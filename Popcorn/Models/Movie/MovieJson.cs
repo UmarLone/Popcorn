@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Models.Cast;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent;
@@ -294,7 +295,13 @@ namespace Popcorn.Models.Movie
         public bool WatchInFullHdQuality
         {
             get { return _watchInFullHdQuality; }
-            set { Set(() => WatchInFullHdQuality, ref _watchInFullHdQuality, value); }
+            set
+            {
+                var odlValue = _watchInFullHdQuality;
+                Set(() => WatchInFullHdQuality, ref _watchInFullHdQuality, value);
+                Messenger.Default.Send(new PropertyChangedMessage<bool>(this,
+                    odlValue, value, nameof(WatchInFullHdQuality)));
+            }
         }
 
         /// <summary>

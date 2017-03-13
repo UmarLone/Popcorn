@@ -20,6 +20,7 @@ using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
+using Popcorn.Models.Torrent;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -104,6 +105,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         private bool _loadingSubtitles;
 
         /// <summary>
+        /// Torrent health, from 0 to 10
+        /// </summary>
+        private double _torrentHealth;
+
+        /// <summary>
+        /// The selected torrent
+        /// </summary>
+        private TorrentJson _selectedTorrent;
+
+        /// <summary>
         /// Initializes a new instance of the MovieDetailsViewModel class.
         /// </summary>
         /// <param name="movieService">Service used to interact with movies</param>
@@ -156,6 +167,24 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         {
             get { return _isMovieLoading; }
             set { Set(() => IsMovieLoading, ref _isMovieLoading, value); }
+        }
+
+        /// <summary>
+        /// Torrent health, from 0 to 10
+        /// </summary>
+        public double TorrentHealth
+        {
+            get { return _torrentHealth; }
+            set { Set(() => TorrentHealth, ref _torrentHealth, value); }
+        }
+
+        /// <summary>
+        /// The selected torrent
+        /// </summary>
+        public TorrentJson SelectedTorrent
+        {
+            get { return _selectedTorrent; }
+            set { Set(() => SelectedTorrent, ref _selectedTorrent, value); }
         }
 
         /// <summary>
@@ -318,6 +347,12 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                     if (!string.IsNullOrEmpty(Movie?.ImdbCode))
                         await _movieService.TranslateMovieAsync(Movie);
                 });
+
+            Messenger.Default.Register<PropertyChangedMessage<bool>>(this, e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Movie.WatchInFullHdQuality)) return;
+                ComputeTorrentHealth();
+            });
         }
 
         /// <summary>
@@ -358,6 +393,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             Movie = movie;
             IsMovieLoading = false;
             Movie.FullHdAvailable = movie.Torrents.Any(torrent => torrent.Quality == "1080p");
+            ComputeTorrentHealth();
+
             var similarTask = Task.Run(async () =>
             {
                 LoadingSimilar = true;
@@ -374,6 +411,63 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Logger.Debug($"LoadMovie ({movie.ImdbCode}) in {elapsedMs} milliseconds.");
+        }
+
+        /// <summary>
+        /// Compute torrent health
+        /// </summary>
+        private void ComputeTorrentHealth()
+        {
+            TorrentJson torrent = null;
+            torrent = Movie.WatchInFullHdQuality
+                ? Movie.Torrents.FirstOrDefault(a => a.Quality == "1080p")
+                : Movie.Torrents.FirstOrDefault(a => a.Quality == "720p");
+            SelectedTorrent = torrent;
+
+            if (torrent != null && torrent.Seeds < 4)
+            {
+                TorrentHealth = 0;
+            }
+            else if (torrent != null && torrent.Seeds < 6)
+            {
+                TorrentHealth = 1;
+            }
+            else if (torrent != null && torrent.Seeds < 8)
+            {
+                TorrentHealth = 2;
+            }
+            else if (torrent != null && torrent.Seeds < 10)
+            {
+                TorrentHealth = 3;
+            }
+            else if (torrent != null && torrent.Seeds < 12)
+            {
+                TorrentHealth = 4;
+            }
+            else if (torrent != null && torrent.Seeds < 14)
+            {
+                TorrentHealth = 5;
+            }
+            else if (torrent != null && torrent.Seeds < 16)
+            {
+                TorrentHealth = 6;
+            }
+            else if (torrent != null && torrent.Seeds < 18)
+            {
+                TorrentHealth = 7;
+            }
+            else if (torrent != null && torrent.Seeds < 20)
+            {
+                TorrentHealth = 8;
+            }
+            else if (torrent != null && torrent.Seeds < 22)
+            {
+                TorrentHealth = 9;
+            }
+            else if (torrent != null && torrent.Seeds >= 22)
+            {
+                TorrentHealth = 10;
+            }
         }
 
         /// <summary>
