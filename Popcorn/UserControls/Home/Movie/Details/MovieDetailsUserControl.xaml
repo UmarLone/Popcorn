@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:converters="clr-namespace:Popcorn.Converters"
     xmlns:customControls="clr-namespace:Popcorn.Controls"
-    xmlns:custompanels="clr-namespace:Popcorn.Panels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:download="clr-namespace:Popcorn.UserControls.Home.Movie.Download"
     xmlns:downloadViewModel="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Download"
@@ -30,7 +29,6 @@
             </Style>
 
             <converters:StringToUriConverter x:Key="StringToUriConverter" />
-            <converters:RatioConverter x:Key="RatioConverter" />
             <converters:MultiBooleanToBoolConverter x:Key="MultiBooleanToBoolConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -203,8 +201,6 @@
                 <Grid Grid.Row="1" Grid.Column="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="15" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Row="0">
@@ -348,67 +344,65 @@
                             </Grid>
                         </DockPanel>
                     </DockPanel>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <TextBlock
-                            Padding="0,20,0,0"
-                            VerticalAlignment="Top"
-                            FontSize="16"
-                            Text="{Binding Movie.DescriptionFull}"
-                            TextAlignment="Justify"
-                            TextWrapping="Wrap" />
-                    </ScrollViewer>
-                    <StackPanel
-                        Grid.Row="3"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top">
-                        <TextBlock
-                            Grid.Row="0"
-                            FontSize="18"
-                            FontWeight="Medium"
-                            Text="{lex:LocText ActorsLabel}" />
-                        <ItemsControl
-                            Grid.Row="1"
-                            Padding="0,15,0,0"
-                            ItemsSource="{Binding Movie.Cast}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock FontSize="14" Text="{Binding Name}" />
-                                            <Border
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Top"
-                                                BorderThickness="1"
-                                                CornerRadius="40">
-                                                <Grid>
+                    <customControls:AnimatedScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Padding="0,20,0,0"
+                                VerticalAlignment="Top"
+                                FontSize="16"
+                                Text="{Binding Movie.DescriptionFull}"
+                                TextAlignment="Justify"
+                                TextWrapping="Wrap" />
+                            <StackPanel
+                                Margin="0,15,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top">
+                                <TextBlock
+                                    FontSize="18"
+                                    FontWeight="Medium"
+                                    Text="{lex:LocText ActorsLabel}" />
+                                <ItemsControl Padding="0,15,0,0" ItemsSource="{Binding Movie.Cast}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock FontSize="14" Text="{Binding Name}" />
                                                     <Border
-                                                        x:Name="mask"
-                                                        Background="Black"
-                                                        CornerRadius="40" />
-                                                    <StackPanel>
-                                                        <StackPanel.OpacityMask>
-                                                            <VisualBrush Visual="{Binding ElementName=mask}" />
-                                                        </StackPanel.OpacityMask>
-                                                        <Image
-                                                            Width="60"
-                                                            Height="60"
-                                                            HorizontalAlignment="Left"
-                                                            attachedProperties:ImageAsyncHelper.SourceUri="{Binding SmallImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
-                                                            RenderOptions.BitmapScalingMode="Fant" />
-                                                    </StackPanel>
-                                                </Grid>
-                                            </Border>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Top"
+                                                        BorderThickness="1"
+                                                        CornerRadius="40">
+                                                        <Grid>
+                                                            <Border
+                                                                x:Name="mask"
+                                                                Background="Black"
+                                                                CornerRadius="40" />
+                                                            <StackPanel>
+                                                                <StackPanel.OpacityMask>
+                                                                    <VisualBrush Visual="{Binding ElementName=mask}" />
+                                                                </StackPanel.OpacityMask>
+                                                                <Image
+                                                                    Width="60"
+                                                                    Height="60"
+                                                                    HorizontalAlignment="Left"
+                                                                    attachedProperties:ImageAsyncHelper.SourceUri="{Binding SmallImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                                                    RenderOptions.BitmapScalingMode="Fant" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </customControls:AnimatedScrollViewer>
                 </Grid>
                 <Grid
                     Grid.Row="3"
@@ -420,7 +414,7 @@
                     Opacity="0.8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="35" />
                         <RowDefinition Height="10" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="5" />
@@ -428,7 +422,7 @@
                     <TextBlock
                         Grid.Row="1"
                         HorizontalAlignment="Center"
-                        FontSize="18"
+                        FontSize="24"
                         FontWeight="ExtraLight"
                         Text="{lex:LocText SimilarLabel}" />
                     <customControls:AnimatedScrollViewer
@@ -560,15 +554,15 @@
                                                     VerticalAlignment="Center"
                                                     Opacity="0.0">
                                                     <Path
-                                                        Width="20.5832"
-                                                        Height="31.6667"
+                                                        Width="10"
+                                                        Height="15"
                                                         Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
                                                         Fill="White"
                                                         Stretch="Fill" />
                                                     <Ellipse
                                                         x:Name="PlayEllipse"
-                                                        Width="60"
-                                                        Height="60"
+                                                        Width="30"
+                                                        Height="30"
                                                         Fill="#00000000"
                                                         Opacity=".6"
                                                         Stretch="Fill"
@@ -581,7 +575,7 @@
                                                     Grid.Row="2"
                                                     Grid.Column="1"
                                                     Width="60"
-                                                    HorizontalAlignment="Left"
+                                                    HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Opacity="0.0"
                                                     RatingValue="{Binding Rating}" />
