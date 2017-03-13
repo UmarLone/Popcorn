@@ -511,6 +511,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Similar.
+        /// </summary>
+        public static string SimilarLabel {
+            get {
+                return ResourceManager.GetString("SimilarLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Subtitles.
         /// </summary>
         public static string SubtitlesLabel {

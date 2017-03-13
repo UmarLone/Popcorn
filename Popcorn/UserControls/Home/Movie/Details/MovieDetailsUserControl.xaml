@@ -5,6 +5,8 @@
     xmlns:attachedProperties="clr-namespace:Popcorn.AttachedProperties"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:converters="clr-namespace:Popcorn.Converters"
+    xmlns:customControls="clr-namespace:Popcorn.Controls"
+    xmlns:custompanels="clr-namespace:Popcorn.Panels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:download="clr-namespace:Popcorn.UserControls.Home.Movie.Download"
     xmlns:downloadViewModel="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Download"
@@ -21,10 +23,17 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
+            <Style x:Key="LargeTileStyle" TargetType="controls:Tile">
+                <Setter Property="Width" Value="100" />
+                <Setter Property="Height" Value="150" />
+                <Setter Property="TitleFontSize" Value="14" />
+            </Style>
+
             <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:RatioConverter x:Key="RatioConverter" />
             <converters:MultiBooleanToBoolConverter x:Key="MultiBooleanToBoolConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <DataTemplate DataType="{x:Type downloadViewModel:DownloadMovieViewModel}">
                 <download:DownloadMovieUserControl />
@@ -173,7 +182,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="3*" MaxWidth="300" />
                     <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="6*" />
+                    <ColumnDefinition Width="5*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Image
@@ -194,6 +203,8 @@
                 <Grid Grid.Row="1" Grid.Column="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="15" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Row="0">
@@ -346,63 +357,268 @@
                             TextAlignment="Justify"
                             TextWrapping="Wrap" />
                     </ScrollViewer>
+                    <StackPanel
+                        Grid.Row="3"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top">
+                        <TextBlock
+                            Grid.Row="0"
+                            FontSize="18"
+                            FontWeight="Medium"
+                            Text="{lex:LocText ActorsLabel}" />
+                        <ItemsControl
+                            Grid.Row="1"
+                            Padding="0,15,0,0"
+                            ItemsSource="{Binding Movie.Cast}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock FontSize="14" Text="{Binding Name}" />
+                                            <Border
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Top"
+                                                BorderThickness="1"
+                                                CornerRadius="40">
+                                                <Grid>
+                                                    <Border
+                                                        x:Name="mask"
+                                                        Background="Black"
+                                                        CornerRadius="40" />
+                                                    <StackPanel>
+                                                        <StackPanel.OpacityMask>
+                                                            <VisualBrush Visual="{Binding ElementName=mask}" />
+                                                        </StackPanel.OpacityMask>
+                                                        <Image
+                                                            Width="60"
+                                                            Height="60"
+                                                            HorizontalAlignment="Left"
+                                                            attachedProperties:ImageAsyncHelper.SourceUri="{Binding SmallImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                                            RenderOptions.BitmapScalingMode="Fant" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </Grid>
-                <StackPanel
+                <Grid
                     Grid.Row="3"
                     Grid.Column="0"
                     Grid.ColumnSpan="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     Background="#252525"
                     Opacity="0.8">
-                    <Grid
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="5" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="1"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                        <StackPanel>
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="Medium"
-                                Text="{lex:LocText ActorsLabel}" />
-                            <ItemsControl Padding="0,15,0,0" ItemsSource="{Binding Movie.Cast}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock FontSize="14" Text="{Binding Name}" />
-                                                <Border
+                        FontSize="18"
+                        FontWeight="ExtraLight"
+                        Text="{lex:LocText SimilarLabel}" />
+                    <customControls:AnimatedScrollViewer
+                        Grid.Row="3"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto"
+                        Visibility="{Binding LoadingSimilar, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ItemsControl
+                            ItemsSource="{Binding SimilarMovies}"
+                            ScrollViewer.CanContentScroll="True"
+                            VirtualizingStackPanel.IsVirtualizing="True"
+                            VirtualizingStackPanel.VirtualizationMode="Recycling">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel
+                                        Margin="10,0"
+                                        HorizontalAlignment="Left"
+                                        Orientation="Vertical">
+                                        <controls:Tile
+                                            Margin="0,0,0,5"
+                                            Background="#FF2F2F2F"
+                                            Command="{Binding MovieDetails.LoadMovieCommand, Source={StaticResource Locator}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource LargeTileStyle}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="85" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="5" />
+                                                    <ColumnDefinition Width="90" />
+                                                    <ColumnDefinition Width="5" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.Triggers>
+                                                    <EventTrigger RoutedEvent="Grid.MouseEnter">
+                                                        <EventTrigger.Actions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        FillBehavior="HoldEnd"
+                                                                        Storyboard.TargetName="BackgroundImage"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="1.0"
+                                                                        To="0.4"
+                                                                        Duration="0:0:01" />
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        FillBehavior="HoldEnd"
+                                                                        Storyboard.TargetName="PlayCanvas"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="0.0"
+                                                                        To="1.0"
+                                                                        Duration="0:0:01" />
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        FillBehavior="HoldEnd"
+                                                                        Storyboard.TargetName="Rating"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="0.0"
+                                                                        To="1.0"
+                                                                        Duration="0:0:01" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger.Actions>
+                                                    </EventTrigger>
+                                                    <EventTrigger RoutedEvent="Grid.MouseLeave">
+                                                        <EventTrigger.Actions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        Storyboard.TargetName="BackgroundImage"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="1.0"
+                                                                        To="1.0" />
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        Storyboard.TargetName="PlayCanvas"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="0.0"
+                                                                        To="0.0" />
+                                                                    <DoubleAnimation
+                                                                        AccelerationRatio="0.05"
+                                                                        AutoReverse="False"
+                                                                        DecelerationRatio="0.95"
+                                                                        Storyboard.TargetName="Rating"
+                                                                        Storyboard.TargetProperty="Opacity"
+                                                                        From="0.0"
+                                                                        To="0.0" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger.Actions>
+                                                    </EventTrigger>
+                                                </Grid.Triggers>
+                                                <Image
+                                                    x:Name="BackgroundImage"
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="3"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="3"
                                                     HorizontalAlignment="Center"
-                                                    VerticalAlignment="Top"
-                                                    BorderThickness="1"
-                                                    CornerRadius="40">
-                                                    <Grid>
-                                                        <Border
-                                                            x:Name="mask"
-                                                            Background="Black"
-                                                            CornerRadius="40" />
-                                                        <StackPanel>
-                                                            <StackPanel.OpacityMask>
-                                                                <VisualBrush Visual="{Binding ElementName=mask}" />
-                                                            </StackPanel.OpacityMask>
-                                                            <Image
-                                                                Width="60"
-                                                                Height="60"
-                                                                HorizontalAlignment="Left"
-                                                                attachedProperties:ImageAsyncHelper.SourceUri="{Binding SmallImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
-                                                                RenderOptions.BitmapScalingMode="Fant" />
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </Border>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
+                                                    VerticalAlignment="Center"
+                                                    attachedProperties:ImageAsyncHelper.SourceUri="{Binding PosterImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                                    RenderOptions.BitmapScalingMode="Fant" />
+                                                <Grid
+                                                    x:Name="PlayCanvas"
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="3"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Opacity="0.0">
+                                                    <Path
+                                                        Width="20.5832"
+                                                        Height="31.6667"
+                                                        Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
+                                                        Fill="White"
+                                                        Stretch="Fill" />
+                                                    <Ellipse
+                                                        x:Name="PlayEllipse"
+                                                        Width="60"
+                                                        Height="60"
+                                                        Fill="#00000000"
+                                                        Opacity=".6"
+                                                        Stretch="Fill"
+                                                        Stroke="#FFFFFF"
+                                                        StrokeLineJoin="Round"
+                                                        StrokeThickness="4" />
+                                                </Grid>
+                                                <movie:MovieRating
+                                                    x:Name="Rating"
+                                                    Grid.Row="2"
+                                                    Grid.Column="1"
+                                                    Width="60"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Opacity="0.0"
+                                                    RatingValue="{Binding Rating}" />
+                                            </Grid>
+                                        </controls:Tile>
+                                        <TextBlock
+                                            Name="Title"
+                                            Width="100"
+                                            HorizontalAlignment="Left"
+                                            FontSize="14"
+                                            Text="{Binding Title}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            Width="100"
+                                            HorizontalAlignment="Left"
+                                            FontSize="12"
+                                            Foreground="Gray">
+                                            <movie:MovieGenres Genres="{Binding Genres}" />
+                                        </TextBlock>
+                                        <TextBlock
+                                            Width="100"
+                                            HorizontalAlignment="Left"
+                                            FontSize="12"
+                                            Foreground="Gray"
+                                            Text="{Binding Year}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </customControls:AnimatedScrollViewer>
+                    <controls:ProgressRing
+                        Grid.Row="3"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource AccentColorBrush}"
+                        IsActive="True"
+                        Visibility="{Binding LoadingSimilar, Converter={StaticResource BoolToInverseVisibilityConverter}}" />
+                </Grid>
             </Grid>
             <controls:ProgressRing
                 Grid.Row="1"

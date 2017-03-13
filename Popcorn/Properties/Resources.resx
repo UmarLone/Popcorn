@@ -288,4 +288,7 @@
   <data name="NoneLabel" xml:space="preserve">
     <value>None</value>
   </data>
+  <data name="SimilarLabel" xml:space="preserve">
+    <value>Similar</value>
+  </data>
 </root>

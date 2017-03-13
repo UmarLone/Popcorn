@@ -62,6 +62,7 @@ namespace Popcorn.AttachedProperties
             {
                 try
                 {
+                    if (_givenUri == null) return null;
                     System.Net.Dns.GetHostEntry(_givenUri.DnsSafeHost);
                     return _givenUri;
                 }

@@ -19,6 +19,7 @@ using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
+using System.Collections.Generic;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -73,9 +74,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         private bool _isTrailerLoading;
 
         /// <summary>
+        /// True if similar movies are loading
+        /// </summary>
+        private bool _loadingSimilar;
+
+        /// <summary>
         /// The movie to manage
         /// </summary>
         private MovieJson _movie = new MovieJson();
+
+        /// <summary>
+        /// The similar movies
+        /// </summary>
+        private ObservableCollection<MovieJson> _similarMovies;
 
         /// <summary>
         /// The movie trailer service
@@ -118,6 +129,15 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         {
             get { return _movie; }
             set { Set(() => Movie, ref _movie, value); }
+        }
+
+        /// <summary>
+        /// The similar movies
+        /// </summary>
+        public ObservableCollection<MovieJson> SimilarMovies
+        {
+            get { return _similarMovies; }
+            set { Set(() => SimilarMovies, ref _similarMovies, value); }
         }
 
         /// <summary>
@@ -166,6 +186,15 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         }
 
         /// <summary>
+        /// True if similar movies are loading
+        /// </summary>
+        public bool LoadingSimilar
+        {
+            get { return _loadingSimilar; }
+            set { Set(() => LoadingSimilar, ref _loadingSimilar, value); }
+        }
+
+        /// <summary>
         /// Specify if a movie is downloading
         /// </summary>
         public bool IsDownloadingMovie
@@ -210,13 +239,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// Load the movie's subtitles asynchronously
         /// </summary>
         /// <param name="movie">The movie</param>
-        private void LoadSubtitles(MovieJson movie)
+        private async Task LoadSubtitles(MovieJson movie)
         {
             Logger.Debug(
                 $"Load subtitles for movie: {movie.Title}");
             Movie = movie;
             LoadingSubtitles = true;
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 try
                 {
@@ -296,7 +325,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         private void RegisterCommands()
         {
-            LoadMovieCommand = new RelayCommand<MovieJson>(LoadMovie);
+            LoadMovieCommand = new RelayCommand<MovieJson>(async movie => await LoadMovie(movie));
 
             PlayMovieCommand = new RelayCommand(() =>
             {
@@ -319,7 +348,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// Load the requested movie
         /// </summary>
         /// <param name="movie">The movie to load</param>
-        private void LoadMovie(MovieJson movie)
+        private async Task LoadMovie(MovieJson movie)
         {
             var watch = Stopwatch.StartNew();
 
@@ -329,7 +358,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             Movie = movie;
             IsMovieLoading = false;
             Movie.FullHdAvailable = movie.Torrents.Any(torrent => torrent.Quality == "1080p");
-            LoadSubtitles(Movie);
+            var similarTask = Task.Run(async () =>
+            {
+                LoadingSimilar = true;
+                SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie.ImdbCode));
+                LoadingSimilar = false;
+            });
+
+            await Task.WhenAll(new List<Task>
+            {
+                LoadSubtitles(Movie),
+                similarTask
+            });
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

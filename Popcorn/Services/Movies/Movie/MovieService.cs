@@ -13,6 +13,7 @@ using RestSharp;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
+using System.Collections.Async;
 
 namespace Popcorn.Services.Movies.Movie
 {
@@ -35,6 +36,7 @@ namespace Popcorn.Services.Movies.Movie
             {
                 MaxRetryCount = 10
             };
+            TmdbClient.GetConfig();
         }
 
         /// <summary>
@@ -47,6 +49,57 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         /// <param name="language">Language to set</param>
         public void ChangeTmdbLanguage(ILanguage language) => TmdbClient.DefaultLanguage = language.Culture;
+
+        /// <summary>
+        /// Tmdb genres cached
+        /// </summary>
+        private List<Genre> _cachedGenres;
+
+
+        /// <summary>
+        /// Get movie by its Imdb code
+        /// </summary>
+        /// <param name="imdbCode">Movie's Imdb code</param>
+        /// <returns>The movie</returns>
+        public async Task<MovieJson> GetMovieAsync(string imdbCode)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var restClient = new RestClient(Constants.PopcornApi);
+            var request = new RestRequest("/{segment}/{movie}", Method.GET);
+            request.AddUrlSegment("segment", "movies");
+            request.AddUrlSegment("movie", imdbCode);
+            MovieJson movie = new MovieJson();
+
+            try
+            {
+                var response = await restClient.ExecuteGetTaskAsync<MovieJson>(request);
+                if (response.ErrorException != null)
+                    throw response.ErrorException;
+
+                movie = response.Data;
+            }
+            catch (Exception exception) when (exception is TaskCanceledException)
+            {
+                Logger.Debug(
+                    "GetPopularMoviesAsync cancelled.");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(
+                    $"GetPopularMoviesAsync: {exception.Message}");
+                throw;
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Debug(
+                    $"GetMovieAsync ({imdbCode}) in {elapsedMs} milliseconds.");
+            }
+
+            return movie;
+        }
 
         /// <summary>
         /// Get all movie's genres
@@ -64,6 +117,7 @@ namespace Popcorn.Services.Movies.Movie
                 await Task.Run(async () =>
                 {
                     var englishGenre = await TmdbClient.GetMovieGenresAsync(new EnglishLanguage().Culture);
+                    _cachedGenres = englishGenre;
                     genres.AddRange((await TmdbClient.GetMovieGenresAsync()).Select(genre => new GenreJson
                     {
                         EnglishName = englishGenre.FirstOrDefault(p => p.Id == genre.Id)?.Name,
@@ -91,6 +145,51 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             return genres;
+        }
+
+        /// <summary>
+        /// Get movies similar async
+        /// </summary>
+        /// <param name="movieId">Movie Id</param>
+        /// <returns>Movies</returns>
+        public async Task<List<MovieJson>> GetMoviesSimilarAsync(string imdbCode)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var movies = new List<MovieJson>();
+
+            try
+            {
+                var movie = await TmdbClient.GetMovieAsync(imdbCode, MovieMethods.AlternativeTitles);
+                var search = await TmdbClient.GetMovieSimilarAsync(movie.Id);
+                if (search.TotalResults != 0)
+                {
+                    await search.Results.Select(a => a.Id).ParallelForEachAsync(async id =>
+                    {
+                        var res = await TmdbClient.GetMovieAsync(id);
+                        var movieToAdd = await GetMovieAsync(res.ImdbId);
+                        if (movieToAdd != null)
+                        {
+                            movies.Add(movieToAdd);
+                        }
+                    });                    
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(
+                    $"GetMoviesSimilarAsync: {exception.Message}");
+                throw;
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Debug(
+                    $"GetMoviesSimilarAsync in {elapsedMs} milliseconds.");
+            }
+
+            return movies;
         }
 
         /// <summary>

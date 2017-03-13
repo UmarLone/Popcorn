@@ -16,6 +16,7 @@ namespace Popcorn.Models.Movie
         private ObservableCollection<Subtitle> _availableSubtitles =
             new ObservableCollection<Subtitle>();
 
+        private int _imdbId;
         private string _dateUploaded;
         private string _posterImage;
         private string _backdropImage;
@@ -339,6 +340,15 @@ namespace Popcorn.Models.Movie
         {
             get { return _hasBeenSeen; }
             set { Set(() => HasBeenSeen, ref _hasBeenSeen, value); }
+        }
+
+        /// <summary>
+        /// Imdb id
+        /// </summary>
+        public int ImdbId
+        {
+            get { return _imdbId; }
+            set { Set(() => ImdbId, ref _imdbId, value); }
         }
     }
 }
