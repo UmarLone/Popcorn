@@ -317,8 +317,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                         });
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Logger.Error(
+                        $"Failed loading subtitles for : {movie.Title}. {ex.Message}");
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         LoadingSubtitles = false;
@@ -397,9 +399,17 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 
             var similarTask = Task.Run(async () =>
             {
-                LoadingSimilar = true;
-                SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie.ImdbCode));
-                LoadingSimilar = false;
+                try
+                {
+                    LoadingSimilar = true;
+                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie.ImdbCode));
+                    LoadingSimilar = false;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(
+                        $"Failed loading similar movies for : {movie.Title}. {ex.Message}");
+                }
             });
 
             await Task.WhenAll(new List<Task>

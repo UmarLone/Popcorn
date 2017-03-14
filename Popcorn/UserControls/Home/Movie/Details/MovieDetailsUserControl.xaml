@@ -317,20 +317,33 @@
                                         IsTabStop="False" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                    <StackPanel
-                                        Width="24"
-                                        Height="24"
+                                    <Grid
+                                        Width="35"
+                                        Height="35"
+                                        HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M3,7V13A9,9 0 0,0 12,22A9,9 0 0,0 21,13V7H17V13A5,5 0 0,1 12,18A5,5 0 0,1 7,13V7M17,5H21V2H17M3,5H7V2H3" Fill="{Binding Path=TorrentHealth, Converter={StaticResource ValueToBrushConverter}, ConverterParameter='0|10', UpdateSourceTrigger=PropertyChanged}" />
-                                        </Canvas>
-                                        <StackPanel.ToolTip>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Seeders:" />
-                                                <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Seeds}" />
+                                        <Path
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M3,7V13A9,9 0 0,0 12,22A9,9 0 0,0 21,13V7H17V13A5,5 0 0,1 12,18A5,5 0 0,1 7,13V7M17,5H21V2H17M3,5H7V2H3"
+                                            Fill="{Binding Path=TorrentHealth, Converter={StaticResource ValueToBrushConverter}, ConverterParameter='0|10', UpdateSourceTrigger=PropertyChanged}" />
+                                        <Rectangle
+                                            Width="35"
+                                            Height="35"
+                                            Fill="Transparent" />
+                                        <Grid.ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Seeders:" />
+                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Seeds}" />
+                                                </StackPanel>
+                                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                    <TextBlock Text="Peers:" />
+                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Peers}" />
+                                                </StackPanel>
                                             </StackPanel>
-                                        </StackPanel.ToolTip>
-                                    </StackPanel>
+                                        </Grid.ToolTip>
+                                    </Grid>
                                     <controls:ToggleSwitch
                                         Margin="20,0,0,0"
                                         HorizontalAlignment="Right"

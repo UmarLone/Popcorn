@@ -167,10 +167,13 @@ namespace Popcorn.Services.Movies.Movie
                     await search.Results.Select(a => a.Id).ParallelForEachAsync(async id =>
                     {
                         var res = await TmdbClient.GetMovieAsync(id);
-                        var movieToAdd = await GetMovieAsync(res.ImdbId);
-                        if (movieToAdd != null)
+                        if (res != null && !string.IsNullOrEmpty(res.ImdbId))
                         {
-                            movies.Add(movieToAdd);
+                            var movieToAdd = await GetMovieAsync(res.ImdbId);
+                            if (movieToAdd != null)
+                            {
+                                movies.Add(movieToAdd);
+                            }
                         }
                     });                    
                 }
