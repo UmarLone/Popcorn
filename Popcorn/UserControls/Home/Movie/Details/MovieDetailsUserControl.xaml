@@ -341,6 +341,10 @@
                                                     <TextBlock Text="Peers:" />
                                                     <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Peers}" />
                                                 </StackPanel>
+                                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                    <TextBlock Text="Size:" />
+                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Size}" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </Grid.ToolTip>
                                     </Grid>
