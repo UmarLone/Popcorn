@@ -10,7 +10,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.5";
+        public const string AppVersion = "1.9.6";
 
         /// <summary>
         /// Youtube quality
@@ -22,11 +22,6 @@ namespace Popcorn.Helpers
             High = 2
         }
         
-        /// <summary>
-        /// Localize flags' images resources
-        /// </summary>
-        public const string FlagImagesDirectory = "pack://application:,,,/Popcorn;component/resources/images/flags/";
-
         /// <summary>
         /// Endpoint to YTS
         /// </summary>
