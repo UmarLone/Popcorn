@@ -1,10 +1,13 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bbougot/Popcorn/master/Popcorn/icon.ico" alt="Logo" />
+</p>
+
 # Popcorn
 
+[![Gitter](https://img.shields.io/badge/Gitter-Join%20Chat-green.svg?style=flat-square)](https://gitter.im/popcorn-app/popcorn)
 <a href="https://popcorn-slack.azurewebsites.net" target="_blank">
   <img alt="Slack" src="http://popcorn-slack.azurewebsites.net/badge.svg">
 </a> 
-
-[![Gitter](https://img.shields.io/badge/Gitter-Join%20Chat-green.svg?style=flat-square)](https://gitter.im/popcorn-app/popcorn)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/mjnfwck6otg9c5wj/branch/master?svg=true)](https://ci.appveyor.com/project/bbougot/popcorn/branch/master) 
 [![Coverage Status](https://coveralls.io/repos/github/bbougot/Popcorn/badge.svg?branch=master)](https://coveralls.io/github/bbougot/Popcorn?branch=master) 
@@ -46,4 +49,4 @@ At this time, only Windows 7+ is supported (Windows 7, 8, 8.1, 10).
 Of course yes! Any pull-request will be considered.
 
 ## Installer
-Download full installer [here](https://github.com/bbougot/Popcorn/releases/download/v1.9.4/Setup.exe)
+Download full installer [here](https://github.com/bbougot/Popcorn/releases/download/v1.9.5/Setup.exe)
