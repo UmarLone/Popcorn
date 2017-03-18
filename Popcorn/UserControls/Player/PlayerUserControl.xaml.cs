@@ -7,6 +7,9 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
+using Meta.Vlc;
+using Meta.Vlc.Interop.Media;
+using Meta.Vlc.Wpf;
 using Popcorn.ViewModels.Pages.Player;
 
 namespace Popcorn.UserControls.Player
@@ -143,7 +146,7 @@ namespace Popcorn.UserControls.Player
             if (moviePlayer == null)
                 return;
 
-            var newVolume = (int)e.NewValue;
+            var newVolume = (int) e.NewValue;
             moviePlayer.ChangeMediaVolume(newVolume);
         }
 
@@ -193,6 +196,15 @@ namespace Popcorn.UserControls.Player
             {
                 await Task.Delay(500);
                 Player.Play();
+                Player.Visibility = Visibility.Hidden;
+
+                while (Player.ActualHeight < 1d)
+                {
+                    Application.Current.MainWindow.Width += 0.1d;
+                    await Task.Delay(100);
+                }
+
+                Player.Visibility = Visibility.Visible;
             });
         }
 

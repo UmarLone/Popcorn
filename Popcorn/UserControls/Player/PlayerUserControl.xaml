@@ -33,14 +33,19 @@
                 <system:String>--no-sub-autodetect-file</system:String>
             </x:Array>
         </Grid.Resources>
-        <wpf:VlcPlayer
-            x:Name="Player"
-            attachedProperties:EnableDragHelper.EnableDrag="True"
-            attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
-            EndBehavior="Nothing"
-            LibVlcPath="libvlc"
-            Stretch="Fill"
-            VlcOption="{StaticResource VlcOptions}" />
+        <StackPanel
+            x:Name="PlayerWrapper"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center">
+            <wpf:VlcPlayer
+                x:Name="Player"
+                attachedProperties:EnableDragHelper.EnableDrag="True"
+                attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
+                EndBehavior="Nothing"
+                LibVlcPath="libvlc"
+                Stretch="UniformToFill"
+                VlcOption="{StaticResource VlcOptions}" />
+        </StackPanel>
         <StatusBar x:Name="PlayerStatusBar" VerticalAlignment="Bottom">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -123,6 +128,7 @@
             </StatusBarItem>
             <StatusBarItem Grid.Column="4" Background="#FF2F2F2F">
                 <ToggleButton
+                    x:Name="MaximizeButton"
                     Width="39"
                     Height="39"
                     IsChecked="{Binding Window.ApplicationService.IsFullScreen, Source={StaticResource Locator}}"

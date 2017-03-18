@@ -358,7 +358,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                     // Get movie file
                                     foreach (
                                         var filePath in
-                                        Directory.GetFiles(status.save_path, handle.torrent_file().name())
+                                        Directory.GetFiles(status.save_path + handle.torrent_file().name())
                                     )
                                     {
                                         _movieFilePath = filePath;
