@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Popcorn</id>
-        <version>1.9.4</version>
+        <version></version>
         <title>Popcorn</title>
         <authors>bbougot</authors>
         <projectUrl>https://github.com/bbougot/Popcorn</projectUrl>
         <iconUrl>https://raw.githubusercontent.com/bbougot/Popcorn/master/Popcorn/icon.ico</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Add similar movies</description>
+        <description>Fix issues and improve stability</description>
     </metadata>
     <files>
         <file src="amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" target="lib\net45\amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />

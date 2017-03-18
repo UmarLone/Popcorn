@@ -738,7 +738,7 @@ xcopy /s /y "$(SolutionDir)\Popcorn\VCRedist\*.*" "$(TargetDir)"</PostBuildEvent
     <Revision Include="$(Version.Split('.')[3])" />
   </ItemGroup>
     <Exec Command="$(SolutionDir)\.nuget\NuGet.exe pack $(SolutionDir)\Popcorn.nuspec -Version @(Major).@(Minor).@(Build) -Properties Configuration=Release -OutputDirectory $(OutDir) -BasePath $(OutDir)" />
-    <Exec Command="$(SolutionDir)\packages\squirrel.windows.1.5.2\tools\Squirrel.exe --releasify $(OutDir)Popcorn.@(Major).@(Minor).@(Build).nupkg" />
+    <Exec Command="$(SolutionDir)\packages\squirrel.windows.1.5.2\tools\Squirrel.exe --releasify $(OutDir)Popcorn.@(Major).@(Minor).@(Build).nupkg -g $(SolutionDir)\Popcorn\progress.gif" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
