@@ -8,7 +8,6 @@ using GalaSoft.MvvmLight.Threading;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
-using Squirrel;
 using WPFLocalizeExtension.Engine;
 
 namespace Popcorn
@@ -42,14 +41,6 @@ namespace Popcorn
             var elapsedStartMs = watchStart.ElapsedMilliseconds;
             Logger.Info(
                 $"Popcorn started in {elapsedStartMs} milliseconds.");
-
-#if !DEBUG
-            SquirrelAwareApp.HandleEvents(
-                onInitialInstall: OnInitialInstall,
-                onAppUpdate: OnAppUpdate,
-                onAppUninstall: OnAppUninstall,
-                onFirstRun: OnFirstRun);
-#endif
         }
 
         /// <summary>
@@ -118,53 +109,6 @@ namespace Popcorn
             {
                 Logger.Fatal(ex);
                 Messenger.Default.Send(new UnhandledExceptionMessage(new Exception(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError"))));
-            }
-        }
-
-        /// <summary>
-        /// Execute when app is uninstalling
-        /// </summary>
-        /// <param name="version"><see cref="Version"/> version</param>
-        private static async void OnAppUninstall(Version version)
-        {
-            using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
-            {
-                manager.RemoveShortcutForThisExe();
-
-                manager.RemoveUninstallerRegistryEntry();
-            }
-        }
-
-        /// <summary>
-        /// Execute when app is updating
-        /// </summary>
-        /// <param name="version"><see cref="Version"/> version</param>
-        private static async void OnAppUpdate(Version version)
-        {
-            using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
-            {
-                manager.CreateShortcutForThisExe();
-            }
-        }
-
-        /// <summary>
-        /// Execute when app has first run
-        /// </summary>
-        private static void OnFirstRun()
-        {
-        }
-
-        /// <summary>
-        /// Execute when app is installing
-        /// </summary>
-        /// <param name="version"><see cref="Version"/> version</param>
-        private static async void OnInitialInstall(Version version)
-        {
-            using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
-            {
-                manager.CreateShortcutForThisExe();
-
-                await manager.CreateUninstallerRegistryEntry();
             }
         }
     }
