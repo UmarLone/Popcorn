@@ -403,6 +403,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Peers.
+        /// </summary>
+        public static string PeersLabel {
+            get {
+                return ResourceManager.GetString("PeersLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Playing.
         /// </summary>
         public static string PlayingTitleTab {
@@ -480,6 +489,15 @@ namespace Popcorn.Properties {
         public static string SearchTitleTab {
             get {
                 return ResourceManager.GetString("SearchTitleTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Seeders.
+        /// </summary>
+        public static string SeedersLabel {
+            get {
+                return ResourceManager.GetString("SeedersLabel", resourceCulture);
             }
         }
         

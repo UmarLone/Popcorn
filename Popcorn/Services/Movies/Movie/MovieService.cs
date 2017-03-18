@@ -36,7 +36,15 @@ namespace Popcorn.Services.Movies.Movie
             {
                 MaxRetryCount = 10
             };
-            TmdbClient.GetConfig();
+
+            try
+            {
+                TmdbClient.GetConfig();
+            }
+            catch (Exception)
+            {
+                //TODO
+            }
         }
 
         /// <summary>

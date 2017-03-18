@@ -69,6 +69,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private double _movieDownloadRate;
 
         /// <summary>
+        /// Number of seeders
+        /// </summary>
+        private int _nbSeeders;
+
+        /// <summary>
+        /// Number of peers
+        /// </summary>
+        private int _nbPeers;
+
+        /// <summary>
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
@@ -107,6 +117,24 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         {
             get { return _movieDownloadRate; }
             set { Set(() => MovieDownloadRate, ref _movieDownloadRate, value); }
+        }
+
+        /// <summary>
+        /// Number of peers
+        /// </summary>
+        public int NbPeers
+        {
+            get { return _nbPeers; }
+            set { Set(() => NbPeers, ref _nbPeers, value); }
+        }
+
+        /// <summary>
+        /// Number of seeders
+        /// </summary>
+        public int NbSeeders
+        {
+            get { return _nbSeeders; }
+            set { Set(() => NbSeeders, ref _nbSeeders, value); }
         }
 
         /// <summary>
@@ -155,6 +183,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
             {
                 var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
+                var reportNbPeers = new Progress<int>(ReportNbPeers);
+                var reportNbSeeders = new Progress<int>(ReportNbSeeders);
 
                 Task.Run(() =>
                 {
@@ -182,7 +212,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                         {
                             await
                                 DownloadMovieAsync(message.Movie,
-                                    reportDownloadProgress, reportDownloadRate, _cancellationDownloadingMovie);
+                                    reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
+                                    _cancellationDownloadingMovie);
                         });
                     }
                 });
@@ -195,6 +226,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         {
             Messenger.Default.Send(new StopPlayingMovieMessage());
         });
+
+        /// <summary>
+        /// Report the number of seeders
+        /// </summary>
+        /// <param name="value">Number of seeders</param>
+        private void ReportNbSeeders(int value) => NbSeeders = value;
+
+        /// <summary>
+        /// Report the number of peers
+        /// </summary>
+        /// <param name="value">Nubmer of peers</param>
+        private void ReportNbPeers(int value) => NbPeers = value;
 
         /// <summary>
         /// Report the download progress
@@ -222,16 +265,20 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// <param name="movie">The movie to download</param>
         /// <param name="downloadProgress">Report download progress</param>
         /// <param name="downloadRate">Report download rate</param>
+        /// <param name="nbSeeds">Report number of seeders</param>
+        /// <param name="nbPeers">Report number of peers</param>
         /// <param name="ct">Cancellation token</param>
         private async Task DownloadMovieAsync(MovieJson movie, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate,
+            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers,
             CancellationTokenSource ct)
         {
+            MovieDownloadProgress = 0d;
+            MovieDownloadRate = 0d;
+            NbSeeders = 0;
+            NbPeers = 0;
+
             await Task.Run(async () =>
             {
-                MovieDownloadProgress = 0d;
-                MovieDownloadRate = 0d;
-
                 using (var session = new session())
                 {
                     Logger.Info(
@@ -241,6 +288,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
 
                     downloadProgress?.Report(0d);
                     downloadRate?.Report(0d);
+                    nbSeeds?.Report(0);
+                    nbPeers?.Report(0);
 
                     session.listen_on(6881, 6889);
                     var torrentUrl = movie.WatchInFullHdQuality
@@ -255,53 +304,58 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
                         torrentPath = result.Item2;
 
-                    var addParams = new add_torrent_params
+                    using (var addParams = new add_torrent_params
                     {
                         save_path = Constants.MovieDownloads,
                         ti = new torrent_info(torrentPath)
-                    };
-
-                    var handle = session.add_torrent(addParams);
-                    handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
-                    handle.set_download_limit(_applicationSettingsViewModel.UploadLimit * 1024);
-
-                    // We have to download sequentially, so that we're able to play the movie without waiting
-                    handle.set_sequential_download(true);
-                    var alreadyBuffered = false;
-                    while (IsDownloadingMovie)
+                    })
+                    using (var handle = session.add_torrent(addParams))
                     {
-                        var status = handle.status();
-                        var progress = status.progress * 100d;
+                        handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
+                        handle.set_download_limit(_applicationSettingsViewModel.UploadLimit * 1024);
 
-                        downloadProgress?.Report(progress);
-                        downloadRate?.Report(Math.Round(status.download_rate / 1024d, 0));
-
-                        handle.flush_cache();
-                        if (handle.need_save_resume_data())
-                            handle.save_resume_data(1);
-
-                        if (progress >= Constants.MinimumBufferingBeforeMoviePlaying && !alreadyBuffered)
+                        // We have to download sequentially, so that we're able to play the movie without waiting
+                        handle.set_sequential_download(true);
+                        var alreadyBuffered = false;
+                        while (IsDownloadingMovie)
                         {
-                            // Get movie file
-                            foreach (
-                                var filePath in
-                                Directory.GetFiles(status.save_path + handle.torrent_file().name(),
-                                    "*" + Constants.VideoFileExtension)
-                            )
+                            using (var status = handle.status())
                             {
-                                alreadyBuffered = true;
-                                movie.FilePath = filePath;
-                                Messenger.Default.Send(new PlayMovieMessage(movie));
-                            }
-                        }
+                                var progress = status.progress * 100d;
 
-                        try
-                        {
-                            await Task.Delay(1000, ct.Token);
-                        }
-                        catch (TaskCanceledException)
-                        {
-                            return;
+                                nbSeeds?.Report(status.num_seeds);
+                                nbPeers?.Report(status.num_peers);
+                                downloadProgress?.Report(progress);
+                                downloadRate?.Report(Math.Round(status.download_rate / 1024d, 0));
+
+                                handle.flush_cache();
+                                if (handle.need_save_resume_data())
+                                    handle.save_resume_data(1);
+
+                                if (progress >= Constants.MinimumBufferingBeforeMoviePlaying && !alreadyBuffered)
+                                {
+                                    // Get movie file
+                                    foreach (
+                                        var filePath in
+                                        Directory.GetFiles(status.save_path + handle.torrent_file().name(),
+                                            "*" + Constants.VideoFileExtension)
+                                    )
+                                    {
+                                        alreadyBuffered = true;
+                                        movie.FilePath = filePath;
+                                        Messenger.Default.Send(new PlayMovieMessage(movie));
+                                    }
+                                }
+
+                                try
+                                {
+                                    await Task.Delay(1000, ct.Token);
+                                }
+                                catch (TaskCanceledException)
+                                {
+                                    return;
+                                }
+                            }
                         }
                     }
                 }

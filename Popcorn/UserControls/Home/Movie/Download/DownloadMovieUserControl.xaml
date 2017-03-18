@@ -72,18 +72,38 @@
                 <RowDefinition Height="114*" />
                 <RowDefinition Height="128*" />
             </Grid.RowDefinitions>
-            <Label
+            <StackPanel
                 Grid.Row="2"
                 Grid.Column="1"
                 Grid.ColumnSpan="3"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="18">
-                <movie:MovieDownloadProgress
-                    DownloadProgress="{Binding MovieDownloadProgress}"
-                    DownloadRate="{Binding MovieDownloadRate}"
-                    MovieTitle="{Binding Movie.Title}" />
-            </Label>
+                Orientation="Vertical">
+                <Label
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18">
+                    <movie:MovieDownloadProgress
+                        DownloadProgress="{Binding MovieDownloadProgress}"
+                        DownloadRate="{Binding MovieDownloadRate}"
+                        MovieTitle="{Binding Movie.Title}" />
+                </Label>
+                <StackPanel
+                    Margin="0,10,0,10"
+                    HorizontalAlignment="Center"
+                    Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{lex:LocText PeersLabel}" />
+                        <TextBlock Text=": " />
+                        <TextBlock Margin="5,0,0,0" Text="{Binding NbPeers}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                        <TextBlock Text="{lex:LocText SeedersLabel}" />
+                        <TextBlock Text=": " />
+                        <TextBlock Margin="5,0,0,0" Text="{Binding NbSeeders}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
             <controls:MetroProgressBar
                 Grid.Row="3"
                 Grid.Column="1"

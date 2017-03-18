@@ -291,4 +291,10 @@
   <data name="SimilarLabel" xml:space="preserve">
     <value>Similar</value>
   </data>
+  <data name="PeersLabel" xml:space="preserve">
+    <value>Peers</value>
+  </data>
+  <data name="SeedersLabel" xml:space="preserve">
+    <value>Seeders</value>
+  </data>
 </root>

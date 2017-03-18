@@ -117,23 +117,19 @@ namespace Popcorn.UserControls.Player
             InputManager.Current.PreProcessInput += OnActivity;
 
             vm.StoppedPlayingMedia += OnStoppedPlayingMedia;
-            
+
             Player.VlcMediaPlayer.EndReached += MediaPlayerEndReached;
 
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            if (!string.IsNullOrEmpty(vm.SubtitleFilePath))
             {
-                if (!string.IsNullOrEmpty(vm.SubtitleFilePath))
-                {
-                    Player.LoadMediaWithOptions(vm.MediaPath, $@":sub-file={vm.SubtitleFilePath}");
-                }
-                else
-                {
-                    Player.LoadMedia(vm.MediaPath);
-                }
+                Player.LoadMediaWithOptions(vm.MediaPath, $@":sub-file={vm.SubtitleFilePath}");
+            }
+            else
+            {
+                Player.LoadMedia(vm.MediaPath);
+            }
 
-                PlayMedia();
-            });
-
+            PlayMedia();
         }
 
         /// <summary>
@@ -188,11 +184,16 @@ namespace Popcorn.UserControls.Player
         /// </summary>
         private void PlayMedia()
         {
-            Player.Play();
             MediaPlayerIsPlaying = true;
 
             MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
             MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
+
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                await Task.Delay(500);
+                Player.Play();
+            });
         }
 
         /// <summary>
