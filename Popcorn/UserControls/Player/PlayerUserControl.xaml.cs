@@ -198,10 +198,26 @@ namespace Popcorn.UserControls.Player
                 Player.Play();
                 Player.Visibility = Visibility.Hidden;
 
+                bool wasMaximized = false;
                 while (Player.ActualHeight < 1d)
                 {
-                    Application.Current.MainWindow.Width += 0.1d;
+                    if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
+                    {
+                        Application.Current.MainWindow.Width -= 0.1d;
+                    }
+                    else
+                    {
+                        wasMaximized = true;
+                        Application.Current.MainWindow.WindowState = WindowState.Normal;
+                        Application.Current.MainWindow.Width -= 0.1d;
+                    }
+
                     await Task.Delay(100);
+                }
+
+                if (wasMaximized)
+                {
+                    Application.Current.MainWindow.WindowState = WindowState.Maximized;
                 }
 
                 Player.Visibility = Visibility.Visible;

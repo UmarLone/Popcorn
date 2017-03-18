@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Windows;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -355,7 +356,9 @@ namespace Popcorn.ViewModels.Windows
 
                         Logger.Info(
                             "Restarting...");
-                        UpdateManager.RestartApp(Path.Combine(latestExe, "Popcorn.exe"));
+
+                        Process.Start($@"{latestExe}\Popcorn.exe");
+                        Application.Current.Shutdown();
                     }
                     else
                     {

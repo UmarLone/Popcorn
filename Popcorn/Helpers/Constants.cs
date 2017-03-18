@@ -10,7 +10,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.8";
+        public const string AppVersion = "1.9.9";
 
         /// <summary>
         /// Youtube quality
