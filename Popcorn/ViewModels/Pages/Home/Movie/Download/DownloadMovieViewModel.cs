@@ -79,6 +79,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private int _nbPeers;
 
         /// <summary>
+        /// Movie file path
+        /// </summary>
+        private string _movieFilePath;
+
+        /// <summary>
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
@@ -163,6 +168,17 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
             _isMovieBuffered = false;
             _cancellationDownloadingMovie.Cancel(true);
             _cancellationDownloadingMovie = new CancellationTokenSource();
+
+            if (!string.IsNullOrEmpty(_movieFilePath))
+            {
+                try
+                {
+                    File.Delete(_movieFilePath);
+                    _movieFilePath = string.Empty;
+                }
+                catch (Exception) { }
+            }
+
         }
 
         /// <summary>
@@ -210,10 +226,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     {
                         DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                         {
-                            await
-                                DownloadMovieAsync(message.Movie,
-                                    reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
-                                    _cancellationDownloadingMovie);
+                            try
+                            {
+                                await
+                                    DownloadMovieAsync(message.Movie,
+                                        reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
+                                        _cancellationDownloadingMovie);
+                            }
+                            catch (Exception) { }
                         });
                     }
                 });
@@ -272,6 +292,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
             IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers,
             CancellationTokenSource ct)
         {
+            _movieFilePath = string.Empty;
             MovieDownloadProgress = 0d;
             MovieDownloadRate = 0d;
             NbSeeders = 0;
@@ -337,10 +358,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                     // Get movie file
                                     foreach (
                                         var filePath in
-                                        Directory.GetFiles(status.save_path + handle.torrent_file().name(),
-                                            "*" + Constants.VideoFileExtension)
+                                        Directory.GetFiles(status.save_path, handle.torrent_file().name())
                                     )
                                     {
+                                        _movieFilePath = filePath;
                                         alreadyBuffered = true;
                                         movie.FilePath = filePath;
                                         Messenger.Default.Send(new PlayMovieMessage(movie));

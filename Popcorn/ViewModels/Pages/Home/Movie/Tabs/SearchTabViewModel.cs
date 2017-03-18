@@ -58,11 +58,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 StopLoadingMovies();
                 Movies.Clear();
                 Page = 0;
+                CurrentNumberOfMovies = 0;
+                MaxNumberOfMovies = 0;
+                IsLoadingMovies = false;
             }
 
             var watch = Stopwatch.StartNew();
 
             Page++;
+
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
 
             Logger.Info(
                 $"Loading page {Page} with criteria: {searchFilter}");
@@ -85,7 +90,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 
                 DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    Movies.Clear();
                     Movies.AddRange(movies.Item1);
                     IsLoadingMovies = false;
                     IsMovieFound = Movies.Any();

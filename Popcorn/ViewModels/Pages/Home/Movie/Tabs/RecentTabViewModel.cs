@@ -50,6 +50,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 
             Page++;
 
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+
             Logger.Info(
                 $"Loading page {Page}...");
 

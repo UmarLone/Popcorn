@@ -46,12 +46,7 @@ namespace Popcorn.Helpers
         /// The maximum number of movies per page to load from the API
         /// </summary>
         public const int MaxMoviesPerPage = 20;
-
-        /// <summary>
-        /// Extension of video file
-        /// </summary>
-        public const string VideoFileExtension = ".mp4";
-
+        
         /// <summary>
         /// Url of the server updates
         /// </summary>
