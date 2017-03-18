@@ -59,12 +59,6 @@ namespace Popcorn.Services.Movies.Movie
         public void ChangeTmdbLanguage(ILanguage language) => TmdbClient.DefaultLanguage = language.Culture;
 
         /// <summary>
-        /// Tmdb genres cached
-        /// </summary>
-        private List<Genre> _cachedGenres;
-
-
-        /// <summary>
         /// Get movie by its Imdb code
         /// </summary>
         /// <param name="imdbCode">Movie's Imdb code</param>
@@ -125,7 +119,6 @@ namespace Popcorn.Services.Movies.Movie
                 await Task.Run(async () =>
                 {
                     var englishGenre = await TmdbClient.GetMovieGenresAsync(new EnglishLanguage().Culture);
-                    _cachedGenres = englishGenre;
                     genres.AddRange((await TmdbClient.GetMovieGenresAsync()).Select(genre => new GenreJson
                     {
                         EnglishName = englishGenre.FirstOrDefault(p => p.Id == genre.Id)?.Name,
@@ -158,7 +151,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <summary>
         /// Get movies similar async
         /// </summary>
-        /// <param name="movieId">Movie Id</param>
+        /// <param name="imdbCode">Movie Id</param>
         /// <returns>Movies</returns>
         public async Task<List<MovieJson>> GetMoviesSimilarAsync(string imdbCode)
         {
@@ -223,7 +216,7 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = 20;
+                limit = Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
@@ -295,7 +288,7 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = 20;
+                limit = Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
@@ -367,7 +360,7 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = 20;
+                limit = Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
@@ -441,7 +434,7 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = 20;
+                limit = Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
@@ -497,7 +490,6 @@ namespace Popcorn.Services.Movies.Movie
         /// Translate movie informations (title, description, ...)
         /// </summary>
         /// <param name="movieToTranslate">Movie to translate</param>
-        /// <param name="ct">Used to cancel translation</param>
         /// <returns>Task</returns>
         public async Task TranslateMovieAsync(MovieJson movieToTranslate)
         {
