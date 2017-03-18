@@ -684,6 +684,28 @@
     <Folder Include="Services\Animes\" />
     <Folder Include="Services\Shows\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="VCRedist\concrt140.dll" />
+    <Content Include="VCRedist\mfc140.dll" />
+    <Content Include="VCRedist\mfc140chs.dll" />
+    <Content Include="VCRedist\mfc140cht.dll" />
+    <Content Include="VCRedist\mfc140deu.dll" />
+    <Content Include="VCRedist\mfc140enu.dll" />
+    <Content Include="VCRedist\mfc140esn.dll" />
+    <Content Include="VCRedist\mfc140fra.dll" />
+    <Content Include="VCRedist\mfc140ita.dll" />
+    <Content Include="VCRedist\mfc140jpn.dll" />
+    <Content Include="VCRedist\mfc140kor.dll" />
+    <Content Include="VCRedist\mfc140rus.dll" />
+    <Content Include="VCRedist\mfc140u.dll" />
+    <Content Include="VCRedist\mfcm140.dll" />
+    <Content Include="VCRedist\mfcm140u.dll" />
+    <Content Include="VCRedist\msvcp140.dll" />
+    <Content Include="VCRedist\vcamp140.dll" />
+    <Content Include="VCRedist\vccorlib140.dll" />
+    <Content Include="VCRedist\vcomp140.dll" />
+    <Content Include="VCRedist\vcruntime140.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -693,12 +715,13 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>	if not exist "$(TargetDir)libvlc" md "$(TargetDir)libvlc"
-    xcopy /s /y "$(SolutionDir)packages\Meta.Vlc.Lib.16.05.01\content\LibVlc\*.*" "$(TargetDir)libvlc"
-    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(TargetDir)libvlc" md "$(TargetDir)libvlc"
+xcopy /s /y "$(SolutionDir)packages\Meta.Vlc.Lib.16.05.01\content\LibVlc\*.*" "$(TargetDir)libvlc"
+if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
+xcopy /s /y "$(SolutionDir)\Popcorn\VCRedist\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

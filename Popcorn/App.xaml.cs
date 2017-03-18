@@ -129,9 +129,7 @@ namespace Popcorn
         {
             using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
             {
-                manager.RemoveShortcutsForExecutable("Popcorn.exe", ShortcutLocation.Desktop);
-                manager.RemoveShortcutsForExecutable("Popcorn.exe", ShortcutLocation.StartMenu);
-                manager.RemoveShortcutsForExecutable("Popcorn.exe", ShortcutLocation.AppRoot);
+                manager.RemoveShortcutForThisExe();
 
                 manager.RemoveUninstallerRegistryEntry();
             }
@@ -145,12 +143,7 @@ namespace Popcorn
         {
             using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
             {
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.Desktop, true);
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.StartMenu, true);
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.AppRoot, true);
-
-                manager.RemoveUninstallerRegistryEntry();
-                await manager.CreateUninstallerRegistryEntry();
+                manager.CreateShortcutForThisExe();
             }
         }
 
@@ -170,10 +163,6 @@ namespace Popcorn
             using (var manager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
             {
                 manager.CreateShortcutForThisExe();
-
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.Desktop, false);
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.StartMenu, false);
-                manager.CreateShortcutsForExecutable("Popcorn.exe", ShortcutLocation.AppRoot, false);
 
                 await manager.CreateUninstallerRegistryEntry();
             }
