@@ -104,8 +104,8 @@ namespace Popcorn.Services.Movies.Movie
         /// <summary>
         /// Get movies similar async
         /// </summary>
-        /// <param name="imdbCode">Movie Id</param>
+        /// <param name="movie">Movie</param>
         /// <returns>Movies</returns>
-        Task<List<MovieJson>> GetMoviesSimilarAsync(string imdbCode);
+        Task<List<MovieJson>> GetMoviesSimilarAsync(MovieJson movie);
     }
 }
