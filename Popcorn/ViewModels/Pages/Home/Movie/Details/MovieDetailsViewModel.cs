@@ -21,6 +21,7 @@ using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent;
+using Popcorn.Models.Torrent.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {

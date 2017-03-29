@@ -141,10 +141,10 @@
   <data name="DownloadLimitLabel" xml:space="preserve">
     <value>Limite de téléchargement (kB/s)</value>
   </data>
-  <data name="EmptySearchLabel" xml:space="preserve">
+  <data name="EmptyMovieSearchLabel" xml:space="preserve">
     <value>Aucun film trouvé</value>
   </data>
-  <data name="GreatestTitleTab" xml:space="preserve">
+  <data name="GreatestMovieTitleTab" xml:space="preserve">
     <value>Réputé</value>
   </data>
   <data name="LanguageLabel" xml:space="preserve">
@@ -159,10 +159,10 @@
   <data name="PlayLabel" xml:space="preserve">
     <value>Lecture</value>
   </data>
-  <data name="PopularTitleTab" xml:space="preserve">
+  <data name="PopularMovieTitleTab" xml:space="preserve">
     <value>Populaire</value>
   </data>
-  <data name="RecentTitleTab" xml:space="preserve">
+  <data name="RecentMovieTitleTab" xml:space="preserve">
     <value>Récent</value>
   </data>
   <data name="ReloadLabel" xml:space="preserve">
@@ -174,7 +174,7 @@
   <data name="SearchBoxWatermark" xml:space="preserve">
     <value>Rechercher...</value>
   </data>
-  <data name="SearchTitleTab" xml:space="preserve">
+  <data name="SearchMovieTitleTab" xml:space="preserve">
     <value>Recherche</value>
   </data>
   <data name="SettingsMenuTitle" xml:space="preserve">
@@ -228,10 +228,10 @@
   <data name="CollectionsLabel" xml:space="preserve">
     <value>Collections</value>
   </data>
-  <data name="FavoritesTitleTab" xml:space="preserve">
+  <data name="FavoritesMovieTitleTab" xml:space="preserve">
     <value>Favoris</value>
   </data>
-  <data name="SeenTitleTab" xml:space="preserve">
+  <data name="SeenMovieTitleTab" xml:space="preserve">
     <value>Visionnés</value>
   </data>
   <data name="NewUpdateDescriptionLabel" xml:space="preserve">
@@ -296,5 +296,14 @@
   </data>
   <data name="SeedersLabel" xml:space="preserve">
     <value>Seeders</value>
+  </data>
+  <data name="PopularShowTitleTab" xml:space="preserve">
+    <value>Populaire</value>
+  </data>
+  <data name="EmptyShowSearchLabel" xml:space="preserve">
+    <value>Aucune série TV trouvée</value>
+  </data>
+  <data name="ShowsWord" xml:space="preserve">
+    <value>Séries TV</value>
   </data>
 </root>

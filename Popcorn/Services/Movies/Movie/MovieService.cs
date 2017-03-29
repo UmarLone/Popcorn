@@ -63,7 +63,7 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         /// <param name="imdbCode">Movie's Imdb code</param>
         /// <returns>The movie</returns>
-        public async Task<MovieJson> GetMovieAsync(string imdbCode)
+        private async Task<MovieJson> GetMovieAsync(string imdbCode)
         {
             var watch = Stopwatch.StartNew();
 

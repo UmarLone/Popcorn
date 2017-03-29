@@ -20,7 +20,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
     /// <summary>
     /// Manage tab controls
     /// </summary>
-    public class TabsViewModel : ViewModelBase
+    public class MovieTabsViewModel : ViewModelBase
     {
         /// <summary>
         /// Logger of the class
@@ -83,12 +83,12 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private string _tabName;
 
         /// <summary>
-        /// Initializes a new instance of the TabsViewModel class.
+        /// Initializes a new instance of the MovieTabsViewModel class.
         /// </summary>
         /// <param name="applicationService">The application state</param>
         /// <param name="movieService">Used to interact with movies</param>
         /// <param name="movieHistoryService">Used to interact with movie history</param>
-        protected TabsViewModel(IApplicationService applicationService, IMovieService movieService,
+        protected MovieTabsViewModel(IApplicationService applicationService, IMovieService movieService,
             IMovieHistoryService movieHistoryService)
         {
             ApplicationService = applicationService;

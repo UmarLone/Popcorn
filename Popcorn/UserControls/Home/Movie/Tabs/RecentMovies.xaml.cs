@@ -25,7 +25,7 @@ namespace Popcorn.UserControls.Home.Movie.Tabs
         {
             var totalHeight = e.VerticalOffset + e.ViewportHeight;
             if (totalHeight < 2d / 3d * e.ExtentHeight) return;
-            var vm = DataContext as RecentTabViewModel;
+            var vm = DataContext as RecentMovieTabViewModel;
             if (vm != null && !vm.IsLoadingMovies)
                 await vm.LoadMoviesAsync();
         }

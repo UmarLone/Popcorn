@@ -182,12 +182,12 @@
       <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -285,16 +285,20 @@
     <Compile Include="AttachedProperties\RippleAssist.cs" />
     <Compile Include="Behaviors\ScrollAnimationBehavior.cs" />
     <Compile Include="Comparers\MovieComparer.cs" />
-    <Compile Include="Controls\Movie\MovieRating.xaml.cs">
-      <DependentUpon>MovieRating.xaml</DependentUpon>
+    <Compile Include="Controls\RatingStar.xaml.cs">
+      <DependentUpon>RatingStar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Ripple.cs" />
+    <Compile Include="Controls\Show\ShowNumberSummary.xaml.cs">
+      <DependentUpon>ShowNumberSummary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BoolToInverseBoolConverter.cs" />
     <Compile Include="Converters\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiBooleanToBoolConverter.cs" />
     <Compile Include="Converters\MultiBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\NullAsBoolConverter.cs" />
+    <Compile Include="Converters\RatingPercentageToNormalizedRatingConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
     <Compile Include="Converters\ValueToBrushConverter.cs" />
@@ -305,8 +309,8 @@
     <Compile Include="Controls\Movie\MovieDownloadProgress.xaml.cs">
       <DependentUpon>MovieDownloadProgress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Movie\MovieGenres.xaml.cs">
-      <DependentUpon>MovieGenres.xaml</DependentUpon>
+    <Compile Include="Controls\GenresLabel.xaml.cs">
+      <DependentUpon>GenresLabel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Movie\MovieRuntime.xaml.cs">
       <DependentUpon>MovieRuntime.xaml</DependentUpon>
@@ -342,11 +346,22 @@
       <DependentUpon>201703041706307_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Anime\AnimeJson.cs" />
+    <Compile Include="Models\Anime\AnimeResponse.cs" />
     <Compile Include="Models\ApplicationState\ApplicationService.cs" />
     <Compile Include="Models\ApplicationState\IApplicationService.cs" />
+    <Compile Include="Models\Episode\EpisodeAnimeJson.cs" />
     <Compile Include="Models\Genre\GenreJson.cs" />
+    <Compile Include="Models\Image\ImageAnimeJson.cs" />
     <Compile Include="Models\Movie\MovieJson.cs" />
     <Compile Include="Models\Movie\MovieResponse.cs" />
+    <Compile Include="Models\Rating\RatingJson.cs" />
+    <Compile Include="Models\Episode\EpisodeShowJson.cs" />
+    <Compile Include="Models\Image\ImageShowJson.cs" />
+    <Compile Include="Models\Shows\ShowJson.cs" />
+    <Compile Include="Models\Shows\ShowResponse.cs" />
+    <Compile Include="Models\Torrent\Show\TorrentShowJson.cs" />
+    <Compile Include="Models\Torrent\Show\TorrentShowNodeJson.cs" />
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -384,7 +399,7 @@
     <Compile Include="Services\Language\ILanguageService.cs" />
     <Compile Include="Services\Movies\Movie\IMovieService.cs" />
     <Compile Include="Services\Movies\Movie\MovieService.cs" />
-    <Compile Include="Models\Torrent\TorrentJson.cs" />
+    <Compile Include="Models\Torrent\Movie\TorrentJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.fr.Designer.cs">
       <DependentUpon>Resources.fr.resx</DependentUpon>
@@ -413,6 +428,8 @@
     <Compile Include="Services\Movies\Trailer\IMovieTrailerService.cs" />
     <Compile Include="Services\Settings\SettingsService.cs" />
     <Compile Include="Services\Settings\ISettingsService.cs" />
+    <Compile Include="Services\Shows\Show\IShowService.cs" />
+    <Compile Include="Services\Shows\Show\ShowService.cs" />
     <Compile Include="Services\Subtitles\ISubtitlesService.cs" />
     <Compile Include="Services\Subtitles\SubtitlesService.cs" />
     <Compile Include="UserControls\Home\Movie\Download\DownloadMovieUserControl.xaml.cs">
@@ -429,6 +446,9 @@
     </Compile>
     <Compile Include="UserControls\Home\Show\ShowUserControl.xaml.cs">
       <DependentUpon>ShowUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Home\Show\Tabs\PopularShows.xaml.cs">
+      <DependentUpon>PopularShows.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Player\PlayerUserControl.xaml.cs">
       <DependentUpon>PlayerUserControl.xaml</DependentUpon>
@@ -463,24 +483,26 @@
     <Compile Include="ViewModels\Pages\Home\IPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Download\DownloadMovieViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Genres\GenresMovieViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Tabs\PopularShowTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Tabs\ShowTabsViewModel.cs" />
     <Compile Include="ViewModels\Windows\WindowViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Anime\AnimePageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\MoviePageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\PagesViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\ShowPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Player\MediaPlayerViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\FavoritesTabViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\GreatestTabViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\SearchTabViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\PopularTabViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\RecentTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\FavoritesMovieTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\GreatestMovieTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\SearchMovieTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\PopularMovieTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\RecentMovieTabViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Details\MovieDetailsViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Search\SearchMovieViewModel.cs" />
     <Compile Include="ViewModels\Windows\Settings\ApplicationSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\SeenTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\SeenMovieTabViewModel.cs" />
     <Compile Include="Services\Movies\Trailer\MovieTrailerService.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\TabsViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Movie\Tabs\MovieTabsViewModel.cs" />
     <Page Include="Controls\CapitalizeText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -489,11 +511,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Movie\MovieGenres.xaml">
+    <Page Include="Controls\GenresLabel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Movie\MovieRating.xaml">
+    <Page Include="Controls\RatingStar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -502,6 +524,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Movie\MovieNumberSummary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Show\ShowNumberSummary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -562,6 +588,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home\Movie\Tabs\SeenMovies.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Show\Tabs\PopularShows.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -682,7 +712,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\Animes\" />
-    <Folder Include="Services\Shows\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="VCRedist\concrt140.dll" />
@@ -727,16 +756,16 @@ xcopy /s /y "$(SolutionDir)\Popcorn\VCRedist\*.*" "$(TargetDir)"</PostBuildEvent
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Popcorn" />
     </GetAssemblyIdentity>
-  <PropertyGroup>
-    <Version>@(Popcorn->'%(Version)')</Version>
-  </PropertyGroup>
-  <ItemGroup>
-    <Version Include="$(Version)" />
-    <Major Include="$(Version.Split('.')[0])" />
-    <Minor Include="$(Version.Split('.')[1])" />
-    <Build Include="$(Version.Split('.')[2])" />
-    <Revision Include="$(Version.Split('.')[3])" />
-  </ItemGroup>
+    <PropertyGroup>
+      <Version>@(Popcorn->'%(Version)')</Version>
+    </PropertyGroup>
+    <ItemGroup>
+      <Version Include="$(Version)" />
+      <Major Include="$(Version.Split('.')[0])" />
+      <Minor Include="$(Version.Split('.')[1])" />
+      <Build Include="$(Version.Split('.')[2])" />
+      <Revision Include="$(Version.Split('.')[3])" />
+    </ItemGroup>
     <Exec Command="$(SolutionDir)\.nuget\NuGet.exe pack $(SolutionDir)\Popcorn.nuspec -Version @(Major).@(Minor).@(Build) -Properties Configuration=Release -OutputDirectory $(OutDir) -BasePath $(OutDir)" />
     <Exec Command="$(SolutionDir)\packages\squirrel.windows.1.5.2\tools\Squirrel.exe --releasify $(OutDir)Popcorn.@(Major).@(Minor).@(Build).nupkg -g $(SolutionDir)\Popcorn\progress.gif" />
   </Target>

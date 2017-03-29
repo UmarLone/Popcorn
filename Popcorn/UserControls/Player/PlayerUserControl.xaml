@@ -42,6 +42,7 @@
                 attachedProperties:EnableDragHelper.EnableDrag="True"
                 attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
                 EndBehavior="Nothing"
+                LengthChanged="OnLengthChanged"
                 LibVlcPath="libvlc"
                 Stretch="UniformToFill"
                 VlcOption="{StaticResource VlcOptions}" />

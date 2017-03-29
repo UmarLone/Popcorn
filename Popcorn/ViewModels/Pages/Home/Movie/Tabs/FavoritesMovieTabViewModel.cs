@@ -16,7 +16,7 @@ using Popcorn.Services.Movies.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
-    public class SeenTabViewModel : TabsViewModel
+    public class FavoritesMovieTabViewModel : MovieTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -24,18 +24,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Initializes a new instance of the SeenTabViewModel class.
+        /// Initializes a new instance of the FavoritesMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
         /// <param name="movieHistoryService">Movie history service</param>
-        public SeenTabViewModel(IApplicationService applicationService, IMovieService movieService,
+        public FavoritesMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
             IMovieHistoryService movieHistoryService)
             : base(applicationService, movieService, movieHistoryService)
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SeenTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesMovieTitleTab");
         }
 
         /// <summary>
@@ -55,7 +55,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 IsLoadingMovies = true;
 
                 var movies =
-                    await MovieHistoryService.GetSeenMoviesAsync(Genre, Rating).ConfigureAwait(false);
+                    await
+                        MovieHistoryService.GetFavoritesMoviesAsync(Genre, Rating).ConfigureAwait(false);
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
@@ -90,9 +91,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SeenTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesMovieTitleTab"));
 
-            Messenger.Default.Register<ChangeHasBeenSeenMovieMessage>(
+            Messenger.Default.Register<ChangeFavoriteMovieMessage>(
                 this,
                 async message =>
                 {

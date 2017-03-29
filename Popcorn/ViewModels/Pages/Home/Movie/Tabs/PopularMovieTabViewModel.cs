@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +12,16 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genre;
+using Popcorn.Models.Movie;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
-    public class FavoritesTabViewModel : TabsViewModel
+    /// <summary>
+    /// The popular movies tab
+    /// </summary>
+    public sealed class PopularMovieTabViewModel : MovieTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -24,18 +29,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Initializes a new instance of the FavoritesTabViewModel class.
+        /// Initializes a new instance of the PopularMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
         /// <param name="movieHistoryService">Movie history service</param>
-        public FavoritesTabViewModel(IApplicationService applicationService, IMovieService movieService,
+        public PopularMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
             IMovieHistoryService movieHistoryService)
             : base(applicationService, movieService, movieHistoryService)
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularMovieTitleTab");
+            Movies = new ObservableCollection<MovieJson>();
         }
 
         /// <summary>
@@ -45,8 +51,12 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             var watch = Stopwatch.StartNew();
 
+            Page++;
+
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+
             Logger.Info(
-                "Loading movies...");
+                $"Loading page {Page}...");
 
             HasLoadingFailed = false;
 
@@ -55,21 +65,25 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 IsLoadingMovies = true;
 
                 var movies =
-                    await
-                        MovieHistoryService.GetFavoritesMoviesAsync(Genre, Rating).ConfigureAwait(false);
+                    await MovieService.GetPopularMoviesAsync(Page,
+                        MaxMoviesPerPage,
+                        Rating,
+                        CancellationLoadingMovies.Token,
+                        Genre).ConfigureAwait(false);
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    Movies.Clear();
-                    Movies.AddRange(movies);
+                    Movies.AddRange(movies.Item1);
                     IsLoadingMovies = false;
                     IsMovieFound = Movies.Any();
                     CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = Movies.Count;
+                    MaxNumberOfMovies = movies.Item2;
+                    await MovieHistoryService.SetMovieHistoryAsync(movies.Item1).ConfigureAwait(false);
                 });
             }
             catch (Exception exception)
             {
+                Page--;
                 Logger.Error(
                     $"Error while loading page {Page}: {exception.Message}");
                 HasLoadingFailed = true;
@@ -80,7 +94,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded movies in {elapsedMs} milliseconds.");
+                    $"Loaded page {Page} in {elapsedMs} milliseconds.");
             }
         }
 
@@ -91,20 +105,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab"));
-
-            Messenger.Default.Register<ChangeFavoriteMovieMessage>(
-                this,
-                async message =>
-                {
-                    StopLoadingMovies();
-                    await LoadMoviesAsync();
-                });
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularMovieTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {
                 if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
                 StopLoadingMovies();
+                Page = 0;
+                Movies.Clear();
                 await LoadMoviesAsync();
             });
 
@@ -112,6 +120,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             {
                 if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
                 StopLoadingMovies();
+                Page = 0;
+                Movies.Clear();
                 await LoadMoviesAsync();
             });
         }

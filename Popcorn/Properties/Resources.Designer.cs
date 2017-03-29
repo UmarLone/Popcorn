@@ -198,9 +198,18 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No movie found.
         /// </summary>
-        public static string EmptySearchLabel {
+        public static string EmptyMovieSearchLabel {
             get {
-                return ResourceManager.GetString("EmptySearchLabel", resourceCulture);
+                return ResourceManager.GetString("EmptyMovieSearchLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à No show found.
+        /// </summary>
+        public static string EmptyShowSearchLabel {
+            get {
+                return ResourceManager.GetString("EmptyShowSearchLabel", resourceCulture);
             }
         }
         
@@ -216,9 +225,9 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Favorites.
         /// </summary>
-        public static string FavoritesTitleTab {
+        public static string FavoritesMovieTitleTab {
             get {
-                return ResourceManager.GetString("FavoritesTitleTab", resourceCulture);
+                return ResourceManager.GetString("FavoritesMovieTitleTab", resourceCulture);
             }
         }
         
@@ -243,9 +252,9 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Greatest.
         /// </summary>
-        public static string GreatestTitleTab {
+        public static string GreatestMovieTitleTab {
             get {
-                return ResourceManager.GetString("GreatestTitleTab", resourceCulture);
+                return ResourceManager.GetString("GreatestMovieTitleTab", resourceCulture);
             }
         }
         
@@ -432,9 +441,18 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Popular.
         /// </summary>
-        public static string PopularTitleTab {
+        public static string PopularMovieTitleTab {
             get {
-                return ResourceManager.GetString("PopularTitleTab", resourceCulture);
+                return ResourceManager.GetString("PopularMovieTitleTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Popular.
+        /// </summary>
+        public static string PopularShowTitleTab {
+            get {
+                return ResourceManager.GetString("PopularShowTitleTab", resourceCulture);
             }
         }
         
@@ -450,9 +468,9 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Recent.
         /// </summary>
-        public static string RecentTitleTab {
+        public static string RecentMovieTitleTab {
             get {
-                return ResourceManager.GetString("RecentTitleTab", resourceCulture);
+                return ResourceManager.GetString("RecentMovieTitleTab", resourceCulture);
             }
         }
         
@@ -486,9 +504,9 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Search.
         /// </summary>
-        public static string SearchTitleTab {
+        public static string SearchMovieTitleTab {
             get {
-                return ResourceManager.GetString("SearchTitleTab", resourceCulture);
+                return ResourceManager.GetString("SearchMovieTitleTab", resourceCulture);
             }
         }
         
@@ -504,9 +522,9 @@ namespace Popcorn.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Seen.
         /// </summary>
-        public static string SeenTitleTab {
+        public static string SeenMovieTitleTab {
             get {
-                return ResourceManager.GetString("SeenTitleTab", resourceCulture);
+                return ResourceManager.GetString("SeenMovieTitleTab", resourceCulture);
             }
         }
         
@@ -525,6 +543,15 @@ namespace Popcorn.Properties {
         public static string ShowsLabel {
             get {
                 return ResourceManager.GetString("ShowsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Shows.
+        /// </summary>
+        public static string ShowsWord {
+            get {
+                return ResourceManager.GetString("ShowsWord", resourceCulture);
             }
         }
         

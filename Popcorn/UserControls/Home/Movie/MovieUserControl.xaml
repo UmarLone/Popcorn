@@ -261,7 +261,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="{lex:LocText PopularTitleTab}" />
+                                                Text="{lex:LocText PopularMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -286,7 +286,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="{lex:LocText GreatestTitleTab}" />
+                                                Text="{lex:LocText GreatestMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -313,7 +313,7 @@
                                                 Margin="10,0,0,0"
                                                 VerticalAlignment="Center"
                                                 FontSize="16"
-                                                Text="{lex:LocText RecentTitleTab}" />
+                                                Text="{lex:LocText RecentMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -339,7 +339,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="{lex:LocText SearchTitleTab}" />
+                                                Text="{lex:LocText SearchMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -375,7 +375,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="{lex:LocText FavoritesTitleTab}" />
+                                                Text="{lex:LocText FavoritesMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -401,7 +401,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="{lex:LocText SeenTitleTab}" />
+                                                Text="{lex:LocText SeenMovieTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -513,22 +513,22 @@
                     SelectedItem="{Binding SelectedTab}">
 
                     <controls1:MetroAnimatedSingleRowTabControl.Resources>
-                        <DataTemplate DataType="{x:Type tabsViewModel:GreatestTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:GreatestMovieTabViewModel}">
                             <tabs:GreatestMovies Margin="20,0,0,0" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tabsViewModel:PopularTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:PopularMovieTabViewModel}">
                             <tabs:PopularMovies Margin="20,0,0,0" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tabsViewModel:RecentTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:RecentMovieTabViewModel}">
                             <tabs:RecentMovies Margin="20,0,0,0" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tabsViewModel:SearchTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:SearchMovieTabViewModel}">
                             <tabs:SearchMovies Margin="20,0,0,0" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tabsViewModel:FavoritesTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:FavoritesMovieTabViewModel}">
                             <tabs:FavoritesMovies Margin="20,0,0,0" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tabsViewModel:SeenTabViewModel}">
+                        <DataTemplate DataType="{x:Type tabsViewModel:SeenMovieTabViewModel}">
                             <tabs:SeenMovies Margin="20,0,0,0" />
                         </DataTemplate>
                     </controls1:MetroAnimatedSingleRowTabControl.Resources>

@@ -7,9 +7,6 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
-using Meta.Vlc;
-using Meta.Vlc.Interop.Media;
-using Meta.Vlc.Wpf;
 using Popcorn.ViewModels.Pages.Player;
 
 namespace Popcorn.UserControls.Player
@@ -23,6 +20,11 @@ namespace Popcorn.UserControls.Player
         /// If control is disposed
         /// </summary>
         private bool _disposed;
+
+        /// <summary>
+        /// False if player is not fully initialised
+        /// </summary>
+        private bool _isPlayerFullyInitialised;
 
         /// <summary>
         /// Indicates if a media is playing
@@ -196,31 +198,6 @@ namespace Popcorn.UserControls.Player
             {
                 await Task.Delay(500);
                 Player.Play();
-                Player.Visibility = Visibility.Hidden;
-
-                bool wasMaximized = false;
-                while (Player.ActualHeight < 1d)
-                {
-                    if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
-                    {
-                        Application.Current.MainWindow.Width -= 0.1d;
-                    }
-                    else
-                    {
-                        wasMaximized = true;
-                        Application.Current.MainWindow.WindowState = WindowState.Normal;
-                        Application.Current.MainWindow.Width -= 0.1d;
-                    }
-
-                    await Task.Delay(100);
-                }
-
-                if (wasMaximized)
-                {
-                    Application.Current.MainWindow.WindowState = WindowState.Maximized;
-                }
-
-                Player.Visibility = Visibility.Visible;
             });
         }
 
@@ -459,6 +436,43 @@ namespace Popcorn.UserControls.Player
 
             if (disposing)
                 GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// On player length changed, make sure player have enough space to show fully
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnLengthChanged(object sender, EventArgs e)
+        {
+            if (_isPlayerFullyInitialised) return;
+
+            _isPlayerFullyInitialised = true;
+            Player.Visibility = Visibility.Hidden;
+
+            bool wasMaximized = false;
+            while (Player.ActualHeight < 1d)
+            {
+                if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
+                {
+                    Application.Current.MainWindow.Width -= 0.1d;
+                }
+                else
+                {
+                    wasMaximized = true;
+                    Application.Current.MainWindow.WindowState = WindowState.Normal;
+                    Application.Current.MainWindow.Width -= 0.1d;
+                }
+
+                await Task.Delay(100);
+            }
+
+            if (wasMaximized)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Maximized;
+            }
+
+            Player.Visibility = Visibility.Visible;
         }
     }
 }

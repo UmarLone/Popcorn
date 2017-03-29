@@ -25,13 +25,6 @@ namespace Popcorn.Services.Movies.Movie
         Task<List<GenreJson>> GetGenresAsync(CancellationToken ct);
 
         /// <summary>
-        /// Get movie by its Imdb code
-        /// </summary>
-        /// <param name="imdbCode">Movie's Imdb code</param>
-        /// <returns>The movie</returns>
-        Task<MovieJson> GetMovieAsync(string imdbCode);
-
-        /// <summary>
         /// Get popular movies by page
         /// </summary>
         /// <param name="page">Page to return</param>

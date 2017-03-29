@@ -1,26 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace Popcorn.Controls.Movie
+namespace Popcorn.Controls
 {
     /// <summary>
-    /// Interaction logic for MovieGenres.xaml
+    /// Interaction logic for GenresLabel.xaml
     /// </summary>
-    public partial class MovieGenres
+    public partial class GenresLabel
     {
         /// <summary>
         /// Genres property
         /// </summary>
         public static readonly DependencyProperty GenresProperty =
             DependencyProperty.Register("Genres",
-                typeof (IEnumerable<string>), typeof (MovieGenres),
+                typeof (IEnumerable<string>), typeof (GenresLabel),
                 new PropertyMetadata(null, OnGenresChanged));
 
         /// <summary>
-        /// Initialize a new instance of MovieGenres
+        /// Initialize a new instance of GenresLabel
         /// </summary>
-        public MovieGenres()
+        public GenresLabel()
         {
             InitializeComponent();
         }
@@ -41,7 +42,7 @@ namespace Popcorn.Controls.Movie
         /// <param name="e">Event args</param>
         private static void OnGenresChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var movieGenres = d as MovieGenres;
+            var movieGenres = d as GenresLabel;
             movieGenres?.DisplayMovieGenres();
         }
 
@@ -58,11 +59,23 @@ namespace Popcorn.Controls.Movie
             foreach (var genre in Genres)
             {
                 index++;
-                DisplayText.Text += genre;
+                DisplayText.Text += FirstCharToUpper(genre);
                 // Add the comma at the end of each genre.
                 if (index != Genres.Count())
                     DisplayText.Text += ", ";
             }
+        }
+
+        /// <summary>
+        /// Make first letter of a string upper case
+        /// </summary>
+        /// <param name="input">Input</param>
+        /// <returns>First letter upper cased string</returns>
+        private static string FirstCharToUpper(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                throw new ArgumentException("Input is empty");
+            return input.First().ToString().ToUpper() + input.Substring(1);
         }
     }
 }

@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Models.Cast;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent;
+using Popcorn.Models.Torrent.Movie;
 using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Movie

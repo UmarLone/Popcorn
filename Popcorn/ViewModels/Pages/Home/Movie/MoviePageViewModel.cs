@@ -57,7 +57,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// The selected tab
         /// </summary>
-        private TabsViewModel _selectedTab;
+        private MovieTabsViewModel _selectedTab;
 
         /// <summary>
         /// <see cref="Search"/>
@@ -67,7 +67,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// The tabs
         /// </summary>
-        private ObservableCollection<TabsViewModel> _tabs = new ObservableCollection<TabsViewModel>();
+        private ObservableCollection<MovieTabsViewModel> _tabs = new ObservableCollection<MovieTabsViewModel>();
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -89,11 +89,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
 
             DispatcherHelper.CheckBeginInvokeOnUI(async () =>
             {
-                Tabs.Add(new PopularTabViewModel(ApplicationService, _movieService, _movieHistoryService));
-                Tabs.Add(new GreatestTabViewModel(ApplicationService, _movieService, _movieHistoryService));
-                Tabs.Add(new RecentTabViewModel(ApplicationService, _movieService, _movieHistoryService));
-                Tabs.Add(new FavoritesTabViewModel(ApplicationService, _movieService, _movieHistoryService));
-                Tabs.Add(new SeenTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new PopularMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new GreatestMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new RecentMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new FavoritesMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new SeenMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
                 SelectedTab = Tabs.First();
                 SelectedMoviesIndexMenuTab = 0;
                 var loadMoviesTask = Tabs.ParallelForEachAsync(async tab =>
@@ -141,7 +141,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// Tabs shown into the interface
         /// </summary>
-        public ObservableCollection<TabsViewModel> Tabs
+        public ObservableCollection<MovieTabsViewModel> Tabs
         {
             get { return _tabs; }
             set { Set(() => Tabs, ref _tabs, value); }
@@ -150,7 +150,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// The selected tab
         /// </summary>
-        public TabsViewModel SelectedTab
+        public MovieTabsViewModel SelectedTab
         {
             get { return _selectedTab; }
             set { Set(() => SelectedTab, ref _selectedTab, value); }
@@ -172,49 +172,49 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         {
             SelectGreatestTab = new RelayCommand(() =>
             {
-                if (SelectedTab is GreatestTabViewModel)
+                if (SelectedTab is GreatestMovieTabViewModel)
                     return;
-                foreach (var greatestTab in Tabs.OfType<GreatestTabViewModel>())
+                foreach (var greatestTab in Tabs.OfType<GreatestMovieTabViewModel>())
                     SelectedTab = greatestTab;
             });
 
             SelectPopularTab = new RelayCommand(() =>
             {
-                if (SelectedTab is PopularTabViewModel)
+                if (SelectedTab is PopularMovieTabViewModel)
                     return;
-                foreach (var popularTab in Tabs.OfType<PopularTabViewModel>())
+                foreach (var popularTab in Tabs.OfType<PopularMovieTabViewModel>())
                     SelectedTab = popularTab;
             });
 
             SelectRecentTab = new RelayCommand(() =>
             {
-                if (SelectedTab is RecentTabViewModel)
+                if (SelectedTab is RecentMovieTabViewModel)
                     return;
-                foreach (var recentTab in Tabs.OfType<RecentTabViewModel>())
+                foreach (var recentTab in Tabs.OfType<RecentMovieTabViewModel>())
                     SelectedTab = recentTab;
             });
 
             SelectSearchTab = new RelayCommand(() =>
             {
-                if (SelectedTab is SearchTabViewModel)
+                if (SelectedTab is SearchMovieTabViewModel)
                     return;
-                foreach (var searchTab in Tabs.OfType<SearchTabViewModel>())
+                foreach (var searchTab in Tabs.OfType<SearchMovieTabViewModel>())
                     SelectedTab = searchTab;
             });
 
             SelectFavoritesTab = new RelayCommand(() =>
             {
-                if (SelectedTab is FavoritesTabViewModel)
+                if (SelectedTab is FavoritesMovieTabViewModel)
                     return;
-                foreach (var favoritesTab in Tabs.OfType<FavoritesTabViewModel>())
+                foreach (var favoritesTab in Tabs.OfType<FavoritesMovieTabViewModel>())
                     SelectedTab = favoritesTab;
             });
 
             SelectSeenTab = new RelayCommand(() =>
             {
-                if (SelectedTab is SeenTabViewModel)
+                if (SelectedTab is SeenMovieTabViewModel)
                     return;
-                foreach (var seenTab in Tabs.OfType<SeenTabViewModel>())
+                foreach (var seenTab in Tabs.OfType<SeenMovieTabViewModel>())
                     SelectedTab = seenTab;
             });
         }
@@ -285,7 +285,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
             if (string.IsNullOrEmpty(criteria))
             {
                 // The search filter is empty. We have to find the search tab if any
-                foreach (var searchTabToRemove in Tabs.OfType<SearchTabViewModel>())
+                foreach (var searchTabToRemove in Tabs.OfType<SearchMovieTabViewModel>())
                 {
                     // The search tab is currently selected in the UI, we have to pick a different selected tab prior deleting
                     if (searchTabToRemove == SelectedTab)
@@ -302,7 +302,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
             {
                 IsMovieSearchActive = true;
                 SelectedMoviesIndexMenuTab = 3;
-                foreach (var searchTab in Tabs.OfType<SearchTabViewModel>())
+                foreach (var searchTab in Tabs.OfType<SearchMovieTabViewModel>())
                 {
                     await searchTab.SearchMoviesAsync(criteria);
                     if (SelectedTab != searchTab)
@@ -311,9 +311,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
                     return;
                 }
 
-                Tabs.Add(new SearchTabViewModel(ApplicationService, _movieService, _movieHistoryService));
+                Tabs.Add(new SearchMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
                 SelectedTab = Tabs.Last();
-                var searchMovieTab = SelectedTab as SearchTabViewModel;
+                var searchMovieTab = SelectedTab as SearchMovieTabViewModel;
                 if (searchMovieTab != null)
                     await searchMovieTab.SearchMoviesAsync(criteria);
             }

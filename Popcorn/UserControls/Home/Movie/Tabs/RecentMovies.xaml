@@ -13,7 +13,7 @@
     xmlns:movie="clr-namespace:Popcorn.Controls.Movie"
     xmlns:tabs="clr-namespace:Popcorn.UserControls.Home.Movie.Tabs"
     xmlns:tabs1="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Tabs"
-    d:DataContext="{d:DesignInstance tabs1:RecentTabViewModel}"
+    d:DataContext="{d:DesignInstance tabs1:RecentMovieTabViewModel}"
     lex:LocalizeDictionary.DesignCulture="en"
     lex:ResxLocalizationProvider.DefaultAssembly="Popcorn"
     lex:ResxLocalizationProvider.DefaultDictionary="Resources"
@@ -40,7 +40,7 @@
             VerticalAlignment="Center"
             FontSize="36"
             Foreground="#FF7D7D7D"
-            Text="{lex:LocText EmptySearchLabel}">
+            Text="{lex:LocText EmptyMovieSearchLabel}">
             <TextBlock.Visibility>
                 <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}" ConverterParameter="AND">
                     <Binding
@@ -243,7 +243,7 @@
                                             <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_eye}" />
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
-                                    <movie:MovieRating
+                                    <customControls:RatingStar
                                         x:Name="Rating"
                                         Grid.Row="2"
                                         Grid.Column="1"
@@ -306,7 +306,7 @@
                                 HorizontalAlignment="Left"
                                 FontSize="12"
                                 Foreground="Gray">
-                                <movie:MovieGenres Genres="{Binding Genres}" />
+                                <customControls:GenresLabel Genres="{Binding Genres}" />
                             </TextBlock>
                             <TextBlock
                                 Width="200"
