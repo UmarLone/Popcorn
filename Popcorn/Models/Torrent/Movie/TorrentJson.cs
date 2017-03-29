@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using RestSharp.Deserializers;
 
-namespace Popcorn.Models.Torrent
+namespace Popcorn.Models.Torrent.Movie
 {
     public class TorrentJson : ObservableObject
     {

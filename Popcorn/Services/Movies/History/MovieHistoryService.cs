@@ -13,6 +13,7 @@ using Popcorn.Models.Cast;
 using Popcorn.Models.Genre;
 using Popcorn.Models.Movie;
 using Popcorn.Models.Torrent;
+using Popcorn.Models.Torrent.Movie;
 
 namespace Popcorn.Services.Movies.History
 {

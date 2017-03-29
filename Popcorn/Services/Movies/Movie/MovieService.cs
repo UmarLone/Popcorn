@@ -63,7 +63,7 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         /// <param name="imdbCode">Movie's Imdb code</param>
         /// <returns>The movie</returns>
-        public async Task<MovieJson> GetMovieAsync(string imdbCode)
+        private async Task<MovieJson> GetMovieAsync(string imdbCode)
         {
             var watch = Stopwatch.StartNew();
 
@@ -151,9 +151,9 @@ namespace Popcorn.Services.Movies.Movie
         /// <summary>
         /// Get movies similar async
         /// </summary>
-        /// <param name="imdbCode">Movie Id</param>
+        /// <param name="movie">Movie</param>
         /// <returns>Movies</returns>
-        public async Task<List<MovieJson>> GetMoviesSimilarAsync(string imdbCode)
+        public async Task<List<MovieJson>> GetMoviesSimilarAsync(MovieJson movie)
         {
             var watch = Stopwatch.StartNew();
 
@@ -161,22 +161,16 @@ namespace Popcorn.Services.Movies.Movie
 
             try
             {
-                var movie = await TmdbClient.GetMovieAsync(imdbCode, MovieMethods.AlternativeTitles);
-                var search = await TmdbClient.GetMovieSimilarAsync(movie.Id);
-                if (search.TotalResults != 0)
+                if (movie.Similar.Any())
                 {
-                    await search.Results.Select(a => a.Id).ParallelForEachAsync(async id =>
+                    await movie.Similar.Select(a => a).ParallelForEachAsync(async imdbCode =>
                     {
-                        var res = await TmdbClient.GetMovieAsync(id);
-                        if (res != null && !string.IsNullOrEmpty(res.ImdbId))
+                        var movieToAdd = await GetMovieAsync(imdbCode);
+                        if (movieToAdd != null)
                         {
-                            var movieToAdd = await GetMovieAsync(res.ImdbId);
-                            if (movieToAdd != null)
-                            {
-                                movies.Add(movieToAdd);
-                            }
+                            movies.Add(movieToAdd);
                         }
-                    });                    
+                    });
                 }
             }
             catch (Exception exception)

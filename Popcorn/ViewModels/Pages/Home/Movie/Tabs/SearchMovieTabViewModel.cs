@@ -19,7 +19,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
     /// <summary>
     /// The search movies tab
     /// </summary>
-    public sealed class SearchTabViewModel : TabsViewModel
+    public sealed class SearchMovieTabViewModel : MovieTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -27,18 +27,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Initializes a new instance of the SearchTabViewModel class.
+        /// Initializes a new instance of the SearchMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
         /// <param name="movieHistoryService">Movie history service</param>
-        public SearchTabViewModel(IApplicationService applicationService, IMovieService movieService,
+        public SearchMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
             IMovieHistoryService movieHistoryService)
             : base(applicationService, movieService, movieHistoryService)
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SearchTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SearchMovieTitleTab");
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SearchTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SearchMovieTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {

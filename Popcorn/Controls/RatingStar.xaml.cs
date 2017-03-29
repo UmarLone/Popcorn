@@ -3,12 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace Popcorn.Controls.Movie
+namespace Popcorn.Controls
 {
     /// <summary>
-    /// Interaction logic for Rating.xaml
+    /// Interaction logic for RatingStar.xaml
     /// </summary>
-    public partial class MovieRating
+    public partial class RatingStar
     {
         /// <summary>
         /// Max rating value
@@ -19,13 +19,13 @@ namespace Popcorn.Controls.Movie
         /// Rating property
         /// </summary>
         public static readonly DependencyProperty RatingValueProperty = DependencyProperty.Register("RatingValue",
-            typeof(double), typeof(MovieRating),
+            typeof(double), typeof(RatingStar),
             new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, RatingChanged));
 
         /// <summary>
         /// Initialize a new instance of Rating
         /// </summary>
-        public MovieRating()
+        public RatingStar()
         {
             InitializeComponent();
         }
@@ -53,7 +53,7 @@ namespace Popcorn.Controls.Movie
         /// <param name="e">Event args</param>
         private static void RatingChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var rating = sender as MovieRating;
+            var rating = sender as RatingStar;
             if (rating == null)
                 return;
 

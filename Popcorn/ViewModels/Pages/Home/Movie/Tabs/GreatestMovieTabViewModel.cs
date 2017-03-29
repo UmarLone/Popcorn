@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,16 +11,15 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genre;
-using Popcorn.Models.Movie;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
     /// <summary>
-    /// The popular movies tab
+    /// The greatest movies tab
     /// </summary>
-    public sealed class PopularTabViewModel : TabsViewModel
+    public sealed class GreatestMovieTabViewModel : MovieTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -29,19 +27,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Initializes a new instance of the PopularTabViewModel class.
+        /// Initializes a new instance of the GreatestMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
         /// <param name="movieHistoryService">Movie history service</param>
-        public PopularTabViewModel(IApplicationService applicationService, IMovieService movieService,
+        public GreatestMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
             IMovieHistoryService movieHistoryService)
             : base(applicationService, movieService, movieHistoryService)
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularTitleTab");
-            Movies = new ObservableCollection<MovieJson>();
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestMovieTitleTab");
         }
 
         /// <summary>
@@ -65,7 +62,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 IsLoadingMovies = true;
 
                 var movies =
-                    await MovieService.GetPopularMoviesAsync(Page,
+                    await MovieService.GetGreatestMoviesAsync(Page,
                         MaxMoviesPerPage,
                         Rating,
                         CancellationLoadingMovies.Token,
@@ -105,7 +102,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestMovieTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {

@@ -7,6 +7,7 @@ using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Settings;
+using Popcorn.Services.Shows.Show;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home;
 using Popcorn.ViewModels.Pages.Home.Anime;
@@ -37,6 +38,7 @@ namespace Popcorn.ViewModels
             SimpleIoc.Default.Register<IMovieTrailerService, MovieTrailerService>();
             SimpleIoc.Default.Register<IApplicationService, ApplicationService>();
             SimpleIoc.Default.Register<ISubtitlesService, SubtitlesService>();
+            SimpleIoc.Default.Register<IShowService, ShowService>();
 
             #endregion
 

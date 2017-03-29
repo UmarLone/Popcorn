@@ -21,6 +21,7 @@ using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent;
+using Popcorn.Models.Torrent.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -402,7 +403,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 try
                 {
                     LoadingSimilar = true;
-                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie.ImdbCode));
+                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie));
                     LoadingSimilar = false;
                 }
                 catch (Exception ex)

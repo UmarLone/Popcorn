@@ -250,7 +250,7 @@
                                     Margin="15,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="16">
-                                    <movie:MovieGenres Genres="{Binding Movie.Genres}" />
+                                    <customControls:GenresLabel Genres="{Binding Movie.Genres}" />
                                 </TextBlock>
                                 <Canvas
                                     Margin="10,0,0,5"
@@ -263,7 +263,7 @@
                                         Stroke="#FFFFFF"
                                         StrokeThickness="5" />
                                 </Canvas>
-                                <movie:MovieRating
+                                <customControls:RatingStar
                                     Width="60"
                                     Height="20"
                                     Margin="15,0,0,4"
@@ -603,7 +603,7 @@
                                                         StrokeLineJoin="Round"
                                                         StrokeThickness="4" />
                                                 </Grid>
-                                                <movie:MovieRating
+                                                <customControls:RatingStar
                                                     x:Name="Rating"
                                                     Grid.Row="2"
                                                     Grid.Column="1"
@@ -626,7 +626,7 @@
                                             HorizontalAlignment="Left"
                                             FontSize="12"
                                             Foreground="Gray">
-                                            <movie:MovieGenres Genres="{Binding Genres}" />
+                                            <customControls:GenresLabel Genres="{Binding Genres}" />
                                         </TextBlock>
                                         <TextBlock
                                             Width="100"
