@@ -403,7 +403,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 try
                 {
                     LoadingSimilar = true;
-                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie.ImdbCode));
+                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie));
                     LoadingSimilar = false;
                 }
                 catch (Exception ex)
