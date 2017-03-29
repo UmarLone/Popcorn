@@ -160,7 +160,7 @@
                                         Grid.ColumnSpan="3"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        attachedProperties:ImageAsyncHelper.SourceUri="{Binding Images.Banner, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                        attachedProperties:ImageAsyncHelper.SourceUri="{Binding Images.Poster, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
                                         RenderOptions.BitmapScalingMode="Fant" />
                                     <Grid
                                         x:Name="PlayCanvas"
