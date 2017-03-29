@@ -547,7 +547,7 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Shows.
+        ///   Recherche une chaîne localisée semblable à shows.
         /// </summary>
         public static string ShowsWord {
             get {
