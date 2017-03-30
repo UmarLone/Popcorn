@@ -8,7 +8,7 @@
         <projectUrl>https://github.com/bbougot/Popcorn</projectUrl>
         <iconUrl>https://raw.githubusercontent.com/bbougot/Popcorn/master/Popcorn/icon.ico</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Fix issues and improve stability</description>
+        <description>Popcorn Windows native app made in .NET/WPF</description>
     </metadata>
     <files>
         <file src="amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" target="lib\net45\amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
@@ -362,16 +362,11 @@
         <file src="EntityFramework.SqlServerCompact.dll" target="lib\net45\EntityFramework.SqlServerCompact.dll" />
         <file src="GalaSoft.MvvmLight.dll" target="lib\net45\GalaSoft.MvvmLight.dll" />
         <file src="GalaSoft.MvvmLight.Extras.dll" target="lib\net45\GalaSoft.MvvmLight.Extras.dll" />
-        <file src="GalaSoft.MvvmLight.Extras.pdb" target="lib\net45\GalaSoft.MvvmLight.Extras.pdb" />
-        <file src="GalaSoft.MvvmLight.pdb" target="lib\net45\GalaSoft.MvvmLight.pdb" />
         <file src="GalaSoft.MvvmLight.Platform.dll" target="lib\net45\GalaSoft.MvvmLight.Platform.dll" />
-        <file src="GalaSoft.MvvmLight.Platform.pdb" target="lib\net45\GalaSoft.MvvmLight.Platform.pdb" />
         <file src="ICSharpCode.SharpZipLib.dll" target="lib\net45\ICSharpCode.SharpZipLib.dll" />
         <file src="ltnet.dll" target="lib\net45\ltnet.dll" />
         <file src="MahApps.Metro.dll" target="lib\net45\MahApps.Metro.dll" />
         <file src="MahApps.Metro.IconPacks.dll" target="lib\net45\MahApps.Metro.IconPacks.dll" />
-        <file src="MahApps.Metro.IconPacks.pdb" target="lib\net45\MahApps.Metro.IconPacks.pdb" />
-        <file src="MahApps.Metro.pdb" target="lib\net45\MahApps.Metro.pdb" />
         <file src="Meta.Vlc.dll" target="lib\net45\Meta.Vlc.dll" />
         <file src="Meta.Vlc.Wpf.dll" target="lib\net45\Meta.Vlc.Wpf.dll" />
         <file src="mfc140.dll" target="lib\net45\mfc140.dll" />
@@ -389,26 +384,21 @@
         <file src="mfcm140.dll" target="lib\net45\mfcm140.dll" />
         <file src="mfcm140u.dll" target="lib\net45\mfcm140u.dll" />
         <file src="Microsoft.Practices.ServiceLocation.dll" target="lib\net45\Microsoft.Practices.ServiceLocation.dll" />
-        <file src="Microsoft.Practices.ServiceLocation.pdb" target="lib\net45\Microsoft.Practices.ServiceLocation.pdb" />
         <file src="Microsoft.Win32.Primitives.dll" target="lib\net45\Microsoft.Win32.Primitives.dll" />
         <file src="Mono.Cecil.dll" target="lib\net45\Mono.Cecil.dll" />
         <file src="Mono.Cecil.Mdb.dll" target="lib\net45\Mono.Cecil.Mdb.dll" />
-        <file src="Mono.Cecil.Pdb.dll" target="lib\net45\Mono.Cecil.Pdb.dll" />
         <file src="Mono.Cecil.Rocks.dll" target="lib\net45\Mono.Cecil.Rocks.dll" />
         <file src="msvcp140.dll" target="lib\net45\msvcp140.dll" />
         <file src="Newtonsoft.Json.dll" target="lib\net45\Newtonsoft.Json.dll" />
         <file src="NLog.config" target="lib\net45\NLog.config" />
         <file src="NLog.dll" target="lib\net45\NLog.dll" />
         <file src="NuGet.Squirrel.dll" target="lib\net45\NuGet.Squirrel.dll" />
-        <file src="NuGet.Squirrel.pdb" target="lib\net45\NuGet.Squirrel.pdb" />
         <file src="OSDBnet.dll" target="lib\net45\OSDBnet.dll" />
         <file src="Popcorn.exe" target="lib\net45\Popcorn.exe" />
         <file src="Popcorn.exe.config" target="lib\net45\Popcorn.exe.config" />
-        <file src="Popcorn.pdb" target="lib\net45\Popcorn.pdb" />
         <file src="RestSharp.dll" target="lib\net45\RestSharp.dll" />
         <file src="Splat.dll" target="lib\net45\Splat.dll" />
         <file src="Squirrel.dll" target="lib\net45\Squirrel.dll" />
-        <file src="Squirrel.pdb" target="lib\net45\Squirrel.pdb" />
         <file src="System.Data.SqlServerCe.dll" target="lib\net45\System.Data.SqlServerCe.dll" />
         <file src="System.Diagnostics.DiagnosticSource.dll" target="lib\net45\System.Diagnostics.DiagnosticSource.dll" />
         <file src="System.Net.Http.dll" target="lib\net45\System.Net.Http.dll" />
@@ -418,14 +408,13 @@
         <file src="System.Security.Cryptography.X509Certificates.dll" target="lib\net45\System.Security.Cryptography.X509Certificates.dll" />
         <file src="System.Windows.Interactivity.dll" target="lib\net45\System.Windows.Interactivity.dll" />
         <file src="TMDbLib.dll" target="lib\net45\TMDbLib.dll" />
-        <file src="TMDbLib.pdb" target="lib\net45\TMDbLib.pdb" />
         <file src="vcamp140.dll" target="lib\net45\vcamp140.dll" />
         <file src="vccorlib140.dll" target="lib\net45\vccorlib140.dll" />
         <file src="vcomp140.dll" target="lib\net45\vcomp140.dll" />
         <file src="vcruntime140.dll" target="lib\net45\vcruntime140.dll" />
         <file src="WPFLocalizeExtension.dll" target="lib\net45\WPFLocalizeExtension.dll" />
         <file src="XAMLMarkupExtensions.dll" target="lib\net45\XAMLMarkupExtensions.dll" />
-        <file src="XAMLMarkupExtensions.pdb" target="lib\net45\XAMLMarkupExtensions.pdb" />
         <file src="YoutubeExtractor.dll" target="lib\net45\YoutubeExtractor.dll" />
+        <file src="Popcorn.ImageLoader.dll" target="lib\net45\Popcorn.ImageLoader.dll" />
     </files>
 </package>

@@ -28,8 +28,8 @@ namespace Popcorn.ImageLoader
 
         private Dictionary<Image, LoadImageRequest> _imagesLastRunningTask = new Dictionary<Image, LoadImageRequest>();
 
-        private Stack<LoadImageRequest> _loadThumbnailStack = new Stack<LoadImageRequest>();
-        private Stack<LoadImageRequest> _loadNormalStack = new Stack<LoadImageRequest>();
+        private Queue<LoadImageRequest> _loadThumbnailQueue = new Queue<LoadImageRequest>();
+        private Queue<LoadImageRequest> _loadNormalQueue = new Queue<LoadImageRequest>();
 
         private AutoResetEvent _loaderThreadThumbnailEvent = new AutoResetEvent(false);
         private AutoResetEvent _loaderThreadNormalSizeEvent = new AutoResetEvent(false);
@@ -110,9 +110,9 @@ namespace Popcorn.ImageLoader
             // Begin Loading
             BeginLoading(image, loadTask);
 
-            lock (_loadThumbnailStack)
+            lock (_loadThumbnailQueue)
             {
-                _loadThumbnailStack.Push(loadTask);
+                _loadThumbnailQueue.Enqueue(loadTask);
             }
 
             _loaderThreadThumbnailEvent.Set();
@@ -324,9 +324,9 @@ namespace Popcorn.ImageLoader
                 do
                 {
 
-                    lock (_loadThumbnailStack)
+                    lock (_loadThumbnailQueue)
                     {
-                        loadTask = _loadThumbnailStack.Count > 0 ? _loadThumbnailStack.Pop() : null;
+                        loadTask = _loadThumbnailQueue.Count > 0 ? _loadThumbnailQueue.Dequeue() : null;
                     }
 
                     if (loadTask != null && !loadTask.IsCanceled)
@@ -348,9 +348,9 @@ namespace Popcorn.ImageLoader
                         {
                             EndLoading(loadTask.Image, bitmapSource, loadTask, false);
 
-                            lock (_loadNormalStack)
+                            lock (_loadNormalQueue)
                             {
-                                _loadNormalStack.Push(loadTask);
+                                _loadNormalQueue.Enqueue(loadTask);
                             }
 
                             _loaderThreadNormalSizeEvent.Set();
@@ -374,9 +374,9 @@ namespace Popcorn.ImageLoader
                 do
                 {
 
-                    lock (_loadNormalStack)
+                    lock (_loadNormalQueue)
                     {
-                        loadTask = _loadNormalStack.Count > 0 ? _loadNormalStack.Pop() : null;
+                        loadTask = _loadNormalQueue.Count > 0 ? _loadNormalQueue.Dequeue() : null;
                     }
 
                     if (loadTask != null && !loadTask.IsCanceled)
