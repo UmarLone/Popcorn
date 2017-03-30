@@ -33,7 +33,8 @@
             <converters:MultiBooleanToBoolConverter x:Key="MultiBooleanToBoolConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
+            <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
+            <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
             <DataTemplate DataType="{x:Type downloadViewModel:DownloadMovieViewModel}">
                 <download:DownloadMovieUserControl />
             </DataTemplate>
@@ -645,6 +646,21 @@
                         Foreground="{DynamicResource AccentColorBrush}"
                         IsActive="True"
                         Visibility="{Binding LoadingSimilar, Converter={StaticResource BoolToInverseVisibilityConverter}}" />
+                    <TextBlock
+                        Grid.Row="3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        Margin="0,0,0,20"
+                        FontWeight="Light"
+                        Text="{lex:LocText NoSimilarLabel}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}" ConverterParameter="AND">
+                                <Binding Converter="{StaticResource BoolToInverseBoolConverter}" Path="LoadingSimilar" />
+                                <Binding Converter="{StaticResource BoolToInverseBoolConverter}" Path="AnySimilar" />
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
                 </Grid>
             </Grid>
             <controls:ProgressRing

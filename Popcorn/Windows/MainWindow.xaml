@@ -78,6 +78,7 @@
                 CloseButtonVisibility="{Binding MovieDetails.IsDownloadingMovie, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Locator}}"
                 CloseCommand="{Binding CloseMoviePageCommand}"
                 Header="{Binding MovieDetails.Movie.Title, Source={StaticResource Locator}}"
+                HeaderTemplate="{Binding Source={StaticResource FlyoutHeaderTemplate}}"
                 IsOpen="{Binding IsMovieFlyoutOpen}"
                 Position="Right">
                 <details:MovieDetailsUserControl />

@@ -13,5 +13,6 @@
         <ResourceDictionary Source="../Resources/AnimatedScrollViewer.xaml" />
         <ResourceDictionary Source="../Resources/Ripple.xaml" />
         <ResourceDictionary Source="../Resources/SplitView.xaml" />
+        <ResourceDictionary Source="../Resources/FlyoutHeader.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

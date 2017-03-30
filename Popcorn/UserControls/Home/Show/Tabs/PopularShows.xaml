@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:movie="clr-namespace:Popcorn.Controls.Movie"
     xmlns:panels="clr-namespace:Popcorn.Panels"
     d:DesignHeight="300"
     d:DesignWidth="300"
