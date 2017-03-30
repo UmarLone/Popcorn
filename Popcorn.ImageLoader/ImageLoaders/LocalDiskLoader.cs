@@ -9,7 +9,6 @@ namespace Popcorn.ImageLoader.ImageLoaders
 {
     internal class LocalDiskLoader: ILoader
     {
-
         public Stream Load(string source)
         {
             //Thread.Sleep(1000);

@@ -10,6 +10,7 @@
     xmlns:download="clr-namespace:Popcorn.UserControls.Home.Movie.Download"
     xmlns:downloadViewModel="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Download"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:imageLoader="clr-namespace:Popcorn.ImageLoader;assembly=Popcorn.ImageLoader"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:movie="clr-namespace:Popcorn.Controls.Movie"
@@ -577,7 +578,9 @@
                                                     Grid.ColumnSpan="3"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    attachedProperties:ImageAsyncHelper.SourceUri="{Binding PosterImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                                    imageLoader:Loader.DisplayOption="Preview"
+                                                    imageLoader:Loader.Source="{Binding Path=PosterImage}"
+                                                    imageLoader:Loader.SourceType="ExternalResource"
                                                     RenderOptions.BitmapScalingMode="Fant" />
                                                 <Grid
                                                     x:Name="PlayCanvas"
