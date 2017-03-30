@@ -4,24 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Rating
 {
     public class RatingJson
     {
-        [JsonProperty("percentage")]
+        [DeserializeAs(Name = "percentage")]
         public int? Percentage { get; set; }
 
-        [JsonProperty("watching")]
+        [DeserializeAs(Name = "watching")]
         public int? Watching { get; set; }
 
-        [JsonProperty("votes")]
+        [DeserializeAs(Name = "votes")]
         public int? Votes { get; set; }
 
-        [JsonProperty("loved")]
+        [DeserializeAs(Name = "loved")]
         public int? Loved { get; set; }
 
-        [JsonProperty("hated")]
+        [DeserializeAs(Name = "hated")]
         public int? Hated { get; set; }
     }
 }

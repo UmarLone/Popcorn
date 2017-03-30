@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Anime
 {
     public class AnimeResponse
     {
-        [JsonProperty("totalAnimes")]
+        [DeserializeAs(Name = "totalAnimes")]
         public int TotalAnimes { get; set; }
 
-        [JsonProperty("animes")]
+        [DeserializeAs(Name = "animes")]
         public List<AnimeJson> Animes { get; set; }
     }
 }

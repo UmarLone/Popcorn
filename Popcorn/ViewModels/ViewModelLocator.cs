@@ -14,6 +14,7 @@ using Popcorn.ViewModels.Pages.Home.Anime;
 using Popcorn.ViewModels.Pages.Home.Movie;
 using Popcorn.ViewModels.Pages.Home.Movie.Details;
 using Popcorn.ViewModels.Pages.Home.Show;
+using Popcorn.ViewModels.Pages.Home.Show.Details;
 using Popcorn.ViewModels.Windows;
 using Popcorn.ViewModels.Windows.Settings;
 
@@ -53,6 +54,7 @@ namespace Popcorn.ViewModels
             SimpleIoc.Default.Register<AnimePageViewModel>();
 
             SimpleIoc.Default.Register<ShowPageViewModel>();
+            SimpleIoc.Default.Register<ShowDetailsViewModel>();
 
             SimpleIoc.Default.Register<ApplicationSettingsViewModel>();
 
@@ -82,6 +84,14 @@ namespace Popcorn.ViewModels
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
         public MovieDetailsViewModel MovieDetails => ServiceLocator.Current.GetInstance<MovieDetailsViewModel>();
+
+        /// <summary>
+        /// Gets the ShowDetails property.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public ShowDetailsViewModel ShowDetails => ServiceLocator.Current.GetInstance<ShowDetailsViewModel>();
 
         /// <summary>
         /// Gets the ApplicationSettings property.
