@@ -648,10 +648,10 @@
                         Visibility="{Binding LoadingSimilar, Converter={StaticResource BoolToInverseVisibilityConverter}}" />
                     <TextBlock
                         Grid.Row="3"
+                        Margin="0,0,0,20"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="18"
-                        Margin="0,0,0,20"
                         FontWeight="Light"
                         Text="{lex:LocText NoSimilarLabel}">
                         <TextBlock.Visibility>

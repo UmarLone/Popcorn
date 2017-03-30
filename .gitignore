@@ -50,8 +50,8 @@ Popcorn/Bin
 Popcorn/Obj
 Popcorn.Tests/Bin
 Popcorn.Tests/Obj
-Unosquare.FFmpegMediaElement/Bin
-Unosquare.FFmpegMediaElement/Obj
+Popcorn.ImageLoader/Bin
+Popcorn.ImageLoader/Obj
 
 # User files
 *.suo

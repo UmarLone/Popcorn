@@ -10,6 +10,9 @@
     DataContext="{Binding ShowDetails, Source={StaticResource Locator}}"
     mc:Ignorable="d">
     <Grid>
-        <Image Source="{Binding Show.Images.Banner}" Stretch="UniformToFill" />
+        <Image
+            Opacity="0.6"
+            Source="{Binding Show.Images.Banner, IsAsync=True}"
+            Stretch="UniformToFill" />
     </Grid>
 </UserControl>

@@ -2,11 +2,11 @@
     x:Class="Popcorn.UserControls.Home.Show.Tabs.PopularShows"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:attachedProperties="clr-namespace:Popcorn.AttachedProperties"
     xmlns:controls="clr-namespace:Popcorn.Controls"
     xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:converters="clr-namespace:Popcorn.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:imageLoader="clr-namespace:Popcorn.ImageLoader;assembly=Popcorn.ImageLoader"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:panels="clr-namespace:Popcorn.Panels"
@@ -21,7 +21,6 @@
                 <Setter Property="TitleFontSize" Value="14" />
             </Style>
 
-            <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
@@ -160,8 +159,9 @@
                                         Grid.ColumnSpan="3"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        attachedProperties:ImageAsyncHelper.SourceUri="{Binding Images.Poster, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
-                                        RenderOptions.BitmapScalingMode="Fant" />
+                                        imageLoader:Loader.DisplayOption="Preview"
+                                        imageLoader:Loader.Source="{Binding Path=Images.Poster}"
+                                        imageLoader:Loader.SourceType="ExternalResource" />
                                     <Grid
                                         x:Name="PlayCanvas"
                                         Grid.Row="0"

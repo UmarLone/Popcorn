@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn", "Popcorn\Popcorn.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.Tests", "Popcorn.Tests\Popcorn.Tests.csproj", "{A482F82D-8500-42C8-B433-2E21AF9B89F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.ImageLoader", "Popcorn.ImageLoader\Popcorn.ImageLoader.csproj", "{7C68C43B-0E5C-4B9F-9F49-045CAA39D8B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,9 @@ Global
 		{A482F82D-8500-42C8-B433-2E21AF9B89F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A482F82D-8500-42C8-B433-2E21AF9B89F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A482F82D-8500-42C8-B433-2E21AF9B89F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C68C43B-0E5C-4B9F-9F49-045CAA39D8B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C68C43B-0E5C-4B9F-9F49-045CAA39D8B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C68C43B-0E5C-4B9F-9F49-045CAA39D8B3}.Release|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
