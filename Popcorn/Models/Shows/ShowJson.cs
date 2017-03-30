@@ -66,5 +66,8 @@ namespace Popcorn.Models.Shows
 
         [DeserializeAs(Name = "rating")]
         public RatingJson Rating { get; set; }
+
+        [DeserializeAs(Name = "similar")]
+        public List<string> Similars { get; set; }
     }
 }

@@ -269,7 +269,7 @@ namespace Popcorn.ViewModels.Windows
                 IsMovieFlyoutOpen = false;
             });
 
-            CloseMoviePageCommand = new RelayCommand(() =>
+            CloseShowPageCommand = new RelayCommand(() =>
             {
                 IsShowFlyoutOpen = false;
             });
