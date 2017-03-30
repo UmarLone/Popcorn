@@ -23,7 +23,7 @@ namespace Popcorn.Helpers
         }
         
         /// <summary>
-        /// Endpoint to YTS
+        /// Endpoint to API
         /// </summary>
         public const string PopcornApi = "https://popcornapi.azurewebsites.net/api";
 
