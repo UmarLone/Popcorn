@@ -306,4 +306,7 @@
   <data name="ShowsWord" xml:space="preserve">
     <value>shows</value>
   </data>
+  <data name="NoSimilarLabel" xml:space="preserve">
+    <value>No similar movie found</value>
+  </data>
 </root>

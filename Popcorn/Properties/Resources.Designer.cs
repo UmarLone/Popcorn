@@ -367,6 +367,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à No similar movie found.
+        /// </summary>
+        public static string NoSimilarLabel {
+            get {
+                return ResourceManager.GetString("NoSimilarLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Now.
         /// </summary>
         public static string NowLabel {

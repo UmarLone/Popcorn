@@ -53,6 +53,11 @@ namespace Popcorn.ViewModels.Windows
         private bool _isMovieFlyoutOpen;
 
         /// <summary>
+        /// Specify if show flyout is open
+        /// </summary>
+        private bool _isShowFlyoutOpen;
+
+        /// <summary>
         /// Specify if settings flyout is open
         /// </summary>
         private bool _isSettingsFlyoutOpen;
@@ -130,6 +135,15 @@ namespace Popcorn.ViewModels.Windows
         }
 
         /// <summary>
+        /// Specify if show flyout is open
+        /// </summary>
+        public bool IsShowFlyoutOpen
+        {
+            get { return _isShowFlyoutOpen; }
+            set { Set(() => IsShowFlyoutOpen, ref _isShowFlyoutOpen, value); }
+        }
+
+        /// <summary>
         /// Media player
         /// </summary>
         public MediaPlayerViewModel MediaPlayer
@@ -142,6 +156,11 @@ namespace Popcorn.ViewModels.Windows
         /// Command used to close movie page
         /// </summary>
         public RelayCommand CloseMoviePageCommand { get; private set; }
+
+        /// <summary>
+        /// Command used to close show page
+        /// </summary>
+        public RelayCommand CloseShowPageCommand { get; private set; }
 
         /// <summary>
         /// Command used to close the application
@@ -166,6 +185,8 @@ namespace Popcorn.ViewModels.Windows
             Messenger.Default.Register<ManageExceptionMessage>(this, e => ManageException(e.UnHandledException));
 
             Messenger.Default.Register<LoadMovieMessage>(this, e => IsMovieFlyoutOpen = true);
+
+            Messenger.Default.Register<LoadShowMessage>(this, e => IsShowFlyoutOpen = true);
 
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
@@ -246,6 +267,11 @@ namespace Popcorn.ViewModels.Windows
             {
                 Messenger.Default.Send(new StopPlayingTrailerMessage());
                 IsMovieFlyoutOpen = false;
+            });
+
+            CloseShowPageCommand = new RelayCommand(() =>
+            {
+                IsShowFlyoutOpen = false;
             });
 
             MainWindowClosingCommand = new RelayCommand(() =>

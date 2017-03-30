@@ -7,63 +7,67 @@ using Newtonsoft.Json;
 using Popcorn.Models.Episode;
 using Popcorn.Models.Image;
 using Popcorn.Models.Rating;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Shows
 {
     public class ShowJson
     {
-        [JsonProperty("imdb_id")]
+        [DeserializeAs(Name = "imdb_id")]
         public string ImdbId { get; set; }
 
-        [JsonProperty("tvdb_id")]
+        [DeserializeAs(Name = "tvdb_id")]
         public string TvdbId { get; set; }
 
-        [JsonProperty("title")]
+        [DeserializeAs(Name = "title")]
         public string Title { get; set; }
 
-        [JsonProperty("year")]
+        [DeserializeAs(Name = "year")]
         public int Year { get; set; }
 
-        [JsonProperty("slug")]
+        [DeserializeAs(Name = "slug")]
         public string Slug { get; set; }
 
-        [JsonProperty("synopsis")]
+        [DeserializeAs(Name = "synopsis")]
         public string Synopsis { get; set; }
 
-        [JsonProperty("runtime")]
+        [DeserializeAs(Name = "runtime")]
         public string Runtime { get; set; }
 
-        [JsonProperty("country")]
+        [DeserializeAs(Name = "country")]
         public string Country { get; set; }
 
-        [JsonProperty("network")]
+        [DeserializeAs(Name = "network")]
         public string Network { get; set; }
 
-        [JsonProperty("air_day")]
+        [DeserializeAs(Name = "air_day")]
         public string AirDay { get; set; }
 
-        [JsonProperty("air_time")]
+        [DeserializeAs(Name = "air_time")]
         public string AirTime { get; set; }
 
-        [JsonProperty("status")]
+        [DeserializeAs(Name = "status")]
         public string Status { get; set; }
 
-        [JsonProperty("num_seasons")]
+        [DeserializeAs(Name = "num_seasons")]
         public int NumSeasons { get; set; }
 
-        [JsonProperty("last_updated")]
+        [DeserializeAs(Name = "last_updated")]
         public long LastUpdated { get; set; }
 
-        [JsonProperty("episodes")]
+        [DeserializeAs(Name = "episodes")]
         public List<EpisodeShowJson> Episodes { get; set; }
 
-        [JsonProperty("genres")]
+        [DeserializeAs(Name = "genres")]
         public List<string> Genres { get; set; }
 
-        [JsonProperty("images")]
+        [DeserializeAs(Name = "images")]
         public ImageShowJson Images { get; set; }
 
-        [JsonProperty("rating")]
+        [DeserializeAs(Name = "rating")]
         public RatingJson Rating { get; set; }
+
+        [DeserializeAs(Name = "similar")]
+        public List<string> Similars { get; set; }
     }
 }

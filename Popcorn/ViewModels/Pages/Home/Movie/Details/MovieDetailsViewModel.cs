@@ -81,6 +81,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         private bool _loadingSimilar;
 
         /// <summary>
+        /// True if movie have similars
+        /// </summary>
+        private bool _anySimilar;
+
+        /// <summary>
         /// The movie to manage
         /// </summary>
         private MovieJson _movie = new MovieJson();
@@ -222,6 +227,15 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         {
             get { return _loadingSimilar; }
             set { Set(() => LoadingSimilar, ref _loadingSimilar, value); }
+        }
+
+        /// <summary>
+        /// True if movie have similars
+        /// </summary>
+        public bool AnySimilar
+        {
+            get { return _anySimilar; }
+            set { Set(() => AnySimilar, ref _anySimilar, value); }
         }
 
         /// <summary>
@@ -404,6 +418,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 {
                     LoadingSimilar = true;
                     SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie));
+                    AnySimilar = SimilarMovies.Any();
                     LoadingSimilar = false;
                 }
                 catch (Exception ex)

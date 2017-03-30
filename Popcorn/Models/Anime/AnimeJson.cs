@@ -7,51 +7,52 @@ using Newtonsoft.Json;
 using Popcorn.Models.Episode;
 using Popcorn.Models.Image;
 using Popcorn.Models.Rating;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Anime
 {
     public class AnimeJson
     {
-        [JsonProperty("mal_id")]
+        [DeserializeAs(Name = "mal_id")]
         public string MalId { get; set; }
 
-        [JsonProperty("title")]
+        [DeserializeAs(Name = "title")]
         public string Title { get; set; }
 
-        [JsonProperty("year")]
+        [DeserializeAs(Name = "year")]
         public int Year { get; set; }
 
-        [JsonProperty("slug")]
+        [DeserializeAs(Name = "slug")]
         public string Slug { get; set; }
 
-        [JsonProperty("synopsis")]
+        [DeserializeAs(Name = "synopsis")]
         public string Synopsis { get; set; }
 
-        [JsonProperty("runtime")]
+        [DeserializeAs(Name = "runtime")]
         public string Runtime { get; set; }
 
-        [JsonProperty("status")]
+        [DeserializeAs(Name = "status")]
         public string Status { get; set; }
 
-        [JsonProperty("type")]
+        [DeserializeAs(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("last_updated")]
+        [DeserializeAs(Name = "last_updated")]
         public long LastUpdated { get; set; }
 
-        [JsonProperty("num_seasons")]
+        [DeserializeAs(Name = "num_seasons")]
         public int NumSeasons { get; set; }
 
-        [JsonProperty("episodes")]
+        [DeserializeAs(Name = "episodes")]
         public List<EpisodeAnimeJson> Episodes { get; set; }
 
-        [JsonProperty("genres")]
+        [DeserializeAs(Name = "genres")]
         public List<string> Genres { get; set; }
 
-        [JsonProperty("images")]
+        [DeserializeAs(Name = "images")]
         public ImageAnimeJson Images { get; set; }
 
-        [JsonProperty("rating")]
+        [DeserializeAs(Name = "rating")]
         public RatingJson Rating { get; set; }
     }
 }

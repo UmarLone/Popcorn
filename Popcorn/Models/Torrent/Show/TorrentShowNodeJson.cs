@@ -4,21 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Torrent.Show
 {
     public class TorrentShowNodeJson
     {
-        [JsonProperty("0")]
+        [DeserializeAs(Name = "0")]
         public TorrentShowJson Torrent_0 { get; set; }
 
-        [JsonProperty("480p")]
+        [DeserializeAs(Name = "480p")]
         public TorrentShowJson Torrent_480p { get; set; }
 
-        [JsonProperty("720p")]
+        [DeserializeAs(Name = "720p")]
         public TorrentShowJson Torrent_720p { get; set; }
 
-        [JsonProperty("1080p")]
+        [DeserializeAs(Name = "1080p")]
         public TorrentShowJson Torrent_1080p { get; set; }
     }
 }

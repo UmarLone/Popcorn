@@ -56,7 +56,7 @@ namespace Popcorn.Models.Movie
         private bool _watchInFullHdQuality;
         private int _year;
         private string _ytTrailerCode;
-        private List<string> _similar;
+        private List<string> _similars;
 
         [DeserializeAs(Name = "url")]
         public string Url
@@ -283,10 +283,10 @@ namespace Popcorn.Models.Movie
         }
 
         [DeserializeAs(Name = "similar")]
-        public List<string> Similar
+        public List<string> Similars
         {
-            get { return _similar; }
-            set { Set(() => Similar, ref _similar, value); }
+            get { return _similars; }
+            set { Set(() => Similars, ref _similars, value); }
         }
 
         /// <summary>

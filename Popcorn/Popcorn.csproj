@@ -339,6 +339,7 @@
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />
     <Compile Include="Messaging\ChangeHasBeenSeenMovieMessage.cs" />
+    <Compile Include="Messaging\LoadShowMessage.cs" />
     <Compile Include="Messaging\PlayTrailerMessage.cs" />
     <Compile Include="Messaging\UnhandledExceptionMessage.cs" />
     <Compile Include="Migrations\201703041706307_Initial.cs" />
@@ -444,6 +445,9 @@
     <Compile Include="UserControls\Home\Movie\MovieUserControl.xaml.cs">
       <DependentUpon>MovieUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Home\Show\Details\ShowDetailsUserControl.xaml.cs">
+      <DependentUpon>ShowDetailsUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Home\Show\ShowUserControl.xaml.cs">
       <DependentUpon>ShowUserControl.xaml</DependentUpon>
     </Compile>
@@ -483,6 +487,7 @@
     <Compile Include="ViewModels\Pages\Home\IPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Download\DownloadMovieViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Genres\GenresMovieViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Details\ShowDetailsViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Tabs\PopularShowTabViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Tabs\ShowTabsViewModel.cs" />
     <Compile Include="ViewModels\Windows\WindowViewModel.cs" />
@@ -555,6 +560,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Resources\FlyoutHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -576,6 +585,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home\Movie\MovieUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Home\Show\Details\ShowDetailsUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,33 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Image
 {
     public class ImageAnimeJson
     {
-        [JsonProperty("poster_kitsu")]
+        [DeserializeAs(Name = "poster_kitsu")]
         public ImageAnimeTypeJson Poster { get; set; }
 
-        [JsonProperty("cover_kitsu")]
+        [DeserializeAs(Name = "cover_kitsu")]
         public ImageAnimeTypeJson Cover { get; set; }
     }
 
     public class ImageAnimeTypeJson
     {
-        [JsonProperty("tiny")]
+        [DeserializeAs(Name = "tiny")]
         public string Tiny { get; set; }
 
-        [JsonProperty("small")]
+        [DeserializeAs(Name = "small")]
         public string Small { get; set; }
 
-        [JsonProperty("medium")]
+        [DeserializeAs(Name = "medium")]
         public string Medium { get; set; }
 
-        [JsonProperty("large")]
+        [DeserializeAs(Name = "large")]
         public string Large { get; set; }
 
-        [JsonProperty("original")]
+        [DeserializeAs(Name = "original")]
         public string Original { get; set; }
     }
 }

@@ -161,14 +161,14 @@ namespace Popcorn.Services.Movies.Movie
 
             try
             {
-                if (movie.Similar.Any())
+                if (movie.Similars != null && movie.Similars.Any())
                 {
-                    await movie.Similar.Select(a => a).ParallelForEachAsync(async imdbCode =>
+                    await movie.Similars.ParallelForEachAsync(async imdbCode =>
                     {
-                        var movieToAdd = await GetMovieAsync(imdbCode);
-                        if (movieToAdd != null)
+                        var similar = await GetMovieAsync(imdbCode);
+                        if (similar != null)
                         {
-                            movies.Add(movieToAdd);
+                            movies.Add(similar);
                         }
                     });
                 }

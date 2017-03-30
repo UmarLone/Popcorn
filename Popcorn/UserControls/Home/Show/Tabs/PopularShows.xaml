@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:movie="clr-namespace:Popcorn.Controls.Movie"
     xmlns:panels="clr-namespace:Popcorn.Panels"
     d:DesignHeight="300"
     d:DesignWidth="300"
@@ -67,6 +66,7 @@
                             <controls1:Tile
                                 Margin="0,0,0,5"
                                 Background="#FF2F2F2F"
+                                Command="{Binding ShowDetails.LoadShowCommand, Source={StaticResource Locator}}"
                                 CommandParameter="{Binding}"
                                 Style="{StaticResource LargeTileStyle}">
                                 <Grid>
