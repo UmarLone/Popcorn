@@ -14,6 +14,7 @@ using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using System.Collections.Async;
+using Popcorn.Models.Trailer;
 
 namespace Popcorn.Services.Movies.Movie
 {
@@ -32,9 +33,9 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         public MovieService()
         {
-            TmdbClient = new TMDbClient(Constants.TmDbClientId)
+            TmdbClient = new TMDbClient(Constants.TmDbClientId, true)
             {
-                MaxRetryCount = 10
+                MaxRetryCount = 50
             };
 
             try
@@ -53,10 +54,31 @@ namespace Popcorn.Services.Movies.Movie
         private TMDbClient TmdbClient { get; }
 
         /// <summary>
+        /// True if movie languages must be refreshed
+        /// </summary>
+        private bool _mustRefreshLanguage;
+
+        /// <summary>
         /// Change the culture of TMDb
         /// </summary>
         /// <param name="language">Language to set</param>
-        public void ChangeTmdbLanguage(ILanguage language) => TmdbClient.DefaultLanguage = language.Culture;
+        public void ChangeTmdbLanguage(ILanguage language)
+        {
+            if (TmdbClient.DefaultLanguage == null && language.Culture == "en")
+            {
+                _mustRefreshLanguage = false;
+            }
+            else if (TmdbClient.DefaultLanguage != language.Culture)
+            {
+                _mustRefreshLanguage = true;
+            }
+            else
+            {
+                _mustRefreshLanguage = false;
+            }
+
+            TmdbClient.DefaultLanguage = language.Culture;
+        }
 
         /// <summary>
         /// Get movie by its Imdb code
@@ -487,6 +509,8 @@ namespace Popcorn.Services.Movies.Movie
         /// <returns>Task</returns>
         public async Task TranslateMovieAsync(MovieJson movieToTranslate)
         {
+            if (!_mustRefreshLanguage) return;
+
             var watch = Stopwatch.StartNew();
 
             try
@@ -553,6 +577,53 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             return trailers;
+        }
+
+        /// <summary>
+        /// Get the video url of the trailer by its Youtube key
+        /// </summary>
+        /// <param name="key">Youtube trailer key</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>Trailer url</returns>
+        public async Task<string> GetVideoTrailerUrlAsync(string key, CancellationToken ct)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var wrapper = new TrailerResponse();
+
+            var restClient = new RestClient(Constants.PopcornApi);
+            var request = new RestRequest("/{segment}/{key}", Method.GET);
+            request.AddUrlSegment("segment", "trailer");
+            request.AddUrlSegment("key", key);
+
+            try
+            {
+                var response = await restClient.ExecuteGetTaskAsync<TrailerResponse>(request, ct);
+                if (response.ErrorException != null)
+                    throw response.ErrorException;
+
+                wrapper = response.Data;
+            }
+            catch (Exception exception) when (exception is TaskCanceledException)
+            {
+                Logger.Debug(
+                    "GetVideoTrailerUrlAsync cancelled.");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(
+                    $"GetVideoTrailerUrlAsync: {exception.Message}");
+                throw;
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Debug(
+                    $"GetVideoTrailerUrlAsync ({key}) in {elapsedMs} milliseconds.");
+            }
+
+            return wrapper.TrailerUrl ?? string.Empty;;
         }
     }
 }

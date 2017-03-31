@@ -94,12 +94,20 @@ namespace Popcorn.Services.Movies.Movie
         Task TranslateMovieAsync(MovieJson movieToTranslate);
 
         /// <summary>
-        /// Get the link to the youtube trailer of a movie
+        /// Get the youtube trailer of a movie
         /// </summary>
         /// <param name="movie">The movie</param>
         /// <param name="ct">Used to cancel loading trailer</param>
         /// <returns>Video trailer</returns>
         Task<ResultContainer<Video>> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct);
+
+        /// <summary>
+        /// Get the video url of the trailer by its Youtube key
+        /// </summary>
+        /// <param name="key">Youtube trailer key</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>Trailer url</returns>
+        Task<string> GetVideoTrailerUrlAsync(string key, CancellationToken ct);
 
         /// <summary>
         /// Get movies similar async
