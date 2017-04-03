@@ -246,9 +246,10 @@ namespace Popcorn.Services.Movies.Movie
             request.AddParameter("minimum_rating", ratingFilter);
             request.AddParameter("sort_by", "like_count");
 
+            IRestResponse<MovieResponse> response;
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
+                response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -273,13 +274,13 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetPopularMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var movies = wrapper.Movies ?? new List<MovieJson>();
+            var movies = wrapper?.Movies ?? new List<MovieJson>();
             Parallel.ForEach(movies, async movie =>
             {
                 await TranslateMovieAsync(movie);
             });
 
-            var nbMovies = wrapper.TotalMovies;
+            var nbMovies = wrapper?.TotalMovies ?? 0;
 
             return new Tuple<IEnumerable<MovieJson>, int>(movies, nbMovies);
         }
