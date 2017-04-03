@@ -31,7 +31,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// </summary>
         private void RegisterCommands()
         {
-            LoadShowCommand = new RelayCommand<ShowJson>(async movie => await LoadShow(movie));
+            LoadShowCommand = new RelayCommand<ShowJson>(movie => LoadShow(movie));
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// Load the requested show
         /// </summary>
         /// <param name="show">The show to load</param>
-        private async Task LoadShow(ShowJson show)
+        private void LoadShow(ShowJson show)
         {
             var watch = Stopwatch.StartNew();
 

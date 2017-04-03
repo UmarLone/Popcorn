@@ -10,17 +10,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.14";
-
-        /// <summary>
-        /// Youtube quality
-        /// </summary>
-        public enum YoutubeStreamingQuality
-        {
-            Low = 0,
-            Medium = 1,
-            High = 2
-        }
+        public const string AppVersion = "1.9.15";
         
         /// <summary>
         /// Endpoint to API
@@ -31,11 +21,6 @@ namespace Popcorn.Helpers
         /// Client ID for TMDb
         /// </summary>
         public const string TmDbClientId = "a21fe922d3bac6654e93450e9a18af1c";
-
-        /// <summary>
-        /// Generic path to youtube video
-        /// </summary>
-        public const string YoutubePath = "http://www.youtube.com/watch?v=";
 
         /// <summary>
         /// In percentage, the minimum of buffering before we can actually start playing the movie

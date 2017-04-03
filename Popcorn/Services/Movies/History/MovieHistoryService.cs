@@ -87,6 +87,9 @@ namespace Popcorn.Services.Movies.History
                 using (var context = new ApplicationDbContext())
                 {
                     var movieHistory = await context.MovieHistory.FirstOrDefaultAsync();
+                    if (movieHistory == null)
+                        return movies;
+
                     if (genre != null)
                     {
                         movies.AddRange(movieHistory.Movies.Where(
@@ -137,6 +140,9 @@ namespace Popcorn.Services.Movies.History
                 using (var context = new ApplicationDbContext())
                 {
                     var movieHistory = await context.MovieHistory.FirstOrDefaultAsync();
+                    if (movieHistory == null)
+                        return movies;
+
                     if (genre != null)
                     {
                         movies.AddRange(movieHistory.Movies.Where(
