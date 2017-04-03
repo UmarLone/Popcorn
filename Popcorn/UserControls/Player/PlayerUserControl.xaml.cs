@@ -8,6 +8,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using Popcorn.ViewModels.Pages.Player;
+using System.Threading;
+using System.Diagnostics;
+using GalaSoft.MvvmLight.Messaging;
+using Popcorn.Messaging;
+using Popcorn.Helpers;
 
 namespace Popcorn.UserControls.Player
 {
@@ -25,6 +30,11 @@ namespace Popcorn.UserControls.Player
         /// False if player is not fully initialised
         /// </summary>
         private bool _isPlayerFullyInitialised;
+
+        /// <summary>
+        /// Mutex for player initialization
+        /// </summary>
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Indicates if a media is playing
@@ -83,7 +93,7 @@ namespace Popcorn.UserControls.Player
         /// </summary>
         public int Volume
         {
-            get { return (int) GetValue(VolumeProperty); }
+            get { return (int)GetValue(VolumeProperty); }
 
             set { SetValue(VolumeProperty, value); }
         }
@@ -110,12 +120,12 @@ namespace Popcorn.UserControls.Player
                 return;
 
             // start the timer used to report time on MediaPlayerSliderProgress
-            MediaPlayerTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
+            MediaPlayerTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             MediaPlayerTimer.Tick += MediaPlayerTimerTick;
             MediaPlayerTimer.Start();
 
             // start the activity timer used to manage visibility of the PlayerStatusBar
-            ActivityTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(4)};
+            ActivityTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
             ActivityTimer.Tick += OnInactivity;
             ActivityTimer.Start();
 
@@ -148,7 +158,7 @@ namespace Popcorn.UserControls.Player
             if (moviePlayer == null)
                 return;
 
-            var newVolume = (int) e.NewValue;
+            var newVolume = (int)e.NewValue;
             moviePlayer.ChangeMediaVolume(newVolume);
         }
 
@@ -445,34 +455,56 @@ namespace Popcorn.UserControls.Player
         /// <param name="e"></param>
         private async void OnLengthChanged(object sender, EventArgs e)
         {
-            if (_isPlayerFullyInitialised) return;
-
-            _isPlayerFullyInitialised = true;
-            Player.Visibility = Visibility.Hidden;
-
-            bool wasMaximized = false;
-            while (Player.ActualHeight < 1d)
+            await semaphoreSlim.WaitAsync();
+            try
             {
-                if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
+                if (_isPlayerFullyInitialised) return;
+
+                _isPlayerFullyInitialised = true;
+                Player.Visibility = Visibility.Hidden;
+
+                bool wasMaximized = false;
+                var watcher = new Stopwatch();
+                watcher.Start();
+                while (Player.ActualHeight < 1d)
                 {
-                    Application.Current.MainWindow.Width -= 0.1d;
-                }
-                else
-                {
-                    wasMaximized = true;
-                    Application.Current.MainWindow.WindowState = WindowState.Normal;
-                    Application.Current.MainWindow.Width -= 0.1d;
+                    if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
+                    {
+                        Application.Current.MainWindow.Width -= 0.1d;
+                    }
+                    else
+                    {
+                        wasMaximized = true;
+                        Application.Current.MainWindow.WindowState = WindowState.Normal;
+                        Application.Current.MainWindow.Width -= 0.1d;
+                    }
+
+                    await Task.Delay(100);
+
+                    // Check if we are waiting for more than 2 seconds for the player to initialize. If so, something weird happen, so break the loop
+                    if (watcher.ElapsedMilliseconds > 2000)
+                    {
+                        watcher.Stop();
+                        Messenger.Default.Send(
+                            new ManageExceptionMessage(
+                                new Exception(
+                                    LocalizationProviderHelper.GetLocalizedValue<string>("TrailerNotAvailable"))));
+                        Messenger.Default.Send(new StopPlayingTrailerMessage());
+                        break;
+                    }
                 }
 
-                await Task.Delay(100);
+                if (wasMaximized)
+                {
+                    Application.Current.MainWindow.WindowState = WindowState.Maximized;
+                }
+
+                Player.Visibility = Visibility.Visible;
             }
-
-            if (wasMaximized)
+            finally
             {
-                Application.Current.MainWindow.WindowState = WindowState.Maximized;
+                semaphoreSlim.Release();
             }
-
-            Player.Visibility = Visibility.Visible;
         }
     }
 }
