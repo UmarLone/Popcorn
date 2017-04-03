@@ -22,6 +22,33 @@
         <file src="amd64\sqlcese40.dll" target="lib\net45\amd64\sqlcese40.dll" />
         <file src="en\Popcorn.resources.dll" target="lib\net45\en\Popcorn.resources.dll" />
         <file src="fr\Popcorn.resources.dll" target="lib\net45\fr\Popcorn.resources.dll" />
+        <file src="de\Microsoft.Data.Edm.resources.dll" target="lib\net45\de\Microsoft.Data.Edm.resources.dll" />
+        <file src="de\Microsoft.Data.OData.resources.dll" target="lib\net45\de\Microsoft.Data.OData.resources.dll" />
+        <file src="de\System.Spatial.resources.dll" target="lib\net45\de\System.Spatial.resources.dll" />
+        <file src="es\Microsoft.Data.Edm.resources.dll" target="lib\net45\es\Microsoft.Data.Edm.resources.dll" />
+        <file src="es\Microsoft.Data.OData.resources.dll" target="lib\net45\es\Microsoft.Data.OData.resources.dll" />
+        <file src="es\System.Spatial.resources.dll" target="lib\net45\es\System.Spatial.resources.dll" />
+        <file src="fr\Microsoft.Data.Edm.resources.dll" target="lib\net45\fr\Microsoft.Data.Edm.resources.dll" />
+        <file src="fr\Microsoft.Data.OData.resources.dll" target="lib\net45\fr\Microsoft.Data.OData.resources.dll" />
+        <file src="fr\System.Spatial.resources.dll" target="lib\net45\fr\System.Spatial.resources.dll" />
+        <file src="it\Microsoft.Data.Edm.resources.dll" target="lib\net45\it\Microsoft.Data.Edm.resources.dll" />
+        <file src="it\Microsoft.Data.OData.resources.dll" target="lib\net45\it\Microsoft.Data.OData.resources.dll" />
+        <file src="it\System.Spatial.resources.dll" target="lib\net45\it\System.Spatial.resources.dll" />
+        <file src="ja\Microsoft.Data.Edm.resources.dll" target="lib\net45\ja\Microsoft.Data.Edm.resources.dll" />
+        <file src="ja\Microsoft.Data.OData.resources.dll" target="lib\net45\ja\Microsoft.Data.OData.resources.dll" />
+        <file src="ja\System.Spatial.resources.dll" target="lib\net45\ja\System.Spatial.resources.dll" />
+        <file src="ko\Microsoft.Data.Edm.resources.dll" target="lib\net45\ko\Microsoft.Data.Edm.resources.dll" />
+        <file src="ko\Microsoft.Data.OData.resources.dll" target="lib\net45\ko\Microsoft.Data.OData.resources.dll" />
+        <file src="ko\System.Spatial.resources.dll" target="lib\net45\ko\System.Spatial.resources.dll" />
+        <file src="ru\Microsoft.Data.Edm.resources.dll" target="lib\net45\ru\Microsoft.Data.Edm.resources.dll" />
+        <file src="ru\Microsoft.Data.OData.resources.dll" target="lib\net45\ru\Microsoft.Data.OData.resources.dll" />
+        <file src="ru\System.Spatial.resources.dll" target="lib\net45\ru\System.Spatial.resources.dll" />
+        <file src="zh-Hans\Microsoft.Data.Edm.resources.dll" target="lib\net45\zh-Hans\Microsoft.Data.Edm.resources.dll" />
+        <file src="zh-Hans\Microsoft.Data.OData.resources.dll" target="lib\net45\zh-Hans\Microsoft.Data.OData.resources.dll" />
+        <file src="zh-Hans\System.Spatial.resources.dll" target="lib\net45\zh-Hans\System.Spatial.resources.dll" />
+        <file src="zh-Hant\Microsoft.Data.Edm.resources.dll" target="lib\net45\zh-Hant\Microsoft.Data.Edm.resources.dll" />
+        <file src="zh-Hant\Microsoft.Data.OData.resources.dll" target="lib\net45\zh-Hant\Microsoft.Data.OData.resources.dll" />
+        <file src="zh-Hant\System.Spatial.resources.dll" target="lib\net45\zh-Hant\System.Spatial.resources.dll" />
         <file src="libvlc\plugins\access\libaccess_bd_plugin.dll" target="lib\net45\libvlc\plugins\access\libaccess_bd_plugin.dll" />
         <file src="libvlc\plugins\access\libaccess_mms_plugin.dll" target="lib\net45\libvlc\plugins\access\libaccess_mms_plugin.dll" />
         <file src="libvlc\plugins\access\libaccess_realrtsp_plugin.dll" target="lib\net45\libvlc\plugins\access\libaccess_realrtsp_plugin.dll" />
