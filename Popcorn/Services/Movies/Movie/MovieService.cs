@@ -221,7 +221,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular movies and the number of movies found</returns>
-        public async Task<Tuple<IEnumerable<MovieJson>, int>> GetPopularMoviesAsync(int page,
+        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetPopularMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -274,15 +274,15 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetPopularMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var movies = wrapper?.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(movies, async movie =>
+            var result = wrapper?.Movies ?? new List<MovieJson>();
+            Parallel.ForEach(result, async movie =>
             {
                 await TranslateMovieAsync(movie);
             });
 
-            var nbMovies = wrapper?.TotalMovies ?? 0;
+            var nbResult = wrapper?.TotalMovies ?? 0;
 
-            return new Tuple<IEnumerable<MovieJson>, int>(movies, nbMovies);
+            return (result, nbResult);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Top rated movies and the number of movies found</returns>
-        public async Task<Tuple<IEnumerable<MovieJson>, int>> GetGreatestMoviesAsync(int page,
+        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetGreatestMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -346,15 +346,15 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetGreatestMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var movies = wrapper.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(movies, async movie =>
+            var result = wrapper?.Movies ?? new List<MovieJson>();
+            Parallel.ForEach(result, async movie =>
             {
                 await TranslateMovieAsync(movie);
             });
 
-            var nbMovies = wrapper.TotalMovies;
+            var nbResult = wrapper?.TotalMovies ?? 0;
 
-            return new Tuple<IEnumerable<MovieJson>, int>(movies, nbMovies);
+            return (result, nbResult);
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Recent movies and the number of movies found</returns>
-        public async Task<Tuple<IEnumerable<MovieJson>, int>> GetRecentMoviesAsync(int page,
+        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetRecentMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -418,15 +418,15 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetRecentMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var movies = wrapper.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(movies, async movie =>
+            var result = wrapper?.Movies ?? new List<MovieJson>();
+            Parallel.ForEach(result, async movie =>
             {
                 await TranslateMovieAsync(movie);
             });
 
-            var nbMovies = wrapper.TotalMovies;
+            var nbResult = wrapper?.TotalMovies ?? 0;
 
-            return new Tuple<IEnumerable<MovieJson>, int>(movies, nbMovies);
+            return (result, nbResult);
         }
 
         /// <summary>
@@ -439,7 +439,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>Searched movies and the number of movies found</returns>
-        public async Task<Tuple<IEnumerable<MovieJson>, int>> SearchMoviesAsync(string criteria,
+        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> SearchMoviesAsync(string criteria,
             int page,
             int limit,
             GenreJson genre,
@@ -492,15 +492,15 @@ namespace Popcorn.Services.Movies.Movie
                     $"SearchMoviesAsync ({criteria}, {page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var movies = wrapper.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(movies, async movie =>
+            var result = wrapper?.Movies ?? new List<MovieJson>();
+            Parallel.ForEach(result, async movie =>
             {
                 await TranslateMovieAsync(movie);
             });
 
-            var nbMovies = wrapper.TotalMovies;
+            var nbResult = wrapper?.TotalMovies ?? 0;
 
-            return new Tuple<IEnumerable<MovieJson>, int>(movies, nbMovies);
+            return (result, nbResult);
         }
 
         /// <summary>

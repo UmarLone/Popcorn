@@ -33,7 +33,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular movies and the number of movies found</returns>
-        Task<Tuple<IEnumerable<MovieJson>, int>> GetPopularMoviesAsync(int page,
+        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetPopularMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -48,7 +48,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Top rated movies and the number of movies found</returns>
-        Task<Tuple<IEnumerable<MovieJson>, int>> GetGreatestMoviesAsync(int page,
+        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetGreatestMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -63,7 +63,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="genre">The genre to filter</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Recent movies and the number of movies found</returns>
-        Task<Tuple<IEnumerable<MovieJson>, int>> GetRecentMoviesAsync(int page,
+        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetRecentMoviesAsync(int page,
             int limit,
             double ratingFilter,
             CancellationToken ct,
@@ -79,7 +79,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>Searched movies and the number of movies found</returns>
-        Task<Tuple<IEnumerable<MovieJson>, int>> SearchMoviesAsync(string criteria,
+        Task<(IEnumerable<MovieJson> movies, int nbMovies)> SearchMoviesAsync(string criteria,
             int page,
             int limit,
             GenreJson genre,
