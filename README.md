@@ -24,6 +24,9 @@ An application which aims to provide a simple interface to watch any movie.
 ## What does it use?
 .NET Framework 4.6.2 and C# for the backend. WPF/XAML for the interface.
 
+## Tooling
+Use of Visual Studio 2017 and C# 7
+
 ### Dependencies
 * MVVM framework: [MVVM Light](https://mvvmlight.codeplex.com) 
 * UI framework: [MahApps](https://github.com/MahApps/MahApps.Metro)
