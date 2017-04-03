@@ -22,10 +22,12 @@ An application which aims to provide a simple interface to watch any movie.
 ![Screenshot3](https://github.com/bbougot/Popcorn/blob/master/Screenshots/Screen3.jpg)
 
 ## What does it use?
-.NET Framework 4.6.2 and C# for the backend. WPF/XAML for the interface.
-
-## Tooling
-Use of Visual Studio 2017 and C# 7
+#### Backend
+.NET Framework 4.6.2 and C# 7
+#### UI
+WPF/XAML
+#### IDE
+Visual Studio 2017
 
 ### Dependencies
 * MVVM framework: [MVVM Light](https://mvvmlight.codeplex.com) 
