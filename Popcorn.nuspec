@@ -400,6 +400,9 @@
         <file src="Splat.dll" target="lib\net45\Splat.dll" />
         <file src="Squirrel.dll" target="lib\net45\Squirrel.dll" />
         <file src="System.ValueTuple.dll" target="lib\net45\System.ValueTuple.dll" />
+        <file src="System.Spatial.dll" target="lib\net45\System.Spatial.dll" />
+        <file src="Microsoft.Data.Edm.dll" target="lib\net45\Microsoft.Data.Edm.dll" />
+        <file src="Microsoft.Data.OData.dll" target="lib\net45\Microsoft.Data.OData.dll" />
         <file src="System.Data.SqlServerCe.dll" target="lib\net45\System.Data.SqlServerCe.dll" />
         <file src="System.Diagnostics.DiagnosticSource.dll" target="lib\net45\System.Diagnostics.DiagnosticSource.dll" />
         <file src="System.Net.Http.dll" target="lib\net45\System.Net.Http.dll" />
