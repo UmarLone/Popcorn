@@ -311,7 +311,7 @@ namespace Popcorn.ViewModels.Windows
                 }
             });
 
-            OpenSettingsCommand = new RelayCommand(() => IsSettingsFlyoutOpen = true);
+            OpenSettingsCommand = new RelayCommand(() => IsSettingsFlyoutOpen = !IsSettingsFlyoutOpen);
 
             InitializeAsyncCommand = new RelayCommand(async () =>
             {
