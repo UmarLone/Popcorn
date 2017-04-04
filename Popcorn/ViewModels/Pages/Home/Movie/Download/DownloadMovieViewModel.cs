@@ -320,7 +320,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     var result =
                         await
                             DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
-                                Constants.TorrentDownloads + movie.ImdbCode + ".torrent", ct: ct);
+                                Constants.TorrentDownloads + movie.ImdbCode + ".torrent");
                     var torrentPath = string.Empty;
                     if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
                         torrentPath = result.Item2;

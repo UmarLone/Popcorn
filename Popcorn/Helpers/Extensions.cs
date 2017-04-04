@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,21 +14,8 @@ namespace Popcorn.Helpers
     public static class Extensions
     {
         /// <summary>
-        /// Sort an observable collection of an IComparable object
-        /// </summary>
-        /// <typeparam name="T">The type of the object</typeparam>
-        /// <param name="collection">The observable collection to sort</param>
-        public static void Sort<T>(this ObservableCollection<T> collection) where T : IComparable<T>
-        {
-            var sorted = collection.OrderBy(x => x).ToList();
-            for (var i = 0; i < sorted.Count; i++)
-                collection.Move(collection.IndexOf(sorted[i]), i);
-        }
-
-        /// <summary>
 		/// Finds a parent of a given item on the visual tree.
 		/// </summary>
-		/// <typeparam name="T">The type of the queried item.</typeparam>
 		/// <param name="child">A direct or indirect child of the
 		/// queried item.</param>
 		/// <param name="elementName">Parent name</param>
@@ -191,22 +176,6 @@ namespace Popcorn.Helpers
             {
                 oneAtATime.Release();
             }
-        }
-
-        /// <summary>
-        /// Download file asynchronously
-        /// </summary>
-        /// <param name="wc">The WebClient instance</param>
-        /// <param name="address">The address of the file</param>
-        /// <param name="filename">The filename of the file</param>
-        /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns></returns>
-        public static async Task DownloadFileTaskAsync(this WebClient wc, string address, string filename,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            cancellationToken.Register(wc.CancelAsync);
-            await wc.DownloadFileTaskAsync(address, filename);
         }
     }
 }

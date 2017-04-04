@@ -341,9 +341,6 @@
     <Compile Include="Entity\Movie\Torrent.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
-    <Compile Include="Helpers\CookieAwareContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
     <Compile Include="Helpers\FindVisualChildHelper.cs" />
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
