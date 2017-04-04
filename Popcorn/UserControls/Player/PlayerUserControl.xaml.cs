@@ -34,7 +34,7 @@ namespace Popcorn.UserControls.Player
         /// <summary>
         /// Mutex for player initialization
         /// </summary>
-        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Indicates if a media is playing
@@ -76,8 +76,6 @@ namespace Popcorn.UserControls.Player
             typeof(int),
             typeof(PlayerUserControl), new PropertyMetadata(100, OnVolumeChanged));
 
-        private bool _isMouseActivityCaptured;
-
         /// <summary>
         /// Initializes a new instance of the MoviePlayer class.
         /// </summary>
@@ -89,13 +87,18 @@ namespace Popcorn.UserControls.Player
         }
 
         /// <summary>
+        /// Semaphore used to update mouse activity
+        /// </summary>
+        private static readonly SemaphoreSlim MouseActivitySemaphore = new SemaphoreSlim(1, 1);
+
+        /// <summary>
         /// Get or set the media volume
         /// </summary>
         public int Volume
         {
-            get { return (int)GetValue(VolumeProperty); }
+            get => (int) GetValue(VolumeProperty);
 
-            set { SetValue(VolumeProperty, value); }
+            set => SetValue(VolumeProperty, value);
         }
 
         /// <summary>
@@ -108,24 +111,23 @@ namespace Popcorn.UserControls.Player
         /// </summary>
         /// <param name="sender">Sender object</param>
         /// <param name="e">EventArgs</param>
-        private void OnLoaded(object sender, EventArgs e)
+        private async void OnLoaded(object sender, EventArgs e)
         {
             var window = System.Windows.Window.GetWindow(this);
             if (window != null)
                 window.Closing += (s1, e1) => Dispose();
 
             var vm = DataContext as MediaPlayerViewModel;
-            if (vm == null) return;
-            if (vm.MediaPath == null)
+            if (vm?.MediaPath == null)
                 return;
 
             // start the timer used to report time on MediaPlayerSliderProgress
-            MediaPlayerTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            MediaPlayerTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
             MediaPlayerTimer.Tick += MediaPlayerTimerTick;
             MediaPlayerTimer.Start();
 
             // start the activity timer used to manage visibility of the PlayerStatusBar
-            ActivityTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
+            ActivityTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
             ActivityTimer.Tick += OnInactivity;
             ActivityTimer.Start();
 
@@ -144,7 +146,7 @@ namespace Popcorn.UserControls.Player
                 Player.LoadMedia(vm.MediaPath);
             }
 
-            PlayMedia();
+            await PlayMedia();
         }
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace Popcorn.UserControls.Player
             if (moviePlayer == null)
                 return;
 
-            var newVolume = (int)e.NewValue;
+            var newVolume = (int) e.NewValue;
             moviePlayer.ChangeMediaVolume(newVolume);
         }
 
@@ -187,6 +189,8 @@ namespace Popcorn.UserControls.Player
         private void MediaPlayerEndReached(object sender, EventArgs e)
             => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                if (!Player.Position.Equals(1)) return;
+
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null)
                     return;
@@ -197,18 +201,14 @@ namespace Popcorn.UserControls.Player
         /// <summary>
         /// Play the movie
         /// </summary>
-        private void PlayMedia()
+        private async Task PlayMedia()
         {
             MediaPlayerIsPlaying = true;
 
             MediaPlayerStatusBarItemPlay.Visibility = Visibility.Collapsed;
             MediaPlayerStatusBarItemPause.Visibility = Visibility.Visible;
-
-            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-            {
-                await Task.Delay(500);
-                Player.Play();
-            });
+            await Task.Delay(500);
+            Player.Play();
         }
 
         /// <summary>
@@ -239,8 +239,8 @@ namespace Popcorn.UserControls.Player
         {
             if ((Player == null) || (UserIsDraggingMediaPlayerSlider)) return;
             MediaPlayerSliderProgress.Minimum = 0;
-            MediaPlayerSliderProgress.Maximum = Player.Length.TotalSeconds;
-            MediaPlayerSliderProgress.Value = Player.Time.TotalSeconds;
+            MediaPlayerSliderProgress.Maximum = Player.Length.TotalMilliseconds;
+            MediaPlayerSliderProgress.Value = Player.Time.TotalMilliseconds;
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace Popcorn.UserControls.Player
         private void MediaSliderProgressDragCompleted(object sender, DragCompletedEventArgs e)
         {
             UserIsDraggingMediaPlayerSlider = false;
-            Player.Time = TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value);
+            Player.Time = TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value);
         }
 
         /// <summary>
@@ -304,10 +304,16 @@ namespace Popcorn.UserControls.Player
         private void MediaSliderProgressValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             MoviePlayerTextProgressStatus.Text =
-                TimeSpan.FromSeconds(MediaPlayerSliderProgress.Value)
+                TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value)
                     .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture) + " / " +
-                TimeSpan.FromSeconds(Player.Length.TotalSeconds)
+                TimeSpan.FromMilliseconds(Player.Length.TotalMilliseconds)
                     .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
+            if (Player.Time != TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value))
+            {
+                Player.Pause();
+                Player.Time = TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value);
+                Player.Play();
+            }
         }
 
         /// <summary>
@@ -331,26 +337,30 @@ namespace Popcorn.UserControls.Player
         /// <param name="e">EventArgs</param>
         private void OnInactivity(object sender, EventArgs e)
         {
-            InactiveMousePosition = Mouse.GetPosition(Container);
-            var window = System.Windows.Window.GetWindow(this);
-            if (window != null)
+            if (InactiveMousePosition == Mouse.GetPosition(Container))
             {
-                window.Cursor = Cursors.None;
+                var window = System.Windows.Window.GetWindow(this);
+                if (window != null)
+                {
+                    window.Cursor = Cursors.None;
+                }
+
+                var opacityAnimation = new DoubleAnimationUsingKeyFrames
+                {
+                    Duration = new Duration(TimeSpan.FromSeconds(0.5)),
+                    KeyFrames = new DoubleKeyFrameCollection
+                    {
+                        new EasingDoubleKeyFrame(0.0, KeyTime.FromPercent(1d), new PowerEase
+                        {
+                            EasingMode = EasingMode.EaseInOut
+                        })
+                    }
+                };
+
+                PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
             }
 
-            var opacityAnimation = new DoubleAnimationUsingKeyFrames
-            {
-                Duration = new Duration(TimeSpan.FromSeconds(0.5)),
-                KeyFrames = new DoubleKeyFrameCollection
-                {
-                    new EasingDoubleKeyFrame(0.0, KeyTime.FromPercent(1d), new PowerEase
-                    {
-                        EasingMode = EasingMode.EaseInOut
-                    })
-                }
-            };
-
-            PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
+            InactiveMousePosition = Mouse.GetPosition(Container);
         }
 
         /// <summary>
@@ -360,15 +370,18 @@ namespace Popcorn.UserControls.Player
         /// <param name="e">EventArgs</param>
         private async void OnActivity(object sender, PreProcessInputEventArgs e)
         {
-            if (_isMouseActivityCaptured)
+            await MouseActivitySemaphore.WaitAsync();
+            if (e.StagingItem == null)
+            {
+                MouseActivitySemaphore.Release();
                 return;
-
-            _isMouseActivityCaptured = true;
+            }
+            ;
 
             var inputEventArgs = e.StagingItem.Input;
             if (!(inputEventArgs is MouseEventArgs) && !(inputEventArgs is KeyboardEventArgs))
             {
-                _isMouseActivityCaptured = false;
+                MouseActivitySemaphore.Release();
                 return;
             }
             var mouseEventArgs = e.StagingItem.Input as MouseEventArgs;
@@ -381,7 +394,7 @@ namespace Popcorn.UserControls.Player
                 mouseEventArgs.XButton2 == MouseButtonState.Released &&
                 InactiveMousePosition == mouseEventArgs.GetPosition(Container))
             {
-                _isMouseActivityCaptured = false;
+                MouseActivitySemaphore.Release();
                 return;
             }
 
@@ -405,7 +418,7 @@ namespace Popcorn.UserControls.Player
             }
 
             await Task.Delay(TimeSpan.FromSeconds(1));
-            _isMouseActivityCaptured = false;
+            MouseActivitySemaphore.Release();
         }
 
         /// <summary>
@@ -455,7 +468,7 @@ namespace Popcorn.UserControls.Player
         /// <param name="e"></param>
         private async void OnLengthChanged(object sender, EventArgs e)
         {
-            await semaphoreSlim.WaitAsync();
+            await SemaphoreSlim.WaitAsync();
             try
             {
                 if (_isPlayerFullyInitialised) return;
@@ -503,7 +516,7 @@ namespace Popcorn.UserControls.Player
             }
             finally
             {
-                semaphoreSlim.Release();
+                SemaphoreSlim.Release();
             }
         }
     }
