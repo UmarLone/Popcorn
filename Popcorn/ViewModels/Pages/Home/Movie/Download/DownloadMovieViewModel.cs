@@ -102,7 +102,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public bool IsDownloadingMovie
         {
-            get { return _isDownloadingMovie; }
+            get => _isDownloadingMovie;
             set { Set(() => IsDownloadingMovie, ref _isDownloadingMovie, value); }
         }
 
@@ -111,7 +111,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public double MovieDownloadProgress
         {
-            get { return _movieDownloadProgress; }
+            get => _movieDownloadProgress;
             set { Set(() => MovieDownloadProgress, ref _movieDownloadProgress, value); }
         }
 
@@ -120,7 +120,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public double MovieDownloadRate
         {
-            get { return _movieDownloadRate; }
+            get => _movieDownloadRate;
             set { Set(() => MovieDownloadRate, ref _movieDownloadRate, value); }
         }
 
@@ -129,7 +129,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public int NbPeers
         {
-            get { return _nbPeers; }
+            get => _nbPeers;
             set { Set(() => NbPeers, ref _nbPeers, value); }
         }
 
@@ -138,7 +138,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public int NbSeeders
         {
-            get { return _nbSeeders; }
+            get => _nbSeeders;
             set { Set(() => NbSeeders, ref _nbSeeders, value); }
         }
 
@@ -147,7 +147,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public MovieJson Movie
         {
-            get { return _movie; }
+            get => _movie;
             set { Set(() => Movie, ref _movie, value); }
         }
 
@@ -176,7 +176,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     File.Delete(_movieFilePath);
                     _movieFilePath = string.Empty;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    // File could not be deleted... We don't care
+                }
             }
 
         }
@@ -202,7 +205,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
 
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     try
                     {
@@ -224,17 +227,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     }
                     finally
                     {
-                        DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                        try
                         {
-                            try
-                            {
-                                await
-                                    DownloadMovieAsync(message.Movie,
-                                        reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
-                                        _cancellationDownloadingMovie);
-                            }
-                            catch (Exception) { }
-                        });
+                            await
+                                DownloadMovieAsync(message.Movie,
+                                    reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
+                                    _cancellationDownloadingMovie);
+                        }
+                        catch (Exception ex)
+                        {
+                            // An error occured.
+                            Messenger.Default.Send(new ManageExceptionMessage(ex));
+                            Messenger.Default.Send(new StopPlayingMovieMessage());
+                        }
                     }
                 });
             });

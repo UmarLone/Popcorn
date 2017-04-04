@@ -35,7 +35,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Search
         /// </summary>
         public string SearchFilter
         {
-            get { return _searchFilter; }
+            get => _searchFilter;
             set { Set(() => SearchFilter, ref _searchFilter, value, true); }
         }
 

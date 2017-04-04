@@ -20,7 +20,6 @@ using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
-using Popcorn.Models.Torrent;
 using Popcorn.Models.Torrent.Movie;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
@@ -144,7 +143,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public MovieJson Movie
         {
-            get { return _movie; }
+            get => _movie;
             set { Set(() => Movie, ref _movie, value); }
         }
 
@@ -153,7 +152,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public ObservableCollection<MovieJson> SimilarMovies
         {
-            get { return _similarMovies; }
+            get => _similarMovies;
             set { Set(() => SimilarMovies, ref _similarMovies, value); }
         }
 
@@ -162,7 +161,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool LoadingSubtitles
         {
-            get { return _loadingSubtitles; }
+            get => _loadingSubtitles;
             set { Set(() => LoadingSubtitles, ref _loadingSubtitles, value); }
         }
 
@@ -171,7 +170,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool IsMovieLoading
         {
-            get { return _isMovieLoading; }
+            get => _isMovieLoading;
             set { Set(() => IsMovieLoading, ref _isMovieLoading, value); }
         }
 
@@ -180,7 +179,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public double TorrentHealth
         {
-            get { return _torrentHealth; }
+            get => _torrentHealth;
             set { Set(() => TorrentHealth, ref _torrentHealth, value); }
         }
 
@@ -189,7 +188,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public TorrentJson SelectedTorrent
         {
-            get { return _selectedTorrent; }
+            get => _selectedTorrent;
             set { Set(() => SelectedTorrent, ref _selectedTorrent, value); }
         }
 
@@ -198,7 +197,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public DownloadMovieViewModel DownloadMovie
         {
-            get { return _downloadMovie; }
+            get => _downloadMovie;
             set { Set(() => DownloadMovie, ref _downloadMovie, value); }
         }
 
@@ -207,7 +206,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool IsTrailerLoading
         {
-            get { return _isTrailerLoading; }
+            get => _isTrailerLoading;
             set { Set(() => IsTrailerLoading, ref _isTrailerLoading, value); }
         }
 
@@ -216,7 +215,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool IsPlayingTrailer
         {
-            get { return _isPlayingTrailer; }
+            get => _isPlayingTrailer;
             set { Set(() => IsPlayingTrailer, ref _isPlayingTrailer, value); }
         }
 
@@ -225,7 +224,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool LoadingSimilar
         {
-            get { return _loadingSimilar; }
+            get => _loadingSimilar;
             set { Set(() => LoadingSimilar, ref _loadingSimilar, value); }
         }
 
@@ -234,7 +233,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool AnySimilar
         {
-            get { return _anySimilar; }
+            get => _anySimilar;
             set { Set(() => AnySimilar, ref _anySimilar, value); }
         }
 
@@ -243,7 +242,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         public bool IsDownloadingMovie
         {
-            get { return _isDownloadingMovie; }
+            get => _isDownloadingMovie;
             set { Set(() => IsDownloadingMovie, ref _isDownloadingMovie, value); }
         }
 
@@ -295,7 +294,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 {
                     var languages = _subtitlesService.GetSubLanguages().ToList();
 
-                    var imdbId = 0;
+                    int imdbId;
                     if (int.TryParse(new string(movie.ImdbCode
                         .SkipWhile(x => !char.IsDigit(x))
                         .TakeWhile(char.IsDigit)
@@ -444,8 +443,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// </summary>
         private void ComputeTorrentHealth()
         {
-            TorrentJson torrent = null;
-            torrent = Movie.WatchInFullHdQuality
+            var torrent = Movie.WatchInFullHdQuality
                 ? Movie.Torrents.FirstOrDefault(a => a.Quality == "1080p")
                 : Movie.Torrents.FirstOrDefault(a => a.Quality == "720p");
             SelectedTorrent = torrent;

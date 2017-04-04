@@ -375,6 +375,13 @@
                                             <iconPacks:PackIconMaterial Margin="6" Kind="Translate" />
                                         </controls:SplitButton.Icon>
                                     </controls:SplitButton>
+                                    <controls:ProgressRing 
+                                        Visibility="{Binding LoadingSubtitles, Converter={StaticResource BoolToInverseVisibilityConverter}}" 
+                                        VerticalAlignment="Center" 
+                                        Height="20" 
+                                        Margin="10,10,0,0" 
+                                        Width="20" 
+                                        IsActive="True"></controls:ProgressRing>
                                 </StackPanel>
                             </Grid>
                         </DockPanel>

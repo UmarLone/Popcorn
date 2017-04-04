@@ -23,7 +23,7 @@ namespace Popcorn.Helpers
         /// Local file name where to store the content of the download, if null a temporary file name will
         /// be generated.
         /// </param>
-        public static async Task<Tuple<string, string, Exception>> DownloadFileTaskAsync(string remotePath,
+        public static async Task<(string, string, Exception)> DownloadFileTaskAsync(string remotePath,
             string localPath = null)
         {
             var watch = Stopwatch.StartNew();
@@ -47,7 +47,7 @@ namespace Popcorn.Helpers
                 {
                     var fileInfo = new FileInfo(localPath).Length;
                     if (fileInfo != 0)
-                        return new Tuple<string, string, Exception>(remotePath, localPath, null);
+                        return (remotePath, localPath, null);
                 }
 
                 var direcory = Path.GetDirectoryName(localPath);
@@ -76,20 +76,20 @@ namespace Popcorn.Helpers
                     watch.Stop();
                     Logger.Debug(
                         "DownloadFileTaskAsync cancelled.");
-                    return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    return (remotePath, null, exception);
                 }
                 catch (ObjectDisposedException exception)
                 {
                     watch.Stop();
                     Logger.Info(
                         $"DownloadFileTaskAsync (can't cancel download, it has finished previously): {remotePath}");
-                    return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    return (remotePath, null, exception);
                 }
                 catch (WebException exception)
                 {
                     watch.Stop();
                     Logger.Error($"DownloadFileTaskAsync: {exception.Message}");
-                    return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    return (remotePath, null, exception);
                 }
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace Popcorn.Helpers
                 watch.Stop();
                 Logger.Error(
                     $"DownloadFileTaskAsync (download failed): {remotePath} Additional informations : {ex.Message}");
-                return new Tuple<string, string, Exception>(remotePath, null, ex);
+                return (remotePath, null, ex);
             }
             finally
             {
@@ -106,7 +106,7 @@ namespace Popcorn.Helpers
                 Logger.Debug($"DownloadFileTaskAsync (downloaded in {elapsedMs} ms): {remotePath}");
             }
 
-            return new Tuple<string, string, Exception>(remotePath, localPath, null);
+            return (remotePath, localPath, null);
         }
     }
 }

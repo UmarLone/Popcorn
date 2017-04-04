@@ -105,14 +105,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Application state
         /// </summary>
-        public IApplicationService ApplicationService { get; set; }
+        public IApplicationService ApplicationService { get; }
 
         /// <summary>
         /// Tab's movies
         /// </summary>
         public ObservableCollection<MovieJson> Movies
         {
-            get { return _movies; }
+            get => _movies;
             set { Set(() => Movies, ref _movies, value); }
         }
 
@@ -121,7 +121,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public int CurrentNumberOfMovies
         {
-            get { return _currentNumberOfMovies; }
+            get => _currentNumberOfMovies;
             set { Set(() => CurrentNumberOfMovies, ref _currentNumberOfMovies, value); }
         }
 
@@ -130,7 +130,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public int MaxNumberOfMovies
         {
-            get { return _maxNumberOfMovies; }
+            get => _maxNumberOfMovies;
             set { Set(() => MaxNumberOfMovies, ref _maxNumberOfMovies, value); }
         }
 
@@ -139,7 +139,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public string TabName
         {
-            get { return _tabName; }
+            get => _tabName;
             set { Set(() => TabName, ref _tabName, value); }
         }
 
@@ -148,7 +148,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public bool IsLoadingMovies
         {
-            get { return _isLoadingMovies; }
+            get => _isLoadingMovies;
             protected set { Set(() => IsLoadingMovies, ref _isLoadingMovies, value); }
         }
 
@@ -157,7 +157,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public bool IsMovieFound
         {
-            get { return _isMoviesFound; }
+            get => _isMoviesFound;
             set { Set(() => IsMovieFound, ref _isMoviesFound, value); }
         }
 
@@ -166,7 +166,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public double Rating
         {
-            get { return _rating; }
+            get => _rating;
             set { Set(() => Rating, ref _rating, value, true); }
         }
 
@@ -190,7 +190,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         public bool HasLoadingFailed
         {
-            get { return _hasLoadingFailed; }
+            get => _hasLoadingFailed;
             set { Set(() => HasLoadingFailed, ref _hasLoadingFailed, value); }
         }
 
@@ -199,7 +199,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         protected GenreJson Genre
         {
-            get { return _genre; }
+            get => _genre;
             private set { Set(() => Genre, ref _genre, value, true); }
         }
 

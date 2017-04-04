@@ -103,7 +103,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public string PageUri
         {
-            get { return _pageUri; }
+            get => _pageUri;
             set { Set(() => PageUri, ref _pageUri, value); }
         }
 
@@ -112,7 +112,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public IApplicationService ApplicationService
         {
-            get { return _applicationService; }
+            get => _applicationService;
             set { Set(() => ApplicationService, ref _applicationService, value); }
         }
 
@@ -121,7 +121,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public bool IsSettingsFlyoutOpen
         {
-            get { return _isSettingsFlyoutOpen; }
+            get => _isSettingsFlyoutOpen;
             set { Set(() => IsSettingsFlyoutOpen, ref _isSettingsFlyoutOpen, value); }
         }
 
@@ -130,7 +130,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public bool IsMovieFlyoutOpen
         {
-            get { return _isMovieFlyoutOpen; }
+            get => _isMovieFlyoutOpen;
             set { Set(() => IsMovieFlyoutOpen, ref _isMovieFlyoutOpen, value); }
         }
 
@@ -139,7 +139,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public bool IsShowFlyoutOpen
         {
-            get { return _isShowFlyoutOpen; }
+            get => _isShowFlyoutOpen;
             set { Set(() => IsShowFlyoutOpen, ref _isShowFlyoutOpen, value); }
         }
 
@@ -148,7 +148,7 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         public MediaPlayerViewModel MediaPlayer
         {
-            get { return _mediaPlayer; }
+            get => _mediaPlayer;
             set { Set(() => MediaPlayer, ref _mediaPlayer, value); }
         }
 
@@ -403,7 +403,7 @@ namespace Popcorn.ViewModels.Windows
             watchStart.Stop();
             var elapsedStartMs = watchStart.ElapsedMilliseconds;
             Logger.Info(
-                "Finished looking for updates.", elapsedStartMs);
+                $"Finished looking for updates in {elapsedStartMs}.");
         }
 
         /// <summary>
@@ -442,7 +442,8 @@ namespace Popcorn.ViewModels.Windows
                 var exceptionDialog =
                     new ExceptionDialog(
                         new ExceptionDialogSettings(
-                            LocalizationProviderHelper.GetLocalizedValue<string>("EmbarrassingError"), exception.Message));
+                            LocalizationProviderHelper.GetLocalizedValue<string>("EmbarrassingError"),
+                            exception.Message));
                 await _dialogCoordinator.ShowMetroDialogAsync(this, exceptionDialog);
                 await exceptionDialog.WaitForButtonPressAsync();
                 _isManagingException = false;

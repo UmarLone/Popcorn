@@ -116,8 +116,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public SearchMovieViewModel Search
         {
-            get { return _search; }
-            set { Set(ref _search, value); }
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         /// <summary>
@@ -125,8 +125,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public string Caption
         {
-            get { return _caption; }
-            set { Set(ref _caption, value); }
+            get => _caption;
+            set => Set(ref _caption, value);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public bool IsMovieSearchActive
         {
-            get { return _isMovieSearchActive; }
+            get => _isMovieSearchActive;
             private set { Set(() => IsMovieSearchActive, ref _isMovieSearchActive, value); }
         }
 
@@ -143,7 +143,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public ObservableCollection<MovieTabsViewModel> Tabs
         {
-            get { return _tabs; }
+            get => _tabs;
             set { Set(() => Tabs, ref _tabs, value); }
         }
 
@@ -152,7 +152,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public MovieTabsViewModel SelectedTab
         {
-            get { return _selectedTab; }
+            get => _selectedTab;
             set { Set(() => SelectedTab, ref _selectedTab, value); }
         }
 
@@ -224,7 +224,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public GenresMovieViewModel GenresMovie
         {
-            get { return _genresMovie; }
+            get => _genresMovie;
             set { Set(() => GenresMovie, ref _genresMovie, value); }
         }
 
@@ -233,7 +233,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public IApplicationService ApplicationService
         {
-            get { return _applicationService; }
+            get => _applicationService;
             set { Set(() => ApplicationService, ref _applicationService, value); }
         }
 
@@ -272,7 +272,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// </summary>
         public int SelectedMoviesIndexMenuTab
         {
-            get { return _selectedMoviesIndexMenuTab; }
+            get => _selectedMoviesIndexMenuTab;
             set { Set(() => SelectedMoviesIndexMenuTab, ref _selectedMoviesIndexMenuTab, value); }
         }
 

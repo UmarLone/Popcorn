@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 
 namespace Popcorn.ViewModels.Pages.Home.Anime
 {
@@ -19,8 +14,8 @@ namespace Popcorn.ViewModels.Pages.Home.Anime
         /// </summary>
         public string Caption
         {
-            get { return _caption; }
-            set { Set(ref _caption, value); }
+            get => _caption;
+            set => Set(ref _caption, value);
         }
     }
 }

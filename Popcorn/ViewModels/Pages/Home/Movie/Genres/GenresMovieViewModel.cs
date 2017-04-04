@@ -57,7 +57,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// </summary>
         public ObservableCollection<GenreJson> MovieGenres
         {
-            get { return _movieGenres; }
+            get => _movieGenres;
             set { Set(() => MovieGenres, ref _movieGenres, value); }
         }
 
@@ -66,7 +66,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// </summary>
         public GenreJson SelectedGenre
         {
-            get { return _selectedGenre; }
+            get => _selectedGenre;
             set { Set(() => SelectedGenre, ref _selectedGenre, value); }
         }
 
