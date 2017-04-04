@@ -10,7 +10,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.15";
+        public const string AppVersion = "1.9.16";
         
         /// <summary>
         /// Endpoint to API

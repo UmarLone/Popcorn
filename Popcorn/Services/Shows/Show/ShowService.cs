@@ -55,9 +55,10 @@ namespace Popcorn.Services.Shows.Show
             request.AddParameter("minimum_rating", ratingFilter);
             request.AddParameter("sort_by", "votes");
 
+            IRestResponse<ShowResponse> response;
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<ShowResponse>(request, ct);
+                response = await restClient.ExecuteGetTaskAsync<ShowResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -82,9 +83,9 @@ namespace Popcorn.Services.Shows.Show
                     $"GetPopularShowsAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
-            var shows = wrapper.Shows ?? new List<ShowJson>();
+            var shows = wrapper?.Shows ?? new List<ShowJson>();
 
-            var nbShows = wrapper.TotalShows;
+            var nbShows = wrapper?.TotalShows ?? 0;
 
             return new Tuple<IEnumerable<ShowJson>, int>(shows, nbShows);
         }
