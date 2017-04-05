@@ -53,6 +53,7 @@
                     TextAlignment="Justify"
                     TextTrimming="WordEllipsis"
                     TextWrapping="Wrap" />
+
                 <Button
                     Grid.Row="4"
                     Width="130"
@@ -62,9 +63,8 @@
                     VerticalAlignment="Bottom"
                     controls1:ControlsHelper.ContentCharacterCasing="Normal"
                     Command="{Binding PlayCommand, ElementName=EpisodeDetailUc}"
-                    Content="Play"
-                    FontSize="18"
-                    Style="{DynamicResource AccentedSquareButtonStyle}" />
+                    Content="Watch"
+                    FontSize="18" />
             </Grid>
         </controls:AnimatedScrollViewer>
     </Grid>
