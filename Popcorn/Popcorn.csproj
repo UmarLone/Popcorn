@@ -299,6 +299,9 @@
       <DependentUpon>RatingStar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Ripple.cs" />
+    <Compile Include="Controls\Show\Seasons.xaml.cs">
+      <DependentUpon>Seasons.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Show\ShowNumberSummary.xaml.cs">
       <DependentUpon>ShowNumberSummary.xaml</DependentUpon>
     </Compile>
@@ -340,6 +343,7 @@
     <Compile Include="Entity\Movie\MovieHistory.cs" />
     <Compile Include="Entity\Movie\Torrent.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
+    <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
     <Compile Include="Helpers\FindVisualChildHelper.cs" />
@@ -537,6 +541,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Movie\MovieNumberSummary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Show\Seasons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

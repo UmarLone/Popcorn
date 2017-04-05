@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Popcorn.Events;
+using Popcorn.Models.Episode;
+using Popcorn.ViewModels.Pages.Home.Show.Details;
 
 namespace Popcorn.UserControls.Home.Show.Details
 {
@@ -23,6 +27,15 @@ namespace Popcorn.UserControls.Home.Show.Details
         public ShowDetailsUserControl()
         {
             InitializeComponent();
+        }
+
+        private void OnSelectedSeasonChanged(object sender, SelectedSeasonChangedEventArgs e)
+        {
+            var vm = DataContext as ShowDetailsViewModel;
+            if (vm == null) return;
+
+            var episodes = vm.Show.Episodes.Where(a => a.Season == e.SelectedSeasonNumber);
+            EpisodesDetails.ItemsSource = new ObservableCollection<EpisodeShowJson>(episodes.OrderBy(a => a.EpisodeNumber));
         }
     }
 }
