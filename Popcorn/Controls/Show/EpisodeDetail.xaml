@@ -56,15 +56,15 @@
 
                 <Button
                     Grid.Row="4"
-                    Width="130"
-                    Height="40"
+                    Width="105"
+                    Height="35"
                     Margin="0,15,0,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     controls1:ControlsHelper.ContentCharacterCasing="Normal"
                     Command="{Binding PlayCommand, ElementName=EpisodeDetailUc}"
                     Content="Watch"
-                    FontSize="18" />
+                    FontSize="14" />
             </Grid>
         </controls:AnimatedScrollViewer>
     </Grid>
