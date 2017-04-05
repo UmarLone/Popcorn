@@ -146,7 +146,26 @@ namespace Popcorn.UserControls.Player
                 Player.LoadMedia(vm.MediaPath);
             }
 
+            Player.VlcMediaPlayer.EncounteredError += EncounteredError;
             await PlayMedia();
+        }
+
+        /// <summary>
+        /// Vlc encounters an error. Warn the user of this
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EncounteredError(object sender, EventArgs e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Messenger.Default.Send(new UnhandledExceptionMessage(new Exception("An error has occured while trying to play the media.")));
+                var vm = DataContext as MediaPlayerViewModel;
+                if (vm == null)
+                    return;
+
+                vm.MediaEnded();
+            });
         }
 
         /// <summary>
@@ -440,6 +459,7 @@ namespace Popcorn.UserControls.Player
 
             InputManager.Current.PreProcessInput -= OnActivity;
 
+            Player.VlcMediaPlayer.EncounteredError -= EncounteredError;
             Player.VlcMediaPlayer.EndReached -= MediaPlayerEndReached;
             MediaPlayerIsPlaying = false;
             Player.Stop();

@@ -13,6 +13,7 @@ namespace Popcorn.Controls
     public class AnimatedScrollViewer : ScrollViewer
     {
         #region PART items
+
         ScrollBar _aniVerticalScrollBar;
         ScrollBar _aniHorizontalScrollBar;
 
@@ -20,36 +21,38 @@ namespace Popcorn.Controls
 
         static AnimatedScrollViewer()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(AnimatedScrollViewer), new FrameworkPropertyMetadata(typeof(AnimatedScrollViewer)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(AnimatedScrollViewer),
+                new FrameworkPropertyMetadata(typeof(AnimatedScrollViewer)));
         }
 
         #region ScrollViewer Override Methods
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            ScrollBar aniVScroll = base.GetTemplateChild("PART_AniVerticalScrollBar") as ScrollBar;
+            ScrollBar aniVScroll = GetTemplateChild("PART_AniVerticalScrollBar") as ScrollBar;
             if (aniVScroll != null)
             {
                 _aniVerticalScrollBar = aniVScroll;
             }
-            _aniVerticalScrollBar.ValueChanged += new RoutedPropertyChangedEventHandler<double>(VScrollBar_ValueChanged);
+            _aniVerticalScrollBar.ValueChanged += VScrollBar_ValueChanged;
 
-            ScrollBar aniHScroll = base.GetTemplateChild("PART_AniHorizontalScrollBar") as ScrollBar;
+            ScrollBar aniHScroll = GetTemplateChild("PART_AniHorizontalScrollBar") as ScrollBar;
             if (aniHScroll != null)
             {
                 _aniHorizontalScrollBar = aniHScroll;
             }
-            _aniHorizontalScrollBar.ValueChanged += new RoutedPropertyChangedEventHandler<double>(HScrollBar_ValueChanged);
+            _aniHorizontalScrollBar.ValueChanged += HScrollBar_ValueChanged;
 
-            this.PreviewMouseWheel += new MouseWheelEventHandler(CustomPreviewMouseWheel);
-            this.PreviewKeyDown += new KeyEventHandler(AnimatedScrollViewer_PreviewKeyDown);
+            PreviewMouseWheel += CustomPreviewMouseWheel;
+            PreviewKeyDown += AnimatedScrollViewer_PreviewKeyDown;
         }
 
         void AnimatedScrollViewer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
 
-            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer)sender;
+            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) sender;
 
             if (thisScroller.CanKeyboardScroll)
             {
@@ -66,7 +69,8 @@ namespace Popcorn.Controls
                 }
                 else if (keyPressed == Key.PageDown)
                 {
-                    newVerticalPos = NormalizeScrollPos(thisScroller, (newVerticalPos + thisScroller.ViewportHeight), Orientation.Vertical);
+                    newVerticalPos = NormalizeScrollPos(thisScroller, (newVerticalPos + thisScroller.ViewportHeight),
+                        Orientation.Vertical);
                     isKeyHandled = true;
                 }
                 else if (keyPressed == Key.Up)
@@ -76,7 +80,8 @@ namespace Popcorn.Controls
                 }
                 else if (keyPressed == Key.PageUp)
                 {
-                    newVerticalPos = NormalizeScrollPos(thisScroller, (newVerticalPos - thisScroller.ViewportHeight), Orientation.Vertical);
+                    newVerticalPos = NormalizeScrollPos(thisScroller, (newVerticalPos - thisScroller.ViewportHeight),
+                        Orientation.Vertical);
                     isKeyHandled = true;
                 }
 
@@ -89,12 +94,14 @@ namespace Popcorn.Controls
 
                 if (keyPressed == Key.Right)
                 {
-                    newHorizontalPos = NormalizeScrollPos(thisScroller, (newHorizontalPos + 16), Orientation.Horizontal);
+                    newHorizontalPos = NormalizeScrollPos(thisScroller, (newHorizontalPos + 16),
+                        Orientation.Horizontal);
                     isKeyHandled = true;
                 }
                 else if (keyPressed == Key.Left)
                 {
-                    newHorizontalPos = NormalizeScrollPos(thisScroller, (newHorizontalPos - 16), Orientation.Horizontal);
+                    newHorizontalPos = NormalizeScrollPos(thisScroller, (newHorizontalPos - 16),
+                        Orientation.Horizontal);
                     isKeyHandled = true;
                 }
 
@@ -105,7 +112,6 @@ namespace Popcorn.Controls
 
                 e.Handled = isKeyHandled;
             }
-
         }
 
         private double NormalizeScrollPos(AnimatedScrollViewer thisScroll, double scrollChange, Orientation o)
@@ -129,16 +135,15 @@ namespace Popcorn.Controls
             return returnValue;
         }
 
-
         #endregion
 
         #region Custom Event Handlers
 
         void CustomPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double mouseWheelChange = (double)e.Delta;
+            double mouseWheelChange = e.Delta;
 
-            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer)sender;
+            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) sender;
             double newVOffset = thisScroller.TargetVerticalOffset - (mouseWheelChange / 3);
             if (newVOffset < 0)
             {
@@ -152,14 +157,15 @@ namespace Popcorn.Controls
             {
                 thisScroller.TargetVerticalOffset = newVOffset;
             }
+
             e.Handled = true;
         }
 
         void VScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             AnimatedScrollViewer thisScroller = this;
-            double oldTargetVOffset = (double)e.OldValue;
-            double newTargetVOffset = (double)e.NewValue;
+            double oldTargetVOffset = (double) e.OldValue;
+            double newTargetVOffset = (double) e.NewValue;
 
             if (newTargetVOffset != thisScroller.TargetVerticalOffset)
             {
@@ -193,8 +199,8 @@ namespace Popcorn.Controls
         {
             AnimatedScrollViewer thisScroller = this;
 
-            double oldTargetHOffset = (double)e.OldValue;
-            double newTargetHOffset = (double)e.NewValue;
+            double oldTargetHOffset = (double) e.OldValue;
+            double newTargetHOffset = (double) e.NewValue;
 
             if (newTargetHOffset != thisScroller.TargetHorizontalOffset)
             {
@@ -236,20 +242,21 @@ namespace Popcorn.Controls
         /// </summary>
         public double TargetVerticalOffset
         {
-            get { return (double)GetValue(TargetVerticalOffsetProperty); }
-            set { SetValue(TargetVerticalOffsetProperty, value); }
+            get => (double) GetValue(TargetVerticalOffsetProperty);
+            set => SetValue(TargetVerticalOffsetProperty, value);
         }
+
         public static readonly DependencyProperty TargetVerticalOffsetProperty =
             DependencyProperty.Register("TargetVerticalOffset", typeof(double), typeof(AnimatedScrollViewer),
-            new PropertyMetadata(0.0, new PropertyChangedCallback(OnTargetVerticalOffsetChanged)));
+                new PropertyMetadata(0.0, OnTargetVerticalOffsetChanged));
 
         private static void OnTargetVerticalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer)d;
+            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) d;
 
-            if ((double)e.NewValue != thisScroller._aniVerticalScrollBar.Value)
+            if ((double) e.NewValue != thisScroller._aniVerticalScrollBar.Value)
             {
-                thisScroller._aniVerticalScrollBar.Value = (double)e.NewValue;
+                thisScroller._aniVerticalScrollBar.Value = (double) e.NewValue;
             }
 
             thisScroller.animateScroller(thisScroller);
@@ -264,20 +271,21 @@ namespace Popcorn.Controls
         /// </summary>
         public double TargetHorizontalOffset
         {
-            get { return (double)GetValue(TargetHorizontalOffsetProperty); }
-            set { SetValue(TargetHorizontalOffsetProperty, value); }
+            get => (double) GetValue(TargetHorizontalOffsetProperty);
+            set => SetValue(TargetHorizontalOffsetProperty, value);
         }
+
         public static readonly DependencyProperty TargetHorizontalOffsetProperty =
             DependencyProperty.Register("TargetHorizontalOffset", typeof(double), typeof(AnimatedScrollViewer),
-            new PropertyMetadata(0.0, new PropertyChangedCallback(OnTargetHorizontalOffsetChanged)));
+                new PropertyMetadata(0.0, OnTargetHorizontalOffsetChanged));
 
         private static void OnTargetHorizontalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer)d;
+            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) d;
 
-            if ((double)e.NewValue != thisScroller._aniHorizontalScrollBar.Value)
+            if ((double) e.NewValue != thisScroller._aniHorizontalScrollBar.Value)
             {
-                thisScroller._aniHorizontalScrollBar.Value = (double)e.NewValue;
+                thisScroller._aniHorizontalScrollBar.Value = (double) e.NewValue;
             }
 
             thisScroller.animateScroller(thisScroller);
@@ -292,17 +300,18 @@ namespace Popcorn.Controls
         /// </summary>
         public double HorizontalScrollOffset
         {
-            get { return (double)GetValue(HorizontalScrollOffsetProperty); }
-            set { SetValue(HorizontalScrollOffsetProperty, value); }
+            get => (double) GetValue(HorizontalScrollOffsetProperty);
+            set => SetValue(HorizontalScrollOffsetProperty, value);
         }
+
         public static readonly DependencyProperty HorizontalScrollOffsetProperty =
             DependencyProperty.Register("HorizontalScrollOffset", typeof(double), typeof(AnimatedScrollViewer),
-            new PropertyMetadata(0.0, new PropertyChangedCallback(OnHorizontalScrollOffsetChanged)));
+                new PropertyMetadata(0.0, OnHorizontalScrollOffsetChanged));
 
         private static void OnHorizontalScrollOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            AnimatedScrollViewer thisSViewer = (AnimatedScrollViewer)d;
-            thisSViewer.ScrollToHorizontalOffset((double)e.NewValue);
+            AnimatedScrollViewer thisSViewer = (AnimatedScrollViewer) d;
+            thisSViewer.ScrollToHorizontalOffset((double) e.NewValue);
         }
 
         #endregion
@@ -314,17 +323,18 @@ namespace Popcorn.Controls
         /// </summary>
         public double VerticalScrollOffset
         {
-            get { return (double)GetValue(VerticalScrollOffsetProperty); }
-            set { SetValue(VerticalScrollOffsetProperty, value); }
+            get => (double) GetValue(VerticalScrollOffsetProperty);
+            set => SetValue(VerticalScrollOffsetProperty, value);
         }
+
         public static readonly DependencyProperty VerticalScrollOffsetProperty =
             DependencyProperty.Register("VerticalScrollOffset", typeof(double), typeof(AnimatedScrollViewer),
-            new PropertyMetadata(0.0, new PropertyChangedCallback(OnVerticalScrollOffsetChanged)));
+                new PropertyMetadata(0.0, OnVerticalScrollOffsetChanged));
 
         private static void OnVerticalScrollOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            AnimatedScrollViewer thisSViewer = (AnimatedScrollViewer)d;
-            thisSViewer.ScrollToVerticalOffset((double)e.NewValue);
+            AnimatedScrollViewer thisSViewer = (AnimatedScrollViewer) d;
+            thisSViewer.ScrollToVerticalOffset((double) e.NewValue);
         }
 
         #endregion
@@ -337,12 +347,13 @@ namespace Popcorn.Controls
         /// </summary>
         public TimeSpan ScrollingTime
         {
-            get { return (TimeSpan)GetValue(ScrollingTimeProperty); }
-            set { SetValue(ScrollingTimeProperty, value); }
+            get => (TimeSpan) GetValue(ScrollingTimeProperty);
+            set => SetValue(ScrollingTimeProperty, value);
         }
+
         public static readonly DependencyProperty ScrollingTimeProperty =
             DependencyProperty.Register("ScrollingTime", typeof(TimeSpan), typeof(AnimatedScrollViewer),
-              new PropertyMetadata(new TimeSpan(0, 0, 0, 0, 500)));
+                new PropertyMetadata(new TimeSpan(0, 0, 0, 0, 500)));
 
         #endregion
 
@@ -354,12 +365,13 @@ namespace Popcorn.Controls
         /// </summary>
         public KeySpline ScrollingSpline
         {
-            get { return (KeySpline)GetValue(ScrollingSplineProperty); }
-            set { SetValue(ScrollingSplineProperty, value); }
+            get => (KeySpline) GetValue(ScrollingSplineProperty);
+            set => SetValue(ScrollingSplineProperty, value);
         }
+
         public static readonly DependencyProperty ScrollingSplineProperty =
             DependencyProperty.Register("ScrollingSpline", typeof(KeySpline), typeof(AnimatedScrollViewer),
-              new PropertyMetadata(new KeySpline(0.024, 0.914, 0.717, 1)));
+                new PropertyMetadata(new KeySpline(0.024, 0.914, 0.717, 1)));
 
         #endregion
 
@@ -367,44 +379,41 @@ namespace Popcorn.Controls
 
         public static readonly DependencyProperty CanKeyboardScrollProperty =
             DependencyProperty.Register("CanKeyboardScroll", typeof(bool), typeof(AnimatedScrollViewer),
-                new FrameworkPropertyMetadata((bool)true));
+                new FrameworkPropertyMetadata(true));
 
         public bool CanKeyboardScroll
         {
-            get { return (bool)GetValue(CanKeyboardScrollProperty); }
-            set { SetValue(CanKeyboardScrollProperty, value); }
+            get => (bool) GetValue(CanKeyboardScrollProperty);
+            set => SetValue(CanKeyboardScrollProperty, value);
         }
 
         #endregion
 
-
-
         #endregion
 
         #region animateScroller method (Creates and runs animation)
+
         private void animateScroller(object objectToScroll)
         {
             AnimatedScrollViewer thisScrollViewer = objectToScroll as AnimatedScrollViewer;
 
-            Duration targetTime = new Duration(thisScrollViewer.ScrollingTime);
             KeyTime targetKeyTime = thisScrollViewer.ScrollingTime;
             KeySpline targetKeySpline = thisScrollViewer.ScrollingSpline;
 
             DoubleAnimationUsingKeyFrames animateHScrollKeyFramed = new DoubleAnimationUsingKeyFrames();
             DoubleAnimationUsingKeyFrames animateVScrollKeyFramed = new DoubleAnimationUsingKeyFrames();
 
-            SplineDoubleKeyFrame HScrollKey1 = new SplineDoubleKeyFrame(thisScrollViewer.TargetHorizontalOffset, targetKeyTime, targetKeySpline);
-            SplineDoubleKeyFrame VScrollKey1 = new SplineDoubleKeyFrame(thisScrollViewer.TargetVerticalOffset, targetKeyTime, targetKeySpline);
-            animateHScrollKeyFramed.KeyFrames.Add(HScrollKey1);
-            animateVScrollKeyFramed.KeyFrames.Add(VScrollKey1);
+            SplineDoubleKeyFrame hScrollKey1 = new SplineDoubleKeyFrame(thisScrollViewer.TargetHorizontalOffset,
+                targetKeyTime, targetKeySpline);
+            SplineDoubleKeyFrame vScrollKey1 = new SplineDoubleKeyFrame(thisScrollViewer.TargetVerticalOffset,
+                targetKeyTime, targetKeySpline);
+            animateHScrollKeyFramed.KeyFrames.Add(hScrollKey1);
+            animateVScrollKeyFramed.KeyFrames.Add(vScrollKey1);
 
             thisScrollViewer.BeginAnimation(HorizontalScrollOffsetProperty, animateHScrollKeyFramed);
             thisScrollViewer.BeginAnimation(VerticalScrollOffsetProperty, animateVScrollKeyFramed);
-
-            CommandBindingCollection testCollection = thisScrollViewer.CommandBindings;
-            int blah = testCollection.Count;
-
         }
+
         #endregion
     }
 }
