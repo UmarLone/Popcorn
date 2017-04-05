@@ -26,6 +26,33 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="AnimationContentGridVisibility">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=IsVisible}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="1.0"
+                                    Duration="0:0:0.3" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0.0"
+                                    Duration="0:0:0.5" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     <Grid Background="#252525">
         <Grid.RowDefinitions>
@@ -191,6 +218,8 @@
                 Grid.Row="1"
                 Grid.Column="3"
                 Background="#2D2D2D"
+                Opacity="0"
+                Style="{StaticResource AnimationContentGridVisibility}"
                 Visibility="{Binding ElementName=EpisodesDetails, Path=SelectedItem, Converter={StaticResource NullAsVisibilityConverter}}">
                 <show:EpisodeDetail Margin="15,20" Episode="{Binding ElementName=EpisodesDetails, Path=SelectedItem}" />
             </Grid>
