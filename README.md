@@ -21,6 +21,8 @@ An application which aims to provide a simple interface to watch any movie.
 
 ![Screenshot3](https://github.com/bbougot/Popcorn/blob/master/Screenshots/Screen3.jpg)
 
+![Screenshot4](https://github.com/bbougot/Popcorn/blob/master/Screenshots/Screen4.jpg)
+
 ## What does it use?
 #### Backend
 .NET Framework 4.6.2 and C# 7
