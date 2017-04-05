@@ -1,43 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Popcorn.Events;
-using Popcorn.Models.Episode;
 using Popcorn.Models.Shows;
 
 namespace Popcorn.Controls.Show
 {
     /// <summary>
-    /// Logique d'interaction pour Seasons.xaml
+    /// Logique d'interaction pour SeasonDetail.xaml
     /// </summary>
-    public partial class Seasons : UserControl
+    public partial class SeasonDetail
     {
         /// <summary>
-        /// Current number property
+        /// Selected Show
         /// </summary>
         public static readonly DependencyProperty ShowProperty =
             DependencyProperty.Register("Show",
-                typeof(ShowJson), typeof(Seasons),
+                typeof(ShowJson), typeof(SeasonDetail),
                 new PropertyMetadata(null, PropertyChangedCallback));
 
         /// <summary>
-        /// The current number of shows
+        /// The selected show
         /// </summary>
         public ShowJson Show
         {
-            get => (ShowJson)GetValue(ShowProperty);
+            get => (ShowJson) GetValue(ShowProperty);
             set => SetValue(ShowProperty, value);
         }
 
@@ -46,10 +35,10 @@ namespace Popcorn.Controls.Show
         /// </summary>
         public event EventHandler<SelectedSeasonChangedEventArgs> SelectedSeasonChanged;
 
-        private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+        private static void PropertyChangedCallback(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            var seasons = dependencyObject as Seasons;
-            var show = seasons.Show;
+            var seasons = dependencyObject as SeasonDetail;
             var collection = new ObservableCollection<Season>();
             var episodesBySeason =
                 seasons.Show.Episodes.GroupBy(r => r.Season)
@@ -67,7 +56,7 @@ namespace Popcorn.Controls.Show
             seasons.ComboSeasons.SelectedIndex = 0;
         }
 
-        public Seasons()
+        public SeasonDetail()
         {
             InitializeComponent();
         }

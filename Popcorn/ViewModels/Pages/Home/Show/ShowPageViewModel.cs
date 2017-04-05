@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Services.Shows.Show;
 using Popcorn.ViewModels.Pages.Home.Show.Tabs;
@@ -50,15 +52,19 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                     loadMoviesTask
                 });
             });
-        }
 
+            Messenger.Default.Register<PlayEpisodeShowMessage>(this, message =>
+            {
+                
+            });
+        }
 
         /// <summary>
         /// Selected index for movies menu
         /// </summary>
         public int SelectedShowsIndexMenuTab
         {
-            get { return _selectedShowsIndexMenuTab; }
+            get => _selectedShowsIndexMenuTab;
             set { Set(() => SelectedShowsIndexMenuTab, ref _selectedShowsIndexMenuTab, value); }
         }
 
@@ -67,7 +73,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// </summary>
         public ShowTabsViewModel SelectedTab
         {
-            get { return _selectedTab; }
+            get => _selectedTab;
             set { Set(() => SelectedTab, ref _selectedTab, value); }
         }
 
@@ -76,7 +82,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// </summary>
         public ObservableCollection<ShowTabsViewModel> Tabs
         {
-            get { return _tabs; }
+            get => _tabs;
             set { Set(() => Tabs, ref _tabs, value); }
         }
 
@@ -85,8 +91,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// </summary>
         public string Caption
         {
-            get { return _caption; }
-            set { Set(ref _caption, value); }
+            get => _caption;
+            set => Set(ref _caption, value);
         }
     }
 }

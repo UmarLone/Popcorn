@@ -293,14 +293,18 @@
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\ImageAsyncHelper.cs" />
     <Compile Include="AttachedProperties\RippleAssist.cs" />
+    <Compile Include="AttachedProperties\TextParenthesis.cs" />
     <Compile Include="Behaviors\ScrollAnimationBehavior.cs" />
     <Compile Include="Comparers\MovieComparer.cs" />
     <Compile Include="Controls\RatingStar.xaml.cs">
       <DependentUpon>RatingStar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Ripple.cs" />
-    <Compile Include="Controls\Show\Seasons.xaml.cs">
-      <DependentUpon>Seasons.xaml</DependentUpon>
+    <Compile Include="Controls\Show\EpisodeDetail.xaml.cs">
+      <DependentUpon>EpisodeDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Show\SeasonDetail.xaml.cs">
+      <DependentUpon>SeasonDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Show\ShowNumberSummary.xaml.cs">
       <DependentUpon>ShowNumberSummary.xaml</DependentUpon>
@@ -311,6 +315,7 @@
     <Compile Include="Converters\MultiBooleanToBoolConverter.cs" />
     <Compile Include="Converters\MultiBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\NullAsBoolConverter.cs" />
+    <Compile Include="Converters\NullAsVisibilityConverter.cs" />
     <Compile Include="Converters\RatingPercentageToNormalizedRatingConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
@@ -351,6 +356,7 @@
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />
     <Compile Include="Messaging\ChangeHasBeenSeenMovieMessage.cs" />
     <Compile Include="Messaging\LoadShowMessage.cs" />
+    <Compile Include="Messaging\PlayEpisodeShowMessage.cs" />
     <Compile Include="Messaging\PlayTrailerMessage.cs" />
     <Compile Include="Messaging\UnhandledExceptionMessage.cs" />
     <Compile Include="Migrations\201703041706307_Initial.cs" />
@@ -544,7 +550,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Show\Seasons.xaml">
+    <Page Include="Controls\Show\EpisodeDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Show\SeasonDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
