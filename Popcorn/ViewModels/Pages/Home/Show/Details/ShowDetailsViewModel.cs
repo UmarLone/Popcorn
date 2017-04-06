@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Messaging;
 using Popcorn.Models.Shows;
+using Popcorn.ViewModels.Pages.Home.Show.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Details
 {
@@ -21,9 +21,34 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// </summary>
         private ShowJson _show;
 
+        /// <summary>
+        /// Specify if a trailer is playing
+        /// </summary>
+        private bool _isPlayingTrailer;
+
+        /// <summary>
+        /// Specify if a trailer is loading
+        /// </summary>
+        private bool _isTrailerLoading;
+
+        /// <summary>
+        /// Torrent health, from 0 to 10
+        /// </summary>
+        private double _torrentHealth;
+
+        /// <summary>
+        /// The download show view model instance
+        /// </summary>
+        private DownloadShowViewModel _downloadShowViewModel;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ShowDetailsViewModel()
         {
             RegisterCommands();
+            RegisterMessages();
+            DownloadShow = new DownloadShowViewModel();
         }
 
         /// <summary>
@@ -31,7 +56,34 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// </summary>
         private void RegisterCommands()
         {
-            LoadShowCommand = new RelayCommand<ShowJson>(movie => LoadShow(movie));
+            LoadShowCommand = new RelayCommand<ShowJson>(LoadShow);
+        }
+
+        /// <summary>
+        /// Specify if a trailer is loading
+        /// </summary>
+        public bool IsTrailerLoading
+        {
+            get => _isTrailerLoading;
+            set { Set(() => IsTrailerLoading, ref _isTrailerLoading, value); }
+        }
+
+        /// <summary>
+        /// Specify if a trailer is playing
+        /// </summary>
+        public bool IsPlayingTrailer
+        {
+            get => _isPlayingTrailer;
+            set { Set(() => IsPlayingTrailer, ref _isPlayingTrailer, value); }
+        }
+
+        /// <summary>
+        /// Torrent health, from 0 to 10
+        /// </summary>
+        public double TorrentHealth
+        {
+            get => _torrentHealth;
+            set { Set(() => TorrentHealth, ref _torrentHealth, value); }
         }
 
         /// <summary>
@@ -44,9 +96,28 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// </summary>
         public ShowJson Show
         {
-            get { return _show; }
-            set { Set(ref _show, value); }
+            get => _show;
+            set => Set(ref _show, value);
         }
+
+        /// <summary>
+        /// The download show view model instance
+        /// </summary>
+        public DownloadShowViewModel DownloadShow
+        {
+            get => _downloadShowViewModel;
+            set => Set(ref _downloadShowViewModel, value);
+        }
+
+        /// <summary>
+        /// Register messages
+        /// </summary>
+        private void RegisterMessages() => Messenger.Default.Register<DownloadShowEpisodeMessage>(
+            this,
+            message =>
+            {
+
+            });
 
         /// <summary>
         /// Load the requested show
@@ -58,6 +129,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
 
             Messenger.Default.Send(new LoadShowMessage());
             Show = show;
+            foreach (var episode in Show.Episodes)
+            {
+                episode.ImdbId = Show.ImdbId;
+            }
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

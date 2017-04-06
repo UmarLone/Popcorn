@@ -23,9 +23,9 @@ namespace Popcorn.Helpers
         public const string TmDbClientId = "a21fe922d3bac6654e93450e9a18af1c";
 
         /// <summary>
-        /// In percentage, the minimum of buffering before we can actually start playing the movie
+        /// In percentage, the minimum of buffering before we can actually start playing the media
         /// </summary>
-        public const double MinimumBufferingBeforeMoviePlaying = 2.0;
+        public const double MinimumBuffering = 2.0;
 
         /// <summary>
         /// The maximum number of movies per page to load from the API
@@ -45,12 +45,22 @@ namespace Popcorn.Helpers
         /// <summary>
         /// Directory of downloaded movies
         /// </summary>
-        public static string MovieDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\";
+        public static string MovieDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\Movies\\";
 
         /// <summary>
-        /// Directory of downloaded torrents
+        /// Directory of downloaded shows
         /// </summary>
-        public static string TorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\";
+        public static string ShowDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\Shows\\";
+
+        /// <summary>
+        /// Directory of downloaded movie torrents
+        /// </summary>
+        public static string MovieTorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\Movies";
+
+        /// <summary>
+        /// Directory of downloaded show torrents
+        /// </summary>
+        public static string ShowTorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\Shows";
 
         /// <summary>
         /// Subtitles directory

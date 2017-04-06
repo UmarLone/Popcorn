@@ -1,16 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
+using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent.Show;
 using RestSharp.Deserializers;
 
 namespace Popcorn.Models.Episode
 {
-    public class EpisodeShowJson
+    public class EpisodeShowJson : ObservableObject
     {
+        private bool _watchInFullHqQuality;
+
+        private string _filePath;
+
+        private string _imdbId;
+
+        private ObservableCollection<Subtitle> _availableSubtitles =
+            new ObservableCollection<Subtitle>();
+
+        private Subtitle _selectedSubtitle;
+
+        public bool WatchInFullHdQuality
+        {
+            get => _watchInFullHqQuality;
+            set => Set(ref _watchInFullHqQuality, value);
+        }
+
+        public string FilePath
+        {
+            get => _filePath;
+            set => Set(ref _filePath, value);
+        }
+
+        public string ImdbId
+        {
+            get => _imdbId;
+            set => Set(ref _imdbId, value);
+        }
+
+        /// <summary>
+        /// Available subtitles
+        /// </summary>
+        public ObservableCollection<Subtitle> AvailableSubtitles
+        {
+            get { return _availableSubtitles; }
+            set { Set(() => AvailableSubtitles, ref _availableSubtitles, value); }
+        }
+
+        /// <summary>
+        /// Selected subtitle
+        /// </summary>
+        public Subtitle SelectedSubtitle
+        {
+            get { return _selectedSubtitle; }
+            set { Set(() => SelectedSubtitle, ref _selectedSubtitle, value); }
+        }
+
         [DeserializeAs(Name = "torrents")]
         public TorrentShowNodeJson Torrents { get; set; }
 

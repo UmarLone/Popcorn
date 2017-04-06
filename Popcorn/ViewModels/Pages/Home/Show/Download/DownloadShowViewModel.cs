@@ -1,27 +1,22 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using lt;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
-using Popcorn.Models.Movie;
-using Popcorn.Services.Language;
+using Popcorn.Models.Episode;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Windows.Settings;
 
-namespace Popcorn.ViewModels.Pages.Home.Movie.Download
+namespace Popcorn.ViewModels.Pages.Home.Show.Download
 {
-    /// <summary>
-    /// Manage the download of a movie
-    /// </summary>
-    public sealed class DownloadMovieViewModel : ViewModelBase
+    public class DownloadShowViewModel : ViewModelBase
     {
         /// <summary>
         /// Logger of the class
@@ -34,39 +29,39 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private readonly ISubtitlesService _subtitlesService;
 
         /// <summary>
-        /// Manage th application settings
+        /// Manage the application settings
         /// </summary>
         private readonly ApplicationSettingsViewModel _applicationSettingsViewModel;
 
         /// <summary>
         /// Token to cancel the download
         /// </summary>
-        private CancellationTokenSource _cancellationDownloadingMovie;
+        private CancellationTokenSource _cancellationDownloadingEpisode;
 
         /// <summary>
-        /// Specify if a movie is downloading
+        /// Specify if an episode is downloading
         /// </summary>
-        private bool _isDownloadingMovie;
+        private bool _isDownloadingEpisode;
 
         /// <summary>
-        /// Specify if a movie is buffered
+        /// Specify if an episode is buffered
         /// </summary>
-        private bool _isMovieBuffered;
+        private bool _isEpisodeBuffered;
 
         /// <summary>
-        /// The movie to download
+        /// The episode to download
         /// </summary>
-        private MovieJson _movie;
+        private EpisodeShowJson _episode;
 
         /// <summary>
-        /// The movie download progress
+        /// The episode download progress
         /// </summary>
-        private double _movieDownloadProgress;
+        private double _episodeDownloadProgress;
 
         /// <summary>
-        /// The movie download rate
+        /// The episode download rate
         /// </summary>
-        private double _movieDownloadRate;
+        private double _episodeDownloadRate;
 
         /// <summary>
         /// Number of seeders
@@ -79,49 +74,43 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private int _nbPeers;
 
         /// <summary>
-        /// Movie file path
+        /// Episode file path
         /// </summary>
-        private string _movieFilePath;
+        private string _episodeFilePath;
 
-        /// <summary>
-        /// Initializes a new instance of the DownloadMovieViewModel class.
-        /// </summary>
-        /// <param name="subtitlesService">Instance of SubtitlesService</param>
-        /// <param name="languageService">Language service</param>
-        public DownloadMovieViewModel(ISubtitlesService subtitlesService, ILanguageService languageService)
+        public DownloadShowViewModel()
         {
-            _subtitlesService = subtitlesService;
-            _applicationSettingsViewModel = new ApplicationSettingsViewModel(languageService);
-            _cancellationDownloadingMovie = new CancellationTokenSource();
-            RegisterMessages();
             RegisterCommands();
+            RegisterMessages();
+
+            _cancellationDownloadingEpisode = new CancellationTokenSource();
         }
 
         /// <summary>
-        /// Specify if a movie is downloading
+        /// Specify if an episode is downloading
         /// </summary>
-        public bool IsDownloadingMovie
+        public bool IsDownloadingEpisode
         {
-            get => _isDownloadingMovie;
-            set { Set(() => IsDownloadingMovie, ref _isDownloadingMovie, value); }
+            get => _isDownloadingEpisode;
+            set { Set(() => IsDownloadingEpisode, ref _isDownloadingEpisode, value); }
         }
 
         /// <summary>
-        /// Specify the movie download progress
+        /// Specify the episode download progress
         /// </summary>
-        public double MovieDownloadProgress
+        public double EpisodeDownloadProgress
         {
-            get => _movieDownloadProgress;
-            set { Set(() => MovieDownloadProgress, ref _movieDownloadProgress, value); }
+            get => _episodeDownloadProgress;
+            set { Set(() => EpisodeDownloadProgress, ref _episodeDownloadProgress, value); }
         }
 
         /// <summary>
-        /// Specify the movie download rate
+        /// Specify the episode download rate
         /// </summary>
-        public double MovieDownloadRate
+        public double EpisodeDownloadRate
         {
-            get => _movieDownloadRate;
-            set { Set(() => MovieDownloadRate, ref _movieDownloadRate, value); }
+            get => _episodeDownloadRate;
+            set { Set(() => EpisodeDownloadRate, ref _episodeDownloadRate, value); }
         }
 
         /// <summary>
@@ -143,45 +132,44 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         }
 
         /// <summary>
-        /// The movie to download
+        /// The episode to download
         /// </summary>
-        public MovieJson Movie
+        public EpisodeShowJson Episode
         {
-            get => _movie;
-            set { Set(() => Movie, ref _movie, value); }
+            get => _episode;
+            set { Set(() => Episode, ref _episode, value); }
         }
 
         /// <summary>
-        /// The command used to stop the download of a movie
+        /// The command used to stop the download of an episode
         /// </summary>
-        public RelayCommand StopDownloadingMovieCommand { get; private set; }
+        public RelayCommand StopDownloadingEpisodeCommand { get; private set; }
 
         /// <summary>
-        /// Stop downloading a movie
+        /// Stop downloading an episode
         /// </summary>
-        public void StopDownloadingMovie()
+        public void StopDownloadingEpisode()
         {
             Logger.Info(
-                "Stop downloading a movie");
+                "Stop downloading an episode");
 
-            IsDownloadingMovie = false;
-            _isMovieBuffered = false;
-            _cancellationDownloadingMovie.Cancel(true);
-            _cancellationDownloadingMovie = new CancellationTokenSource();
+            IsDownloadingEpisode = false;
+            _isEpisodeBuffered = false;
+            _cancellationDownloadingEpisode.Cancel(true);
+            _cancellationDownloadingEpisode = new CancellationTokenSource();
 
-            if (!string.IsNullOrEmpty(_movieFilePath))
+            if (!string.IsNullOrEmpty(_episodeFilePath))
             {
                 try
                 {
-                    File.Delete(_movieFilePath);
-                    _movieFilePath = string.Empty;
+                    File.Delete(_episodeFilePath);
+                    _episodeFilePath = string.Empty;
                 }
                 catch (Exception)
                 {
                     // File could not be deleted... We don't care
                 }
             }
-
         }
 
         /// <summary>
@@ -189,19 +177,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         public override void Cleanup()
         {
-            StopDownloadingMovie();
+            StopDownloadingEpisode();
             base.Cleanup();
         }
 
         /// <summary>
         /// Register messages
         /// </summary>
-        private void RegisterMessages() => Messenger.Default.Register<DownloadMovieMessage>(
+        private void RegisterMessages() => Messenger.Default.Register<DownloadShowEpisodeMessage>(
             this,
             message =>
             {
-                var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
-                var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
+                var reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
+                var reportDownloadRate = new Progress<double>(ReportEpisodeDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
 
@@ -209,19 +197,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 {
                     try
                     {
-                        if (message.Movie.SelectedSubtitle != null &&
-                            message.Movie.SelectedSubtitle.Sub.LanguageName !=
+                        if (message.Episode.SelectedSubtitle != null &&
+                            message.Episode.SelectedSubtitle.Sub.LanguageName !=
                             LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
                         {
-                            var path = Path.Combine(Constants.Subtitles + message.Movie.ImdbCode);
+                            var path = Path.Combine(Constants.Subtitles + message.Episode.ImdbId);
                             Directory.CreateDirectory(path);
                             var subtitlePath =
                                 _subtitlesService.DownloadSubtitleToPath(path,
-                                    message.Movie.SelectedSubtitle.Sub);
+                                    message.Episode.SelectedSubtitle.Sub);
 
                             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                             {
-                                message.Movie.SelectedSubtitle.FilePath = subtitlePath;
+                                message.Episode.SelectedSubtitle.FilePath = subtitlePath;
                             });
                         }
                     }
@@ -230,15 +218,15 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                         try
                         {
                             await
-                                DownloadMovieAsync(message.Movie,
+                                DownloadEpisodeAsync(message.Episode,
                                     reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
-                                    _cancellationDownloadingMovie);
+                                    _cancellationDownloadingEpisode);
                         }
                         catch (Exception ex)
                         {
                             // An error occured.
                             Messenger.Default.Send(new ManageExceptionMessage(ex));
-                            Messenger.Default.Send(new StopPlayingMovieMessage());
+                            Messenger.Default.Send(new StopPlayingEpisodeMessage());
                         }
                     }
                 });
@@ -247,9 +235,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// <summary>
         /// Register commands
         /// </summary>
-        private void RegisterCommands() => StopDownloadingMovieCommand = new RelayCommand(() =>
+        private void RegisterCommands() => StopDownloadingEpisodeCommand = new RelayCommand(() =>
         {
-            Messenger.Default.Send(new StopPlayingMovieMessage());
+            Messenger.Default.Send(new StopPlayingEpisodeMessage());
         });
 
         /// <summary>
@@ -268,38 +256,38 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// Report the download progress
         /// </summary>
         /// <param name="value">Download rate</param>
-        private void ReportMovieDownloadRate(double value) => MovieDownloadRate = value;
+        private void ReportEpisodeDownloadRate(double value) => EpisodeDownloadRate = value;
 
         /// <summary>
         /// Report the download progress
         /// </summary>
         /// <param name="value">The download progress to report</param>
-        private void ReportMovieDownloadProgress(double value)
+        private void ReportEpisodeDownloadProgress(double value)
         {
-            MovieDownloadProgress = value;
+            EpisodeDownloadProgress = value;
             if (value < Constants.MinimumBuffering)
                 return;
 
-            if (!_isMovieBuffered)
-                _isMovieBuffered = true;
+            if (!_isEpisodeBuffered)
+                _isEpisodeBuffered = true;
         }
 
         /// <summary>
-        /// Download a movie asynchronously
+        /// Download an episode asynchronously
         /// </summary>
-        /// <param name="movie">The movie to download</param>
+        /// <param name="episode">The episode to download</param>
         /// <param name="downloadProgress">Report download progress</param>
         /// <param name="downloadRate">Report download rate</param>
         /// <param name="nbSeeds">Report number of seeders</param>
         /// <param name="nbPeers">Report number of peers</param>
         /// <param name="ct">Cancellation token</param>
-        private async Task DownloadMovieAsync(MovieJson movie, IProgress<double> downloadProgress,
+        private async Task DownloadEpisodeAsync(EpisodeShowJson episode, IProgress<double> downloadProgress,
             IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers,
             CancellationTokenSource ct)
         {
-            _movieFilePath = string.Empty;
-            MovieDownloadProgress = 0d;
-            MovieDownloadRate = 0d;
+            _episodeFilePath = string.Empty;
+            EpisodeDownloadProgress = 0d;
+            EpisodeDownloadRate = 0d;
             NbSeeders = 0;
             NbPeers = 0;
 
@@ -308,9 +296,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 using (var session = new session())
                 {
                     Logger.Info(
-                        $"Start downloading movie : {movie.Title}");
+                        $"Start downloading episode : {episode.Title}");
 
-                    IsDownloadingMovie = true;
+                    IsDownloadingEpisode = true;
 
                     downloadProgress?.Report(0d);
                     downloadRate?.Report(0d);
@@ -318,32 +306,31 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     nbPeers?.Report(0);
 
                     session.listen_on(6881, 6889);
-                    var torrentUrl = movie.WatchInFullHdQuality
-                        ? movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
-                        : movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
-
-                    var result =
-                        await
-                            DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
-                                Constants.MovieTorrentDownloads + movie.ImdbCode + ".torrent");
-                    var torrentPath = string.Empty;
-                    if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
-                        torrentPath = result.Item2;
+                    string torrentUrl;
+                    if (episode.WatchInFullHdQuality && (episode.Torrents.Torrent_720p?.Url != null ||
+                                                         episode.Torrents.Torrent_1080p?.Url != null))
+                    {
+                        torrentUrl = episode.Torrents.Torrent_720p?.Url ?? episode.Torrents.Torrent_1080p.Url;
+                    }
+                    else
+                    {
+                        torrentUrl = episode.Torrents.Torrent_480p?.Url ?? episode.Torrents.Torrent_0.Url;
+                    }
 
                     using (var addParams = new add_torrent_params
                     {
-                        save_path = Constants.MovieDownloads,
-                        ti = new torrent_info(torrentPath)
+                        save_path = Constants.ShowDownloads,
+                        ti = new torrent_info(torrentUrl)
                     })
                     using (var handle = session.add_torrent(addParams))
                     {
                         handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
                         handle.set_download_limit(_applicationSettingsViewModel.UploadLimit * 1024);
 
-                        // We have to download sequentially, so that we're able to play the movie without waiting
+                        // We have to download sequentially, so that we're able to play the episode without waiting
                         handle.set_sequential_download(true);
                         var alreadyBuffered = false;
-                        while (IsDownloadingMovie)
+                        while (IsDownloadingEpisode)
                         {
                             using (var status = handle.status())
                             {
@@ -360,16 +347,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
 
                                 if (progress >= Constants.MinimumBuffering && !alreadyBuffered)
                                 {
-                                    // Get movie file
+                                    // Get episode file
                                     foreach (
                                         var filePath in
                                         Directory.GetFiles(status.save_path + handle.torrent_file().name())
                                     )
                                     {
-                                        _movieFilePath = filePath;
+                                        _episodeFilePath = filePath;
                                         alreadyBuffered = true;
-                                        movie.FilePath = filePath;
-                                        Messenger.Default.Send(new PlayMovieMessage(movie));
+                                        episode.FilePath = filePath;
+                                        Messenger.Default.Send(new PlayShowEpisodeMessage(episode));
                                     }
                                 }
 

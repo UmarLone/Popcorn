@@ -52,11 +52,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                     loadMoviesTask
                 });
             });
-
-            Messenger.Default.Register<PlayEpisodeShowMessage>(this, message =>
-            {
-                
-            });
         }
 
         /// <summary>

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Models.Episode;
 
 namespace Popcorn.Messaging
 {
     /// <summary>
-    /// Play an episode of a show
+    /// Download an episode of a show
     /// </summary>
-    public class PlayShowEpisodeMessage : MessageBase
+    public class DownloadShowEpisodeMessage : MessageBase
     {
         /// <summary>
         /// Episode
@@ -22,7 +17,7 @@ namespace Popcorn.Messaging
         /// Constructor
         /// </summary>
         /// <param name="episode">Episode</param>
-        public PlayShowEpisodeMessage(EpisodeShowJson episode)
+        public DownloadShowEpisodeMessage(EpisodeShowJson episode)
         {
             Episode = episode;
         }

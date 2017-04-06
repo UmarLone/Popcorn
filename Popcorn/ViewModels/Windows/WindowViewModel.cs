@@ -293,9 +293,9 @@ namespace Popcorn.ViewModels.Windows
                     }
                 }
 
-                if (!Directory.Exists(Constants.TorrentDownloads)) return;
+                if (!Directory.Exists(Constants.MovieTorrentDownloads)) return;
                 foreach (
-                    var filePath in Directory.GetFiles(Constants.TorrentDownloads, "*.*", SearchOption.AllDirectories)
+                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*", SearchOption.AllDirectories)
                 )
                 {
                     try
