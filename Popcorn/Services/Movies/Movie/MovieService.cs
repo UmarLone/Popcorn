@@ -157,7 +157,6 @@ namespace Popcorn.Services.Movies.Movie
             {
                 Logger.Error(
                     $"GetGenresAsync: {exception.Message}");
-                throw;
             }
             finally
             {

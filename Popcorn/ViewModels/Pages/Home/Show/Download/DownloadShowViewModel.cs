@@ -10,7 +10,9 @@ using lt;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
+using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Episode;
+using Popcorn.Services.Language;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Windows.Settings;
 
@@ -78,11 +80,16 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// </summary>
         private string _episodeFilePath;
 
-        public DownloadShowViewModel()
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="languageService">The language service</param>
+        public DownloadShowViewModel(ILanguageService languageService)
         {
             RegisterCommands();
             RegisterMessages();
 
+            _applicationSettingsViewModel = new ApplicationSettingsViewModel(languageService);
             _cancellationDownloadingEpisode = new CancellationTokenSource();
         }
 
@@ -237,6 +244,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// </summary>
         private void RegisterCommands() => StopDownloadingEpisodeCommand = new RelayCommand(() =>
         {
+            StopDownloadingEpisode();
             Messenger.Default.Send(new StopPlayingEpisodeMessage());
         });
 
@@ -306,22 +314,24 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                     nbPeers?.Report(0);
 
                     session.listen_on(6881, 6889);
-                    string torrentUrl;
+                    string magnetUri;
                     if (episode.WatchInFullHdQuality && (episode.Torrents.Torrent_720p?.Url != null ||
                                                          episode.Torrents.Torrent_1080p?.Url != null))
                     {
-                        torrentUrl = episode.Torrents.Torrent_720p?.Url ?? episode.Torrents.Torrent_1080p.Url;
+                        magnetUri = episode.Torrents.Torrent_720p?.Url ?? episode.Torrents.Torrent_1080p.Url;
                     }
                     else
                     {
-                        torrentUrl = episode.Torrents.Torrent_480p?.Url ?? episode.Torrents.Torrent_0.Url;
+                        magnetUri = episode.Torrents.Torrent_480p?.Url ?? episode.Torrents.Torrent_0.Url;
                     }
 
-                    using (var addParams = new add_torrent_params
+                    var magnet = new magnet_uri();
+                    var error = new error_code();
+                    var addParams = new add_torrent_params
                     {
                         save_path = Constants.ShowDownloads,
-                        ti = new torrent_info(torrentUrl)
-                    })
+                    };
+                    magnet.parse_magnet_uri(magnetUri, addParams, error);
                     using (var handle = session.add_torrent(addParams))
                     {
                         handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);

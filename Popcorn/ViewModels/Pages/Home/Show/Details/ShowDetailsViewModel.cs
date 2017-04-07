@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Messaging;
 using Popcorn.Models.Shows;
+using Popcorn.Services.Language;
 using Popcorn.ViewModels.Pages.Home.Show.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Details
@@ -44,11 +45,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// <summary>
         /// Constructor
         /// </summary>
-        public ShowDetailsViewModel()
+        /// <param name="languageService">The language service</param>
+        public ShowDetailsViewModel(ILanguageService languageService)
         {
             RegisterCommands();
             RegisterMessages();
-            DownloadShow = new DownloadShowViewModel();
+            DownloadShow = new DownloadShowViewModel(languageService);
         }
 
         /// <summary>

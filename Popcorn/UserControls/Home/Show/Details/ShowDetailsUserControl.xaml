@@ -107,7 +107,10 @@
             <RowDefinition Height="3*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.RowSpan="2">
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Visibility="{Binding DownloadShow.IsDownloadingEpisode, Converter={StaticResource BoolToInverseVisibilityConverter}}">
             <Image
                 Opacity="0.3"
                 Source="{Binding Show.Images.Banner, IsAsync=True}"
@@ -115,8 +118,7 @@
             <ContentControl
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Content="{Binding DownloadShow}"
-                Visibility="{Binding DownloadShow.IsDownloadingEpisode, Converter={StaticResource BoolToInverseVisibilityConverter}}" />
+                Content="{Binding DownloadShow}" />
         </Grid>
         <Grid Grid.Row="0" Style="{StaticResource AnimationContentOnMediaLoading}">
             <Grid.RowDefinitions>
@@ -202,7 +204,10 @@
                     TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Background="#252525">
+        <Grid
+            Grid.Row="1"
+            Background="#252525"
+            Style="{StaticResource AnimationContentOnMediaLoading}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
                 <RowDefinition Height="*" />

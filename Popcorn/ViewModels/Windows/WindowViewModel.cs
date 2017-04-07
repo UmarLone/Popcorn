@@ -188,6 +188,24 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<LoadShowMessage>(this, e => IsShowFlyoutOpen = true);
 
+            Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath, message.Episode.Title,
+                    () =>
+                    {
+                        Messenger.Default.Send(new StopPlayingEpisodeMessage());
+                    },
+                    () =>
+                    {
+                        Messenger.Default.Send(new StopPlayingEpisodeMessage());
+                    },
+                    message.Episode.SelectedSubtitle?.FilePath);
+
+                ApplicationService.IsMediaPlaying = true;
+                IsMovieFlyoutOpen = false;
+                PageUri = "/Pages/PlayerPage.xaml";
+            }));
+
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath, message.Movie.Title,
@@ -223,6 +241,15 @@ namespace Popcorn.ViewModels.Windows
                 IsMovieFlyoutOpen = true;
                 PageUri = "/Pages/HomePage.xaml";
             });
+
+            Messenger.Default.Register<StopPlayingEpisodeMessage>(
+                this,
+                message =>
+                {
+                    ApplicationService.IsMediaPlaying = false;
+                    IsShowFlyoutOpen = true;
+                    PageUri = "/Pages/HomePage.xaml";
+                });
 
             Messenger.Default.Register<StopPlayingMovieMessage>(
                 this,
