@@ -375,6 +375,7 @@
     <Compile Include="Models\Image\ImageAnimeJson.cs" />
     <Compile Include="Models\Movie\MovieJson.cs" />
     <Compile Include="Models\Movie\MovieResponse.cs" />
+    <Compile Include="Models\Player\MediaType.cs" />
     <Compile Include="Models\Rating\RatingJson.cs" />
     <Compile Include="Models\Episode\EpisodeShowJson.cs" />
     <Compile Include="Models\Image\ImageShowJson.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -360,7 +361,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                     // Get episode file
                                     foreach (
                                         var filePath in
-                                        Directory.GetFiles(status.save_path + handle.torrent_file().name())
+                                        Directory
+                                            .GetFiles(status.save_path + handle.torrent_file().name(), "*.*",
+                                                SearchOption.AllDirectories)
+                                            .Where(s => s.EndsWith(".mp4") || s.EndsWith(".mkv") || s.EndsWith(".mov"))
                                     )
                                     {
                                         _episodeFilePath = filePath;

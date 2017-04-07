@@ -17,6 +17,7 @@ using Popcorn.Dialogs;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
+using Popcorn.Models.Player;
 using Popcorn.Services.Movies.History;
 using Popcorn.ViewModels.Pages.Home;
 using Popcorn.ViewModels.Pages.Home.Anime;
@@ -190,7 +191,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath, message.Episode.Title,
+                MediaPlayer = new MediaPlayerViewModel(MediaType.Show, message.Episode.FilePath, message.Episode.Title,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayingEpisodeMessage());
@@ -202,13 +203,13 @@ namespace Popcorn.ViewModels.Windows
                     message.Episode.SelectedSubtitle?.FilePath);
 
                 ApplicationService.IsMediaPlaying = true;
-                IsMovieFlyoutOpen = false;
+                IsShowFlyoutOpen = false;
                 PageUri = "/Pages/PlayerPage.xaml";
             }));
 
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath, message.Movie.Title,
+                MediaPlayer = new MediaPlayerViewModel(MediaType.Movie, message.Movie.FilePath, message.Movie.Title,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayingMovieMessage());
@@ -228,7 +229,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayTrailerMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl, message.MovieTitle,
+                MediaPlayer = new MediaPlayerViewModel(MediaType.Trailer, message.TrailerUrl, message.MovieTitle,
                     message.TrailerStoppedAction, message.TrailerEndedAction);
                 ApplicationService.IsMediaPlaying = true;
                 IsMovieFlyoutOpen = false;
@@ -303,37 +304,82 @@ namespace Popcorn.ViewModels.Windows
 
             MainWindowClosingCommand = new RelayCommand(() =>
             {
-                if (!Directory.Exists(Constants.MovieDownloads)) return;
-                foreach (
-                    var filePath in Directory.GetDirectories(Constants.MovieDownloads)
-                )
+                if (Directory.Exists(Constants.MovieDownloads))
                 {
-                    try
+                    foreach (
+                        var filePath in Directory.GetDirectories(Constants.MovieDownloads)
+                    )
                     {
-                        Logger.Debug(
-                            $"Deleting directory: {filePath}");
-                        Directory.Delete(filePath, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error while deleting directory: {ex.Message}.");
+                        try
+                        {
+                            Logger.Debug(
+                                $"Deleting directory: {filePath}");
+                            Directory.Delete(filePath, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Error while deleting directory: {ex.Message}.");
+                        }
                     }
                 }
 
-                if (!Directory.Exists(Constants.MovieTorrentDownloads)) return;
-                foreach (
-                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*", SearchOption.AllDirectories)
-                )
+                if (Directory.Exists(Constants.ShowDownloads))
                 {
-                    try
+                    foreach (
+                        var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
+                            SearchOption.AllDirectories)
+                    )
                     {
-                        Logger.Debug(
-                            $"Deleting file: {filePath}");
-                        File.Delete(filePath);
+                        try
+                        {
+                            Logger.Debug(
+                                $"Deleting file: {filePath}");
+                            File.Delete(filePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Error while deleting file: {ex.Message}.");
+                        }
                     }
-                    catch (Exception ex)
+                }
+
+                if (Directory.Exists(Constants.ShowTorrentDownloads))
+                {
+                    foreach (
+                        var filePath in Directory.GetFiles(Constants.ShowTorrentDownloads, "*.*",
+                            SearchOption.AllDirectories)
+                    )
                     {
-                        Logger.Error($"Error while deleting file: {ex.Message}.");
+                        try
+                        {
+                            Logger.Debug(
+                                $"Deleting file: {filePath}");
+                            File.Delete(filePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Error while deleting file: {ex.Message}.");
+                        }
+                    }
+                }
+
+                if (Directory.Exists(Constants.MovieTorrentDownloads))
+                {
+                    foreach (
+                        var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
+                            SearchOption.AllDirectories)
+                    )
+                    {
+                        try
+                        {
+                            Logger.Debug(
+                                $"Deleting file: {filePath}");
+                            File.Delete(filePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Error while deleting file: {ex.Message}.");
+                        }
                     }
                 }
             });

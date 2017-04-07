@@ -114,11 +114,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// <summary>
         /// Register messages
         /// </summary>
-        private void RegisterMessages() => Messenger.Default.Register<DownloadShowEpisodeMessage>(
+        private void RegisterMessages() => Messenger.Default.Register<StopPlayingEpisodeMessage>(
             this,
             message =>
             {
-
+                DownloadShow.IsDownloadingEpisode = false;
             });
 
         /// <summary>

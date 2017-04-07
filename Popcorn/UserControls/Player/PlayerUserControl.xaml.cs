@@ -13,6 +13,7 @@ using System.Diagnostics;
 using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Messaging;
 using Popcorn.Helpers;
+using Popcorn.Models.Player;
 
 namespace Popcorn.UserControls.Player
 {
@@ -30,6 +31,11 @@ namespace Popcorn.UserControls.Player
         /// False if player is not fully initialised
         /// </summary>
         private bool _isPlayerFullyInitialised;
+
+        /// <summary>
+        /// The media type
+        /// </summary>
+        private MediaType _mediaType;
 
         /// <summary>
         /// Mutex for player initialization
@@ -135,6 +141,8 @@ namespace Popcorn.UserControls.Player
 
             vm.StoppedPlayingMedia += OnStoppedPlayingMedia;
 
+            _mediaType = vm.MediaType;
+
             Player.VlcMediaPlayer.EndReached += MediaPlayerEndReached;
 
             if (!string.IsNullOrEmpty(vm.SubtitleFilePath))
@@ -159,7 +167,9 @@ namespace Popcorn.UserControls.Player
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                Messenger.Default.Send(new UnhandledExceptionMessage(new Exception("An error has occured while trying to play the media.")));
+                Messenger.Default.Send(
+                    new UnhandledExceptionMessage(
+                        new Exception("An error has occured while trying to play the media.")));
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null)
                     return;
@@ -488,10 +498,16 @@ namespace Popcorn.UserControls.Player
         /// <param name="e"></param>
         private async void OnLengthChanged(object sender, EventArgs e)
         {
+            if (_mediaType != MediaType.Trailer) return;
+
             await SemaphoreSlim.WaitAsync();
             try
             {
-                if (_isPlayerFullyInitialised) return;
+                if (_isPlayerFullyInitialised)
+                {
+                    SemaphoreSlim.Release();
+                    return;
+                }
 
                 _isPlayerFullyInitialised = true;
                 Player.Visibility = Visibility.Hidden;
