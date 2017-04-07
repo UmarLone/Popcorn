@@ -343,26 +343,6 @@ namespace Popcorn.ViewModels.Windows
                     }
                 }
 
-                if (Directory.Exists(Constants.ShowTorrentDownloads))
-                {
-                    foreach (
-                        var filePath in Directory.GetFiles(Constants.ShowTorrentDownloads, "*.*",
-                            SearchOption.AllDirectories)
-                    )
-                    {
-                        try
-                        {
-                            Logger.Debug(
-                                $"Deleting file: {filePath}");
-                            File.Delete(filePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error($"Error while deleting file: {ex.Message}.");
-                        }
-                    }
-                }
-
                 if (Directory.Exists(Constants.MovieTorrentDownloads))
                 {
                     foreach (

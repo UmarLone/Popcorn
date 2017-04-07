@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 
@@ -23,8 +24,12 @@ namespace Popcorn.Helpers
         /// Local file name where to store the content of the download, if null a temporary file name will
         /// be generated.
         /// </param>
-        public static async Task<(string, string, Exception)> DownloadFileTaskAsync(string remotePath,
-            string localPath = null)
+        /// <param name="timeOut">Duration in miliseconds before cancelling the  operation.</param>
+        /// <param name="progress">Report the progress of the download</param>
+        /// <param name="ct">Cancellation token</param>
+        public static async Task<Tuple<string, string, Exception>> DownloadFileTaskAsync(string remotePath,
+            string localPath = null, int timeOut = int.MaxValue, IProgress<long> progress = null,
+            CancellationTokenSource ct = null)
         {
             var watch = Stopwatch.StartNew();
 
@@ -47,49 +52,64 @@ namespace Popcorn.Helpers
                 {
                     var fileInfo = new FileInfo(localPath).Length;
                     if (fileInfo != 0)
-                        return (remotePath, localPath, null);
+                        return new Tuple<string, string, Exception>(remotePath, localPath, null);
                 }
 
                 var direcory = Path.GetDirectoryName(localPath);
                 if (!string.IsNullOrEmpty(direcory) && !Directory.Exists(direcory))
                     Directory.CreateDirectory(direcory);
 
-                try
+                // Sometimes YTS requires an authentication to access movies. Here is an already authenticated cookie valid until December 2017
+                var cookieJar = new CookieContainer();
+                cookieJar.Add(new Cookie("PHPSESSID", "ncrmefe4s79la9d2mba0n538o6", "/", "yts.ag"));
+                cookieJar.Add(new Cookie("__cfduid", "d6c81b283d74b436fec66f02bcb99c04d1481020053", "/", ".yts.ag"));
+                cookieJar.Add(new Cookie("bgb2", "1", "/", "yts.ag"));
+                cookieJar.Add(new Cookie("uhh", "60a8c98fd72e7a79b731f1ea09a5d09d", "/", ".yts.ag"));
+                cookieJar.Add(new Cookie("uid", "2188423", "/", ".yts.ag"));
+                using (var client = new CookieAwareWebClient(cookieJar))
                 {
-                    using (var httpClient = new HttpClient())
+                    if (progress != null)
+                        client.DownloadProgressChanged +=
+                            (sender, e) => progress.Report(e.BytesReceived / e.TotalBytesToReceive);
+
+                    TimerCallback timerCallback = c =>
                     {
-                        using (var request = new HttpRequestMessage(HttpMethod.Get, remotePath))
+                        var webClient = (WebClient)c;
+                        if (!webClient.IsBusy) return;
+                        webClient.CancelAsync();
+                        Logger.Debug($"DownloadFileTaskAsync (time out due): {remotePath}");
+                    };
+
+                    try
+                    {
+                        using (new Timer(timerCallback, client, timeOut, Timeout.Infinite))
                         {
-                            using (
-                                Stream contentStream =
-                                        await (await httpClient.SendAsync(request)).Content.ReadAsStreamAsync(),
-                                    stream = new FileStream(localPath, FileMode.Create, FileAccess.Write,
-                                        FileShare.None, 4096, true))
-                            {
-                                await contentStream.CopyToAsync(stream);
-                            }
+                            if (ct != null)
+                                await client.DownloadFileTaskAsync(remotePath, localPath, ct.Token);
+                            else
+                                await client.DownloadFileTaskAsync(remotePath, localPath);
                         }
                     }
-                }
-                catch (Exception exception) when (exception is TaskCanceledException)
-                {
-                    watch.Stop();
-                    Logger.Debug(
-                        "DownloadFileTaskAsync cancelled.");
-                    return (remotePath, null, exception);
-                }
-                catch (ObjectDisposedException exception)
-                {
-                    watch.Stop();
-                    Logger.Info(
-                        $"DownloadFileTaskAsync (can't cancel download, it has finished previously): {remotePath}");
-                    return (remotePath, null, exception);
-                }
-                catch (WebException exception)
-                {
-                    watch.Stop();
-                    Logger.Error($"DownloadFileTaskAsync: {exception.Message}");
-                    return (remotePath, null, exception);
+                    catch (Exception exception) when (exception is TaskCanceledException)
+                    {
+                        watch.Stop();
+                        Logger.Debug(
+                            "DownloadFileTaskAsync cancelled.");
+                        return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    }
+                    catch (ObjectDisposedException exception)
+                    {
+                        watch.Stop();
+                        Logger.Info(
+                            $"DownloadFileTaskAsync (can't cancel download, it has finished previously): {remotePath}");
+                        return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    }
+                    catch (WebException exception)
+                    {
+                        watch.Stop();
+                        Logger.Error($"DownloadFileTaskAsync: {exception.Message}");
+                        return new Tuple<string, string, Exception>(remotePath, null, exception);
+                    }
                 }
             }
             catch (Exception ex)
@@ -97,7 +117,7 @@ namespace Popcorn.Helpers
                 watch.Stop();
                 Logger.Error(
                     $"DownloadFileTaskAsync (download failed): {remotePath} Additional informations : {ex.Message}");
-                return (remotePath, null, ex);
+                return new Tuple<string, string, Exception>(remotePath, null, ex);
             }
             finally
             {
@@ -106,7 +126,7 @@ namespace Popcorn.Helpers
                 Logger.Debug($"DownloadFileTaskAsync (downloaded in {elapsedMs} ms): {remotePath}");
             }
 
-            return (remotePath, localPath, null);
+            return new Tuple<string, string, Exception>(remotePath, localPath, null);
         }
     }
 }

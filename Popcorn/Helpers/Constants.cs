@@ -10,7 +10,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.18";
+        public const string AppVersion = "1.9.19";
         
         /// <summary>
         /// Endpoint to API
@@ -55,12 +55,7 @@ namespace Popcorn.Helpers
         /// <summary>
         /// Directory of downloaded movie torrents
         /// </summary>
-        public static string MovieTorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\Movies";
-
-        /// <summary>
-        /// Directory of downloaded show torrents
-        /// </summary>
-        public static string ShowTorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\Shows";
+        public static string MovieTorrentDownloads { get; } = Path.GetTempPath() + "Popcorn\\Torrents\\Movies\\";
 
         /// <summary>
         /// Subtitles directory
