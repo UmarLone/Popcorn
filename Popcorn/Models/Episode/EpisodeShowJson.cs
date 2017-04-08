@@ -10,6 +10,8 @@ namespace Popcorn.Models.Episode
     {
         private bool _watchInFullHqQuality;
 
+        private string _title;
+
         private string _filePath;
 
         private string _imdbId;
@@ -18,6 +20,20 @@ namespace Popcorn.Models.Episode
             new ObservableCollection<Subtitle>();
 
         private Subtitle _selectedSubtitle;
+
+        private TorrentShowNodeJson _torrents;
+
+        private long _firstAired;
+
+        private bool _dateBased;
+
+        private string _overview;
+
+        private int _episodeNumber;
+
+        private int _season;
+
+        private int? _tvdbId;
 
         public bool WatchInFullHdQuality
         {
@@ -42,7 +58,7 @@ namespace Popcorn.Models.Episode
         /// </summary>
         public ObservableCollection<Subtitle> AvailableSubtitles
         {
-            get { return _availableSubtitles; }
+            get => _availableSubtitles;
             set { Set(() => AvailableSubtitles, ref _availableSubtitles, value); }
         }
 
@@ -51,32 +67,64 @@ namespace Popcorn.Models.Episode
         /// </summary>
         public Subtitle SelectedSubtitle
         {
-            get { return _selectedSubtitle; }
+            get => _selectedSubtitle;
             set { Set(() => SelectedSubtitle, ref _selectedSubtitle, value); }
         }
 
         [DeserializeAs(Name = "torrents")]
-        public TorrentShowNodeJson Torrents { get; set; }
+        public TorrentShowNodeJson Torrents
+        {
+            get => _torrents;
+            set => Set(ref _torrents, value);
+        }
 
         [DeserializeAs(Name = "first_aired")]
-        public long FirstAired { get; set; }
+        public long FirstAired
+        {
+            get => _firstAired;
+            set => Set(ref _firstAired, value);
+        }
 
         [DeserializeAs(Name = "date_based")]
-        public bool DateBased { get; set; }
+        public bool DateBased
+        {
+            get => _dateBased;
+            set => Set(ref _dateBased, value);
+        }
 
         [DeserializeAs(Name = "overview")]
-        public string Overview { get; set; }
+        public string Overview
+        {
+            get => _overview;
+            set => Set(ref _overview, value);
+        }
 
         [DeserializeAs(Name = "title")]
-        public string Title { get; set; }
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
 
         [DeserializeAs(Name = "episode")]
-        public int EpisodeNumber { get; set; }
+        public int EpisodeNumber
+        {
+            get => _episodeNumber;
+            set => Set(ref _episodeNumber, value);
+        }
 
         [DeserializeAs(Name = "season")]
-        public int Season { get; set; }
+        public int Season
+        {
+            get => _season;
+            set => Set(ref _season, value);
+        }
 
         [DeserializeAs(Name = "tvdb_id")]
-        public int? TvdbId { get; set; }
+        public int? TvdbId
+        {
+            get => _tvdbId;
+            set => Set(ref _tvdbId, value);
+        }
     }
 }

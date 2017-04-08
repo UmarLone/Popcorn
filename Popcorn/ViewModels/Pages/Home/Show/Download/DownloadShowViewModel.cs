@@ -196,6 +196,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
             this,
             message =>
             {
+                Episode = message.Episode;
                 var reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportEpisodeDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
@@ -313,7 +314,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                     downloadRate?.Report(0d);
                     nbSeeds?.Report(0);
                     nbPeers?.Report(0);
-
                     session.listen_on(6881, 6889);
                     string magnetUri;
                     if (episode.WatchInFullHdQuality && (episode.Torrents.Torrent_720p?.Url != null ||
@@ -362,15 +362,18 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                     foreach (
                                         var filePath in
                                         Directory
-                                            .GetFiles(status.save_path + handle.torrent_file().name(), "*.*",
+                                            .GetFiles(status.save_path, "*.*",
                                                 SearchOption.AllDirectories)
-                                            .Where(s => s.EndsWith(".mp4") || s.EndsWith(".mkv") || s.EndsWith(".mov"))
+                                            .Where(s => s.Contains(handle.torrent_file().name()) &&
+                                                        (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
+                                                         s.EndsWith(".mov")))
                                     )
                                     {
                                         _episodeFilePath = filePath;
                                         alreadyBuffered = true;
                                         episode.FilePath = filePath;
                                         Messenger.Default.Send(new PlayShowEpisodeMessage(episode));
+                                        EpisodeDownloadRate = 0d;
                                     }
                                 }
 

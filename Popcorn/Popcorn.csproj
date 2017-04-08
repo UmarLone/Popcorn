@@ -324,8 +324,8 @@
     <Compile Include="Controls\CapitalizeText.xaml.cs">
       <DependentUpon>CapitalizeText.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Movie\MovieDownloadProgress.xaml.cs">
-      <DependentUpon>MovieDownloadProgress.xaml</DependentUpon>
+    <Compile Include="Controls\DownloadProgress.xaml.cs">
+      <DependentUpon>DownloadProgress.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GenresLabel.xaml.cs">
       <DependentUpon>GenresLabel.xaml</DependentUpon>
@@ -540,7 +540,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Movie\MovieDownloadProgress.xaml">
+    <Page Include="Controls\DownloadProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

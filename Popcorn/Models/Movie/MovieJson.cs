@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Models.Cast;
 using Popcorn.Models.Subtitles;
-using Popcorn.Models.Torrent;
 using Popcorn.Models.Torrent.Movie;
 using RestSharp.Deserializers;
 
@@ -61,231 +59,231 @@ namespace Popcorn.Models.Movie
         [DeserializeAs(Name = "url")]
         public string Url
         {
-            get { return _url; }
+            get => _url;
             set { Set(() => Url, ref _url, value); }
         }
 
         [DeserializeAs(Name = "imdb_code")]
         public string ImdbCode
         {
-            get { return _imdbCode; }
+            get => _imdbCode;
             set { Set(() => ImdbCode, ref _imdbCode, value); }
         }
 
         [DeserializeAs(Name = "title")]
         public string Title
         {
-            get { return _title; }
+            get => _title;
             set { Set(() => Title, ref _title, value); }
         }
 
         [DeserializeAs(Name = "title_long")]
         public string TitleLong
         {
-            get { return _titleLong; }
+            get => _titleLong;
             set { Set(() => TitleLong, ref _titleLong, value); }
         }
 
         [DeserializeAs(Name = "slug")]
         public string Slug
         {
-            get { return _slug; }
+            get => _slug;
             set { Set(() => Slug, ref _slug, value); }
         }
 
         [DeserializeAs(Name = "year")]
         public int Year
         {
-            get { return _year; }
+            get => _year;
             set { Set(() => Year, ref _year, value); }
         }
 
         [DeserializeAs(Name = "rating")]
         public double Rating
         {
-            get { return _rating; }
+            get => _rating;
             set { Set(() => Rating, ref _rating, value); }
         }
 
         [DeserializeAs(Name = "runtime")]
         public int Runtime
         {
-            get { return _runtime; }
+            get => _runtime;
             set { Set(() => Runtime, ref _runtime, value); }
         }
 
         [DeserializeAs(Name = "genres")]
         public List<string> Genres
         {
-            get { return _genres; }
+            get => _genres;
             set { Set(() => Genres, ref _genres, value); }
         }
 
         [DeserializeAs(Name = "language")]
         public string Language
         {
-            get { return _language; }
+            get => _language;
             set { Set(() => Language, ref _language, value); }
         }
 
         [DeserializeAs(Name = "mpa_rating")]
         public string MpaRating
         {
-            get { return _mpaRating; }
+            get => _mpaRating;
             set { Set(() => MpaRating, ref _mpaRating, value); }
         }
 
         [DeserializeAs(Name = "download_count")]
         public int DownloadCount
         {
-            get { return _downloadCount; }
+            get => _downloadCount;
             set { Set(() => DownloadCount, ref _downloadCount, value); }
         }
 
         [DeserializeAs(Name = "like_count")]
         public int LikeCount
         {
-            get { return _likeCount; }
+            get => _likeCount;
             set { Set(() => LikeCount, ref _likeCount, value); }
         }
 
         [DeserializeAs(Name = "description_intro")]
         public string DescriptionIntro
         {
-            get { return _descriptionIntro; }
+            get => _descriptionIntro;
             set { Set(() => DescriptionIntro, ref _descriptionIntro, value); }
         }
 
         [DeserializeAs(Name = "description_full")]
         public string DescriptionFull
         {
-            get { return _descriptionFull; }
+            get => _descriptionFull;
             set { Set(() => DescriptionFull, ref _descriptionFull, value); }
         }
 
         [DeserializeAs(Name = "yt_trailer_code")]
         public string YtTrailerCode
         {
-            get { return _ytTrailerCode; }
+            get => _ytTrailerCode;
             set { Set(() => YtTrailerCode, ref _ytTrailerCode, value); }
         }
 
         [DeserializeAs(Name = "cast")]
         public List<CastJson> Cast
         {
-            get { return _cast; }
+            get => _cast;
             set { Set(() => Cast, ref _cast, value); }
         }
 
         [DeserializeAs(Name = "torrents")]
         public List<TorrentJson> Torrents
         {
-            get { return _torrents; }
+            get => _torrents;
             set { Set(() => Torrents, ref _torrents, value); }
         }
 
         [DeserializeAs(Name = "date_uploaded")]
         public string DateUploaded
         {
-            get { return _dateUploaded; }
+            get => _dateUploaded;
             set { Set(() => DateUploaded, ref _dateUploaded, value); }
         }
 
         [DeserializeAs(Name = "poster_image")]
         public string PosterImage
         {
-            get { return _posterImage; }
+            get => _posterImage;
             set { Set(() => PosterImage, ref _posterImage, value); }
         }
 
         [DeserializeAs(Name = "backdrop_image")]
         public string BackdropImage
         {
-            get { return _backdropImage; }
+            get => _backdropImage;
             set { Set(() => BackdropImage, ref _backdropImage, value); }
         }
 
         [DeserializeAs(Name = "date_uploaded_unix")]
         public int DateUploadedUnix
         {
-            get { return _dateUploadedUnix; }
+            get => _dateUploadedUnix;
             set { Set(() => DateUploadedUnix, ref _dateUploadedUnix, value); }
         }
 
         [DeserializeAs(Name = "background_image")]
         public string BackgroundImage
         {
-            get { return _backgroundImage; }
+            get => _backgroundImage;
             set { Set(() => BackgroundImage, ref _backgroundImage, value); }
         }
 
         [DeserializeAs(Name = "small_cover_image")]
         public string SmallCoverImage
         {
-            get { return _smallCoverImage; }
+            get => _smallCoverImage;
             set { Set(() => SmallCoverImage, ref _smallCoverImage, value); }
         }
 
         [DeserializeAs(Name = "medium_cover_image")]
         public string MediumCoverImage
         {
-            get { return _mediumCoverImage; }
+            get => _mediumCoverImage;
             set { Set(() => MediumCoverImage, ref _mediumCoverImage, value); }
         }
 
         [DeserializeAs(Name = "large_cover_image")]
         public string LargeCoverImage
         {
-            get { return _largeCoverImage; }
+            get => _largeCoverImage;
             set { Set(() => LargeCoverImage, ref _largeCoverImage, value); }
         }
 
         [DeserializeAs(Name = "medium_screenshot_image1")]
         public string MediumScreenshotImage1
         {
-            get { return _mediumScreenshotImage1; }
+            get => _mediumScreenshotImage1;
             set { Set(() => MediumScreenshotImage1, ref _mediumScreenshotImage1, value); }
         }
 
         [DeserializeAs(Name = "medium_screenshot_image2")]
         public string MediumScreenshotImage2
         {
-            get { return _mediumScreenshotImage2; }
+            get => _mediumScreenshotImage2;
             set { Set(() => MediumScreenshotImage2, ref _mediumScreenshotImage2, value); }
         }
 
         [DeserializeAs(Name = "medium_screenshot_image3")]
         public string MediumScreenshotImage3
         {
-            get { return _mediumScreenshotImage3; }
+            get => _mediumScreenshotImage3;
             set { Set(() => MediumScreenshotImage3, ref _mediumScreenshotImage3, value); }
         }
 
         [DeserializeAs(Name = "large_screenshot_image1")]
         public string LargeScreenshotImage1
         {
-            get { return _largeScreenshotImage1; }
+            get => _largeScreenshotImage1;
             set { Set(() => LargeScreenshotImage1, ref _largeScreenshotImage1, value); }
         }
 
         [DeserializeAs(Name = "large_screenshot_image2")]
         public string LargeScreenshotImage2
         {
-            get { return _largeScreenshotImage2; }
+            get => _largeScreenshotImage2;
             set { Set(() => LargeScreenshotImage2, ref _largeScreenshotImage2, value); }
         }
 
         [DeserializeAs(Name = "large_screenshot_image3")]
         public string LargeScreenshotImage3
         {
-            get { return _largeScreenshotImage3; }
+            get => _largeScreenshotImage3;
             set { Set(() => LargeScreenshotImage3, ref _largeScreenshotImage3, value); }
         }
 
         [DeserializeAs(Name = "similar")]
         public List<string> Similars
         {
-            get { return _similars; }
+            get => _similars;
             set { Set(() => Similars, ref _similars, value); }
         }
 
@@ -294,7 +292,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public string FilePath
         {
-            get { return _filePath; }
+            get => _filePath;
             set { Set(() => FilePath, ref _filePath, value); }
         }
 
@@ -303,7 +301,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public bool WatchInFullHdQuality
         {
-            get { return _watchInFullHdQuality; }
+            get => _watchInFullHdQuality;
             set
             {
                 var odlValue = _watchInFullHdQuality;
@@ -318,7 +316,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public bool FullHdAvailable
         {
-            get { return _fullHdAvailable; }
+            get => _fullHdAvailable;
             set { Set(() => FullHdAvailable, ref _fullHdAvailable, value); }
         }
 
@@ -327,7 +325,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public ObservableCollection<Subtitle> AvailableSubtitles
         {
-            get { return _availableSubtitles; }
+            get => _availableSubtitles;
             set { Set(() => AvailableSubtitles, ref _availableSubtitles, value); }
         }
 
@@ -336,7 +334,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public Subtitle SelectedSubtitle
         {
-            get { return _selectedSubtitle; }
+            get => _selectedSubtitle;
             set { Set(() => SelectedSubtitle, ref _selectedSubtitle, value); }
         }
 
@@ -345,7 +343,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public bool IsFavorite
         {
-            get { return _isFavorite; }
+            get => _isFavorite;
             set { Set(() => IsFavorite, ref _isFavorite, value); }
         }
 
@@ -354,7 +352,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public bool HasBeenSeen
         {
-            get { return _hasBeenSeen; }
+            get => _hasBeenSeen;
             set { Set(() => HasBeenSeen, ref _hasBeenSeen, value); }
         }
 
@@ -363,7 +361,7 @@ namespace Popcorn.Models.Movie
         /// </summary>
         public int ImdbId
         {
-            get { return _imdbId; }
+            get => _imdbId;
             set { Set(() => ImdbId, ref _imdbId, value); }
         }
     }

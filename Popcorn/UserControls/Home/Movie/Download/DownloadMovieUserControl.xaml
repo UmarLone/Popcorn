@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:controls1="clr-namespace:Popcorn.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:download="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Download"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
@@ -52,7 +53,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <Grid Opacity="0.0" Style="{StaticResource AnimationContentOnMovieDownloading}">
+        <Grid Opacity="1.0" Style="{StaticResource AnimationContentOnMovieDownloading}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="37*" />
                 <ColumnDefinition Width="36*" />
@@ -83,10 +84,10 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="18">
-                    <movie:MovieDownloadProgress
-                        DownloadProgress="{Binding MovieDownloadProgress}"
-                        DownloadRate="{Binding MovieDownloadRate}"
-                        MovieTitle="{Binding Movie.Title}" />
+                    <controls1:DownloadProgress
+                        Title="{Binding Movie.Title}"
+                        Progress="{Binding MovieDownloadProgress}"
+                        Rate="{Binding MovieDownloadRate}" />
                 </Label>
                 <StackPanel
                     Margin="0,10,0,10"

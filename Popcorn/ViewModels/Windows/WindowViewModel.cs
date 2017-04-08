@@ -97,6 +97,7 @@ namespace Popcorn.ViewModels.Windows
             RegisterCommands();
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             PageUri = "/Pages/HomePage.xaml";
+            ClearFolders();
         }
 
         /// <summary>
@@ -302,67 +303,7 @@ namespace Popcorn.ViewModels.Windows
                 IsShowFlyoutOpen = false;
             });
 
-            MainWindowClosingCommand = new RelayCommand(() =>
-            {
-                if (Directory.Exists(Constants.MovieDownloads))
-                {
-                    foreach (
-                        var filePath in Directory.GetDirectories(Constants.MovieDownloads)
-                    )
-                    {
-                        try
-                        {
-                            Logger.Debug(
-                                $"Deleting directory: {filePath}");
-                            Directory.Delete(filePath, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error($"Error while deleting directory: {ex.Message}.");
-                        }
-                    }
-                }
-
-                if (Directory.Exists(Constants.ShowDownloads))
-                {
-                    foreach (
-                        var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
-                            SearchOption.AllDirectories)
-                    )
-                    {
-                        try
-                        {
-                            Logger.Debug(
-                                $"Deleting file: {filePath}");
-                            File.Delete(filePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error($"Error while deleting file: {ex.Message}.");
-                        }
-                    }
-                }
-
-                if (Directory.Exists(Constants.MovieTorrentDownloads))
-                {
-                    foreach (
-                        var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
-                            SearchOption.AllDirectories)
-                    )
-                    {
-                        try
-                        {
-                            Logger.Debug(
-                                $"Deleting file: {filePath}");
-                            File.Delete(filePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error($"Error while deleting file: {ex.Message}.");
-                        }
-                    }
-                }
-            });
+            MainWindowClosingCommand = new RelayCommand(ClearFolders);
 
             OpenSettingsCommand = new RelayCommand(() => IsSettingsFlyoutOpen = !IsSettingsFlyoutOpen);
 
@@ -372,6 +313,71 @@ namespace Popcorn.ViewModels.Windows
                 await StartUpdateProcessAsync();
 #endif
             });
+        }
+
+        /// <summary>
+        /// Clear download folders
+        /// </summary>
+        private void ClearFolders()
+        {
+            if (Directory.Exists(Constants.MovieDownloads))
+            {
+                foreach (
+                    var filePath in Directory.GetDirectories(Constants.MovieDownloads)
+                )
+                {
+                    try
+                    {
+                        Logger.Debug(
+                            $"Deleting directory: {filePath}");
+                        Directory.Delete(filePath, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error while deleting directory: {ex.Message}.");
+                    }
+                }
+            }
+
+            if (Directory.Exists(Constants.ShowDownloads))
+            {
+                foreach (
+                    var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
+                        SearchOption.AllDirectories)
+                )
+                {
+                    try
+                    {
+                        Logger.Debug(
+                            $"Deleting file: {filePath}");
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error while deleting file: {ex.Message}.");
+                    }
+                }
+            }
+
+            if (Directory.Exists(Constants.MovieTorrentDownloads))
+            {
+                foreach (
+                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
+                        SearchOption.AllDirectories)
+                )
+                {
+                    try
+                    {
+                        Logger.Debug(
+                            $"Deleting file: {filePath}");
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error while deleting file: {ex.Message}.");
+                    }
+                }
+            }
         }
 
         /// <summary>
