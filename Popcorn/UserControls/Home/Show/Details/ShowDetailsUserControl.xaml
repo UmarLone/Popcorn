@@ -162,11 +162,13 @@
                     </Image.Effect>
                 </Image>
             </Grid>
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                Orientation="Vertical">
-                <StackPanel Orientation="Horizontal">
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <TextBlock
                         FontSize="30"
                         Foreground="White"
@@ -184,6 +186,7 @@
                         RatingValue="{Binding Show.Rating.Percentage, Converter={StaticResource RatingPercentageToNormalizedRatingConverter}}" />
                 </StackPanel>
                 <TextBlock
+                    Grid.Row="1"
                     Width="200"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
@@ -191,18 +194,20 @@
                     Foreground="WhiteSmoke">
                     <controls:GenresLabel Genres="{Binding Show.Genres}" />
                 </TextBlock>
-                <TextBlock
+                <controls:AnimatedScrollViewer
+                    Grid.Row="2"
                     Margin="0,10,0,0"
-                    FontSize="22"
-                    Foreground="White"
-                    ScrollViewer.CanContentScroll="True"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    Text="{Binding Show.Synopsis}"
-                    TextAlignment="Justify"
-                    TextTrimming="WordEllipsis"
-                    TextWrapping="Wrap" />
-            </StackPanel>
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+                    <TextBlock
+                        FontSize="18"
+                        Foreground="White"
+                        Text="{Binding Show.Synopsis}"
+                        TextAlignment="Justify"
+                        TextTrimming="WordEllipsis"
+                        TextWrapping="Wrap" />
+                </controls:AnimatedScrollViewer>
+            </Grid>
         </Grid>
         <Grid
             Grid.Row="1"
