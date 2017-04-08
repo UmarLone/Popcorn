@@ -623,7 +623,7 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetVideoTrailerUrlAsync ({key}) in {elapsedMs} milliseconds.");
             }
 
-            return wrapper.TrailerUrl ?? string.Empty;;
+            return wrapper?.TrailerUrl ?? string.Empty;;
         }
     }
 }
