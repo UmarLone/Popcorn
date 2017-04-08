@@ -351,9 +351,6 @@
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
-    <Compile Include="Helpers\CookieAwareContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Helpers\FindVisualChildHelper.cs" />
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />

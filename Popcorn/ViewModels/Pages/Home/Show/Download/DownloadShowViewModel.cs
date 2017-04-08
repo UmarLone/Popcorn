@@ -11,7 +11,6 @@ using lt;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
-using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Episode;
 using Popcorn.Services.Language;
 using Popcorn.Services.Subtitles;
@@ -197,6 +196,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
             message =>
             {
                 Episode = message.Episode;
+                EpisodeDownloadRate = 0d;
+                EpisodeDownloadProgress = 0d;
+                NbPeers = 0;
+                NbSeeders = 0;
                 var reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportEpisodeDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
@@ -366,14 +369,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                                 SearchOption.AllDirectories)
                                             .Where(s => s.Contains(handle.torrent_file().name()) &&
                                                         (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
-                                                         s.EndsWith(".mov")))
+                                                         s.EndsWith(".mov") || s.EndsWith(".avi")))
                                     )
                                     {
                                         _episodeFilePath = filePath;
                                         alreadyBuffered = true;
                                         episode.FilePath = filePath;
                                         Messenger.Default.Send(new PlayShowEpisodeMessage(episode));
-                                        EpisodeDownloadRate = 0d;
                                     }
                                 }
 

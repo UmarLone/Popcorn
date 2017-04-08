@@ -505,7 +505,6 @@ namespace Popcorn.UserControls.Player
             {
                 if (_isPlayerFullyInitialised)
                 {
-                    SemaphoreSlim.Release();
                     return;
                 }
 

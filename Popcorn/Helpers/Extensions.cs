@@ -178,21 +178,5 @@ namespace Popcorn.Helpers
                 oneAtATime.Release();
             }
         }
-
-        /// <summary>
-        /// Download file asynchronously
-        /// </summary>
-        /// <param name="wc">The WebClient instance</param>
-        /// <param name="address">The address of the file</param>
-        /// <param name="filename">The filename of the file</param>
-        /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns></returns>
-        public static async Task DownloadFileTaskAsync(this WebClient wc, string address, string filename,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            cancellationToken.Register(wc.CancelAsync);
-            await wc.DownloadFileTaskAsync(address, filename);
-        }
     }
 }

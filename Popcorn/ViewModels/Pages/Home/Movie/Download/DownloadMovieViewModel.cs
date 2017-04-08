@@ -201,6 +201,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
             message =>
             {
                 Movie = message.Movie;
+                MovieDownloadRate = 0d;
+                MovieDownloadProgress = 0d;
+                NbPeers = 0;
+                NbSeeders = 0;
                 var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
@@ -369,14 +373,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                                 SearchOption.AllDirectories)
                                             .Where(s => s.Contains(handle.torrent_file().name()) &&
                                                         (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
-                                                         s.EndsWith(".mov")))
+                                                         s.EndsWith(".mov") || s.EndsWith(".avi")))
                                     )
                                     {
                                         _movieFilePath = filePath;
                                         alreadyBuffered = true;
                                         movie.FilePath = filePath;
                                         Messenger.Default.Send(new PlayMovieMessage(movie));
-                                        MovieDownloadRate = 0d;
                                     }
                                 }
 
