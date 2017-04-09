@@ -277,9 +277,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WpfAnimatedGif, Version=1.4.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WpfAnimatedGif.1.4.14\lib\net\WpfAnimatedGif.dll</HintPath>
-    </Reference>
     <Reference Include="WPFLocalizeExtension, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WpfLocalizeExtension.2.3.2\lib\net35\WPFLocalizeExtension.dll</HintPath>
       <Private>True</Private>
@@ -802,6 +799,10 @@
     <ProjectReference Include="..\Popcorn.ImageLoader\Popcorn.ImageLoader.csproj">
       <Project>{7c68c43b-0e5c-4b9f-9f49-045caa39d8b3}</Project>
       <Name>Popcorn.ImageLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Popcorn.GifLoader\Popcorn.GifLoader.csproj">
+      <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
+      <Name>Popcorn.GifLoader</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

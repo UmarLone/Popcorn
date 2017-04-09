@@ -18,8 +18,8 @@ namespace Popcorn.ImageLoader
 
         public static readonly DependencyProperty SourceTypeProperty =
             DependencyProperty.RegisterAttached("SourceType", typeof(SourceType), typeof(Loader),
-                new UIPropertyMetadata(SourceType.LocalDisk));
-        
+                new UIPropertyMetadata(SourceType.ExternalResource));
+
         [AttachedPropertyBrowsableForType(typeof(Image))]
         public static string GetSource(Image obj)
         {
@@ -97,7 +97,8 @@ namespace Popcorn.ImageLoader
         }
 
         public static readonly DependencyProperty IsLoadingProperty =
-            DependencyProperty.RegisterAttached("IsLoading", typeof(bool), typeof(Loader), new UIPropertyMetadata(true));
+            DependencyProperty.RegisterAttached("IsLoading", typeof(bool), typeof(Loader),
+                new UIPropertyMetadata(true));
 
         [AttachedPropertyBrowsableForType(typeof(Image))]
         public static bool GetErrorDetected(Image obj)

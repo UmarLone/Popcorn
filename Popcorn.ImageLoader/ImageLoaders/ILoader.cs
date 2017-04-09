@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Popcorn.ImageLoader.ImageLoaders
 {
     internal interface ILoader
     {
-        Stream Load(string source);
+        Task<Stream> Load(string source);
     }
 }
