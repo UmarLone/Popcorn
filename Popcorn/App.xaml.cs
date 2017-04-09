@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
+using Popcorn.Windows;
 using WPFLocalizeExtension.Engine;
 
 namespace Popcorn
@@ -21,6 +24,11 @@ namespace Popcorn
         /// Logger of the class
         /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Splash screen dispatcher
+        /// </summary>
+        private Dispatcher _splashScreenDispatcher;
 
         /// <summary>
         /// Initializes a new instance of the App class.
@@ -79,7 +87,8 @@ namespace Popcorn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void Dispatcher_UnhandledException(object sender,
+            System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             CurrentDomainUnhandledException(sender, new UnhandledExceptionEventArgs(e.Exception, false));
@@ -108,8 +117,36 @@ namespace Popcorn
             if (ex != null)
             {
                 Logger.Fatal(ex);
-                Messenger.Default.Send(new UnhandledExceptionMessage(new Exception(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError"))));
+                Messenger.Default.Send(
+                    new UnhandledExceptionMessage(
+                        new Exception(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError"))));
             }
+        }
+
+        private void OnStartup(object sender, StartupEventArgs e)
+        {
+            var splashScreenThread = new Thread(() =>
+            {
+                var splashScreen = new Windows.SplashScreen();
+                _splashScreenDispatcher = splashScreen.Dispatcher;
+                splashScreen.Show();
+                Dispatcher.Run();
+                splashScreen.Close();
+            });
+
+            splashScreenThread.SetApartmentState(ApartmentState.STA);
+            splashScreenThread.Start();
+
+            var mainWindow = new MainWindow();
+            MainWindow = mainWindow;
+            mainWindow.Loaded += async (sender2, e2) =>
+                await mainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    _splashScreenDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                    mainWindow.Activate();
+                });
+
+            mainWindow.Show();
         }
     }
 }

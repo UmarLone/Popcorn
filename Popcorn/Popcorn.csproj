@@ -533,6 +533,9 @@
     <Compile Include="Services\Movies\Trailer\MovieTrailerService.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Tabs\MovieTabsViewModel.cs" />
+    <Compile Include="Windows\SplashScreen.xaml.cs">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\CapitalizeText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -705,6 +708,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\SplashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -764,6 +771,9 @@
     <Folder Include="Services\Animes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\SplashScreen.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="VCRedist\concrt140.dll" />
     <Content Include="VCRedist\mfc140.dll" />
     <Content Include="VCRedist\mfc140chs.dll" />
@@ -789,6 +799,10 @@
     <ProjectReference Include="..\Popcorn.ImageLoader\Popcorn.ImageLoader.csproj">
       <Project>{7c68c43b-0e5c-4b9f-9f49-045caa39d8b3}</Project>
       <Name>Popcorn.ImageLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Popcorn.GifLoader\Popcorn.GifLoader.csproj">
+      <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
+      <Name>Popcorn.GifLoader</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

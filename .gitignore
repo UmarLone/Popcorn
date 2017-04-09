@@ -52,6 +52,8 @@ Popcorn.Tests/Bin
 Popcorn.Tests/Obj
 Popcorn.ImageLoader/Bin
 Popcorn.ImageLoader/Obj
+Popcorn.GifLoader/Bin
+Popcorn.GifLoader/Obj
 
 # User files
 *.suo

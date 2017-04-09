@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Popcorn.ImageLoader.ImageLoaders
 {
@@ -11,14 +9,16 @@ namespace Popcorn.ImageLoader.ImageLoaders
     {
         #region ILoader Members
 
-        public System.IO.Stream Load(string source)
+        public async Task<Stream> Load(string source)
         {
-            var webClient = new WebClient();
-            byte[] html = webClient.DownloadData(source);
+            using (var client = new HttpClient())
+            {
+                var data = await client.GetByteArrayAsync(source);
 
-            if (html == null || html.Count() == 0) return null;
+                if (data == null || data.Count() == 0) return null;
 
-            return new MemoryStream(html);
+                return new MemoryStream(data);
+            }
         }
 
         #endregion
