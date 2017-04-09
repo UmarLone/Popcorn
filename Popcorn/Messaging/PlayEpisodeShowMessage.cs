@@ -19,12 +19,19 @@ namespace Popcorn.Messaging
         public readonly EpisodeShowJson Episode;
 
         /// <summary>
+        /// The buffer progress
+        /// </summary>
+        public readonly Progress<double> BufferProgress;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="episode">Episode</param>
-        public PlayShowEpisodeMessage(EpisodeShowJson episode)
+        /// <param name="bufferProgress">The buffer progress</param>
+        public PlayShowEpisodeMessage(EpisodeShowJson episode, Progress<double> bufferProgress)
         {
             Episode = episode;
+            BufferProgress = bufferProgress;
         }
     }
 }

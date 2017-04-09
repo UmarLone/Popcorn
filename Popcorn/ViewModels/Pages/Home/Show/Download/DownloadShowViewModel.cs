@@ -81,6 +81,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private string _episodeFilePath;
 
         /// <summary>
+        /// The download progress
+        /// </summary>
+        private Progress<double> _reportDownloadProgress;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="languageService">The language service</param>
@@ -200,7 +205,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                 EpisodeDownloadProgress = 0d;
                 NbPeers = 0;
                 NbSeeders = 0;
-                var reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
+                _reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportEpisodeDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
@@ -231,7 +236,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                         {
                             await
                                 DownloadEpisodeAsync(message.Episode,
-                                    reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
+                                    _reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
                                     _cancellationDownloadingEpisode);
                         }
                         catch (Exception ex)
@@ -278,7 +283,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private void ReportEpisodeDownloadProgress(double value)
         {
             EpisodeDownloadProgress = value;
-            if (value < Constants.Constants.MinimumBuffering)
+            if (value < Constants.Constants.MinimumMovieBuffering)
                 return;
 
             if (!_isEpisodeBuffered)
@@ -359,7 +364,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                 if (handle.need_save_resume_data())
                                     handle.save_resume_data(1);
 
-                                if (progress >= Constants.Constants.MinimumBuffering && !alreadyBuffered)
+                                if (progress >= Constants.Constants.MinimumShowBuffering && !alreadyBuffered)
                                 {
                                     // Get episode file
                                     foreach (
@@ -375,7 +380,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                         _episodeFilePath = filePath;
                                         alreadyBuffered = true;
                                         episode.FilePath = filePath;
-                                        Messenger.Default.Send(new PlayShowEpisodeMessage(episode));
+                                        Messenger.Default.Send(new PlayShowEpisodeMessage(episode,
+                                            _reportDownloadProgress));
                                     }
                                 }
 

@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System;
+using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Models.Movie;
 
 namespace Popcorn.Messaging
@@ -14,12 +15,19 @@ namespace Popcorn.Messaging
         public readonly MovieJson Movie;
 
         /// <summary>
+        /// The buffer progress
+        /// </summary>
+        public readonly Progress<double> BufferProgress;
+
+        /// <summary>
         /// Initialize a new instance of PlayMovieMessage class
         /// </summary>
         /// <param name="movie">The movie</param>
-        public PlayMovieMessage(MovieJson movie)
+        /// <param name="bufferProgress">The buffer progress</param>
+        public PlayMovieMessage(MovieJson movie, Progress<double> bufferProgress)
         {
             Movie = movie;
+            BufferProgress = bufferProgress;
         }
     }
 }

@@ -84,6 +84,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private string _movieFilePath;
 
         /// <summary>
+        /// The download progress
+        /// </summary>
+        private Progress<double> _reportDownloadProgress;
+
+        /// <summary>
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
@@ -205,7 +210,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 MovieDownloadProgress = 0d;
                 NbPeers = 0;
                 NbSeeders = 0;
-                var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
+                _reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
@@ -236,7 +241,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                         {
                             await
                                 DownloadMovieAsync(message.Movie,
-                                    reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
+                                    _reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
                                     _cancellationDownloadingMovie);
                         }
                         catch (Exception ex)
@@ -282,7 +287,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private void ReportMovieDownloadProgress(double value)
         {
             MovieDownloadProgress = value;
-            if (value < Constants.Constants.MinimumBuffering)
+            if (value < Constants.Constants.MinimumMovieBuffering)
                 return;
 
             if (!_isMovieBuffered)
@@ -363,7 +368,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                 if (handle.need_save_resume_data())
                                     handle.save_resume_data(1);
 
-                                if (progress >= Constants.Constants.MinimumBuffering && !alreadyBuffered)
+                                if (progress >= Constants.Constants.MinimumMovieBuffering && !alreadyBuffered)
                                 {
                                     // Get movie file
                                     foreach (
@@ -379,7 +384,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                         _movieFilePath = filePath;
                                         alreadyBuffered = true;
                                         movie.FilePath = filePath;
-                                        Messenger.Default.Send(new PlayMovieMessage(movie));
+                                        Messenger.Default.Send(new PlayMovieMessage(movie, _reportDownloadProgress));
                                     }
                                 }
 

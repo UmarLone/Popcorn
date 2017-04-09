@@ -140,6 +140,10 @@ namespace Popcorn.UserControls.Player
             InputManager.Current.PreProcessInput += OnActivity;
 
             vm.StoppedPlayingMedia += OnStoppedPlayingMedia;
+            if (vm.BufferProgress != null)
+            {
+                vm.BufferProgress.ProgressChanged += OnBufferProgressChanged;
+            }
 
             _mediaType = vm.MediaType;
 
@@ -156,6 +160,16 @@ namespace Popcorn.UserControls.Player
 
             Player.VlcMediaPlayer.EncounteredError += EncounteredError;
             await PlayMedia();
+        }
+
+        /// <summary>
+        /// When buffer progress has changed, update buffer bar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBufferProgressChanged(object sender, double e)
+        {
+            BufferProgress.Value = Math.Round(e);
         }
 
         /// <summary>
@@ -485,6 +499,11 @@ namespace Popcorn.UserControls.Player
             if (vm != null)
                 vm.StoppedPlayingMedia -= OnStoppedPlayingMedia;
 
+            if (vm?.BufferProgress != null)
+            {
+                vm.BufferProgress.ProgressChanged -= OnBufferProgressChanged;
+            }
+
             _disposed = true;
 
             if (disposing)
@@ -511,7 +530,7 @@ namespace Popcorn.UserControls.Player
                 _isPlayerFullyInitialised = true;
                 Player.Visibility = Visibility.Hidden;
 
-                bool wasMaximized = false;
+                var wasMaximized = false;
                 var watcher = new Stopwatch();
                 watcher.Start();
                 while (Player.ActualHeight < 1d)
