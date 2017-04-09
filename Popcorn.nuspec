@@ -429,6 +429,7 @@
         <file src="System.ValueTuple.dll" target="lib\net45\System.ValueTuple.dll" />
         <file src="System.Spatial.dll" target="lib\net45\System.Spatial.dll" />
         <file src="Microsoft.Data.Edm.dll" target="lib\net45\Microsoft.Data.Edm.dll" />
+        <file src="WpfAnimatedGif.dll" target="lib\net45\WpfAnimatedGif.dll" />
         <file src="Microsoft.Data.OData.dll" target="lib\net45\Microsoft.Data.OData.dll" />
         <file src="System.Data.SqlServerCe.dll" target="lib\net45\System.Data.SqlServerCe.dll" />
         <file src="System.Diagnostics.DiagnosticSource.dll" target="lib\net45\System.Diagnostics.DiagnosticSource.dll" />
@@ -446,5 +447,6 @@
         <file src="WPFLocalizeExtension.dll" target="lib\net45\WPFLocalizeExtension.dll" />
         <file src="XAMLMarkupExtensions.dll" target="lib\net45\XAMLMarkupExtensions.dll" />
         <file src="Popcorn.ImageLoader.dll" target="lib\net45\Popcorn.ImageLoader.dll" />
+        <file src="Assets\SplashScreen.gif" target="lib\net45\Assets\SplashScreen.gif" />
     </files>
 </package>
