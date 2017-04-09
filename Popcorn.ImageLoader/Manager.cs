@@ -212,11 +212,18 @@ namespace Popcorn.ImageLoader
             if (!string.IsNullOrWhiteSpace(source))
             {
                 Stream imageStream = null;
+                SourceType sourceType = SourceType.ExternalResource;
+
+                image.Dispatcher.Invoke(new ThreadStart(delegate
+                {
+                    sourceType = Loader.GetSourceType(image);
+                }));
+
                 try
                 {
                     if (loadTask.Stream == null)
                     {
-                        ILoader loader = new ExternalLoader();
+                        ILoader loader = LoaderFactory.CreateLoader(sourceType);
                         imageStream = await loader.Load(source);
                         loadTask.Stream = imageStream;
                     }

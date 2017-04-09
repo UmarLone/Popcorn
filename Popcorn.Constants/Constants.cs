@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Popcorn.Helpers
+namespace Popcorn.Constants
 {
     /// <summary>
     /// Constants of the project
@@ -10,8 +10,8 @@ namespace Popcorn.Helpers
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.23";
-        
+        public const string AppVersion = "1.9.24";
+
         /// <summary>
         /// Endpoint to API
         /// </summary>
@@ -41,6 +41,11 @@ namespace Popcorn.Helpers
         /// Url of the server updates
         /// </summary>
         public const string GithubRepository = "https://github.com/bbougot/Popcorn";
+
+        /// <summary>
+        /// Directory of assets
+        /// </summary>
+        public static string Assets { get; } = Path.GetTempPath() + "Popcorn\\Assets\\";
 
         /// <summary>
         /// Directory of downloaded movies

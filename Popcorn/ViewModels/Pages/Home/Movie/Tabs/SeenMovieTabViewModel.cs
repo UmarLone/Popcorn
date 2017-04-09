@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Async;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,8 +60,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
+                    var moviesList = movies.ToList();
                     Movies.Clear();
-                    Movies.AddRange(movies);
+                    Movies.AddRange(moviesList);
                     IsLoadingMovies = false;
                     IsMovieFound = Movies.Any();
                     CurrentNumberOfMovies = Movies.Count;

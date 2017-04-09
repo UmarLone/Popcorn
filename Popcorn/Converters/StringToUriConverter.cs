@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using GalaSoft.MvvmLight.Threading;
+using Popcorn.IO;
 
 namespace Popcorn.Converters
 {
@@ -22,6 +27,27 @@ namespace Popcorn.Converters
         {
             if (string.IsNullOrEmpty(value?.ToString())) return null;
             var path = value.ToString();
+            var fileName = path.Substring(path.LastIndexOf("/images/", StringComparison.InvariantCulture) + 1);
+            fileName = fileName.Replace('/', '_');
+            var files = FastDirectoryEnumerator.EnumerateFiles(Constants.Constants.Assets);
+            var file = files.FirstOrDefault(a => a.Name.Contains(fileName));
+            if (file != null)
+            {
+                return new Uri(file.Path, UriKind.Absolute);
+            }
+
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                using (var client = new HttpClient())
+                {
+                    var data = await client.GetByteArrayAsync(path);
+                    {
+                        if (data == null || data.Length == 0) return;
+                        File.WriteAllBytes(Constants.Constants.Assets + fileName, data);
+                    }
+                }
+            });
+
             return new Uri(path, UriKind.Absolute);
         }
 

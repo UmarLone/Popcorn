@@ -218,7 +218,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                             message.Movie.SelectedSubtitle.Sub.LanguageName !=
                             LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
                         {
-                            var path = Path.Combine(Constants.Subtitles + message.Movie.ImdbCode);
+                            var path = Path.Combine(Constants.Constants.Subtitles + message.Movie.ImdbCode);
                             Directory.CreateDirectory(path);
                             var subtitlePath =
                                 _subtitlesService.DownloadSubtitleToPath(path,
@@ -282,7 +282,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private void ReportMovieDownloadProgress(double value)
         {
             MovieDownloadProgress = value;
-            if (value < Constants.MinimumBuffering)
+            if (value < Constants.Constants.MinimumBuffering)
                 return;
 
             if (!_isMovieBuffered)
@@ -330,14 +330,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     var result =
                         await
                             DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
-                                Constants.MovieTorrentDownloads + movie.ImdbCode + ".torrent");
+                                Constants.Constants.MovieTorrentDownloads + movie.ImdbCode + ".torrent");
                     var torrentPath = string.Empty;
                     if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
                         torrentPath = result.Item2;
 
                     using (var addParams = new add_torrent_params
                     {
-                        save_path = Constants.MovieDownloads,
+                        save_path = Constants.Constants.MovieDownloads,
                         ti = new torrent_info(torrentPath)
                     })
                     using (var handle = session.add_torrent(addParams))
@@ -363,7 +363,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                 if (handle.need_save_resume_data())
                                     handle.save_resume_data(1);
 
-                                if (progress >= Constants.MinimumBuffering && !alreadyBuffered)
+                                if (progress >= Constants.Constants.MinimumBuffering && !alreadyBuffered)
                                 {
                                     // Get movie file
                                     foreach (

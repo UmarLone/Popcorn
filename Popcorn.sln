@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.ImageLoader", "Popc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.GifLoader", "Popcorn.GifLoader\Popcorn.GifLoader.csproj", "{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.IO", "Popcorn.IO\Popcorn.IO.csproj", "{2EE35489-4761-44C6-A612-8619DB2A45E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.Constants", "Popcorn.Constants\Popcorn.Constants.csproj", "{094A69CE-C69E-4EF0-9321-BA16F7A89080}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EE35489-4761-44C6-A612-8619DB2A45E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EE35489-4761-44C6-A612-8619DB2A45E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EE35489-4761-44C6-A612-8619DB2A45E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EE35489-4761-44C6-A612-8619DB2A45E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{094A69CE-C69E-4EF0-9321-BA16F7A89080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{094A69CE-C69E-4EF0-9321-BA16F7A89080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{094A69CE-C69E-4EF0-9321-BA16F7A89080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{094A69CE-C69E-4EF0-9321-BA16F7A89080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

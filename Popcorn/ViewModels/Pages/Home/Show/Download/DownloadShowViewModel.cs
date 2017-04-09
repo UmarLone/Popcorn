@@ -213,7 +213,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                             message.Episode.SelectedSubtitle.Sub.LanguageName !=
                             LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
                         {
-                            var path = Path.Combine(Constants.Subtitles + message.Episode.ImdbId);
+                            var path = Path.Combine(Constants.Constants.Subtitles + message.Episode.ImdbId);
                             Directory.CreateDirectory(path);
                             var subtitlePath =
                                 _subtitlesService.DownloadSubtitleToPath(path,
@@ -278,7 +278,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private void ReportEpisodeDownloadProgress(double value)
         {
             EpisodeDownloadProgress = value;
-            if (value < Constants.MinimumBuffering)
+            if (value < Constants.Constants.MinimumBuffering)
                 return;
 
             if (!_isEpisodeBuffered)
@@ -333,7 +333,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                     var error = new error_code();
                     var addParams = new add_torrent_params
                     {
-                        save_path = Constants.ShowDownloads,
+                        save_path = Constants.Constants.ShowDownloads,
                     };
                     magnet.parse_magnet_uri(magnetUri, addParams, error);
                     using (var handle = session.add_torrent(addParams))
@@ -359,7 +359,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                 if (handle.need_save_resume_data())
                                     handle.save_resume_data(1);
 
-                                if (progress >= Constants.MinimumBuffering && !alreadyBuffered)
+                                if (progress >= Constants.Constants.MinimumBuffering && !alreadyBuffered)
                                 {
                                     // Get episode file
                                     foreach (

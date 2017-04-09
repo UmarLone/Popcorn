@@ -41,12 +41,12 @@ namespace Popcorn.Services.Shows.Show
             var wrapper = new ShowResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.MaxShowsPerPage;
+                limit = Constants.Constants.MaxShowsPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "shows");
             request.AddParameter("limit", limit);
