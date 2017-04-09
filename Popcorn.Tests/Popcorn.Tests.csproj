@@ -124,6 +124,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Constants.csproj">
+      <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
+      <Name>Popcorn.Constants</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Popcorn\Popcorn.csproj">
       <Project>{5bfadf51-ce11-45cf-8e36-dc9dc061c274}</Project>
       <Name>Popcorn</Name>

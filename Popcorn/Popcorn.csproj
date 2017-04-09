@@ -394,7 +394,6 @@
     <Compile Include="Entity\Localization\Language.cs" />
     <Compile Include="Entity\Application\Settings.cs" />
     <Compile Include="Events\WindowStateChangedEventArgs.cs" />
-    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\DownloadFileHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\LocalizationProviderHelper.cs" />
@@ -796,6 +795,10 @@
     <Content Include="VCRedist\vcruntime140.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Constants.csproj">
+      <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
+      <Name>Popcorn.Constants</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Popcorn.ImageLoader\Popcorn.ImageLoader.csproj">
       <Project>{7c68c43b-0e5c-4b9f-9f49-045caa39d8b3}</Project>
       <Name>Popcorn.ImageLoader</Name>
@@ -803,6 +806,10 @@
     <ProjectReference Include="..\Popcorn.GifLoader\Popcorn.GifLoader.csproj">
       <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
       <Name>Popcorn.GifLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Popcorn.IO\Popcorn.IO.csproj">
+      <Project>{2ee35489-4761-44c6-a612-8619db2a45e6}</Project>
+      <Name>Popcorn.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

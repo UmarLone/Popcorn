@@ -98,7 +98,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             RegisterMessages();
             RegisterCommands();
 
-            MaxMoviesPerPage = Constants.MaxMoviesPerPage;
+            MaxMoviesPerPage = Constants.Constants.MaxMoviesPerPage;
             CancellationLoadingMovies = new CancellationTokenSource();
         }
 

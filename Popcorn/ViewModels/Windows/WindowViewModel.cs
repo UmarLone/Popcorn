@@ -320,10 +320,10 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         private void ClearFolders()
         {
-            if (Directory.Exists(Constants.MovieDownloads))
+            if (Directory.Exists(Constants.Constants.MovieDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetDirectories(Constants.MovieDownloads)
+                    var filePath in Directory.GetDirectories(Constants.Constants.MovieDownloads)
                 )
                 {
                     try
@@ -339,10 +339,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Constants.ShowDownloads))
+            if (Directory.Exists(Constants.Constants.ShowDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Constants.Constants.ShowDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -359,10 +359,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Constants.MovieTorrentDownloads))
+            if (Directory.Exists(Constants.Constants.MovieTorrentDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Constants.Constants.MovieTorrentDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -391,7 +391,7 @@ namespace Popcorn.ViewModels.Windows
                 "Looking for updates...");
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
+                using (var updateManager = await UpdateManager.GitHubUpdateManager(Constants.Constants.GithubRepository))
                 {
                     var updateInfo = await updateManager.CheckForUpdate();
                     if (updateInfo == null)

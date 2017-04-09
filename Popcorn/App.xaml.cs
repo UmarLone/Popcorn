@@ -39,7 +39,7 @@ namespace Popcorn
                 "Popcorn starting...");
             var watchStart = Stopwatch.StartNew();
 
-            Directory.CreateDirectory(Constants.Logging);
+            Directory.CreateDirectory(Constants.Constants.Logging);
 
             DispatcherHelper.Initialize();
 

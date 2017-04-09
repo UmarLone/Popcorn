@@ -86,7 +86,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             RegisterMessages();
             RegisterCommands();
 
-            MaxShowsPerPage = Constants.MaxShowsPerPage;
+            MaxShowsPerPage = Constants.Constants.MaxShowsPerPage;
             CancellationLoadingShows = new CancellationTokenSource();
         }
 

@@ -33,7 +33,7 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         public MovieService()
         {
-            TmdbClient = new TMDbClient(Constants.TmDbClientId, true)
+            TmdbClient = new TMDbClient(Constants.Constants.TmDbClientId, true)
             {
                 MaxRetryCount = 50
             };
@@ -89,7 +89,7 @@ namespace Popcorn.Services.Movies.Movie
         {
             var watch = Stopwatch.StartNew();
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}/{movie}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddUrlSegment("movie", imdbCode);
@@ -231,12 +231,12 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.MaxMoviesPerPage;
+                limit = Constants.Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddParameter("limit", limit);
@@ -274,14 +274,27 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             var result = wrapper?.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(result, async movie =>
-            {
-                await TranslateMovieAsync(movie);
-            });
+            await ProcessTranslations(result);
 
             var nbResult = wrapper?.TotalMovies ?? 0;
 
             return (result, nbResult);
+        }
+
+        /// <summary>
+        /// Process translations for a list of movies
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private async Task ProcessTranslations(IEnumerable<MovieJson> result)
+        {
+            await result.ParallelForEachAsync(async movie =>
+            {
+                await Task.WhenAll(new List<Task>
+                {
+                    TranslateMovieAsync(movie)
+                });
+            });
         }
 
         /// <summary>
@@ -304,12 +317,12 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.MaxMoviesPerPage;
+                limit = Constants.Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddParameter("limit", limit);
@@ -346,10 +359,7 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             var result = wrapper?.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(result, async movie =>
-            {
-                await TranslateMovieAsync(movie);
-            });
+            await ProcessTranslations(result);
 
             var nbResult = wrapper?.TotalMovies ?? 0;
 
@@ -376,12 +386,12 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.MaxMoviesPerPage;
+                limit = Constants.Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddParameter("limit", limit);
@@ -418,10 +428,7 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             var result = wrapper?.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(result, async movie =>
-            {
-                await TranslateMovieAsync(movie);
-            });
+            await ProcessTranslations(result);
 
             var nbResult = wrapper?.TotalMovies ?? 0;
 
@@ -450,12 +457,12 @@ namespace Popcorn.Services.Movies.Movie
             var wrapper = new MovieResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.MaxMoviesPerPage;
+                limit = Constants.Constants.MaxMoviesPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddParameter("limit", limit);
@@ -492,10 +499,7 @@ namespace Popcorn.Services.Movies.Movie
             }
 
             var result = wrapper?.Movies ?? new List<MovieJson>();
-            Parallel.ForEach(result, async movie =>
-            {
-                await TranslateMovieAsync(movie);
-            });
+            await ProcessTranslations(result);
 
             var nbResult = wrapper?.TotalMovies ?? 0;
 
@@ -554,7 +558,8 @@ namespace Popcorn.Services.Movies.Movie
             try
             {
                 await Task.Run(
-                    async () => trailers = (await TmdbClient.GetMovieAsync(movie.ImdbCode, MovieMethods.Videos))?.Videos,
+                    async () => trailers = (await TmdbClient.GetMovieAsync(movie.ImdbCode, MovieMethods.Videos))
+                        ?.Videos,
                     ct);
             }
             catch (Exception exception) when (exception is TaskCanceledException)
@@ -591,7 +596,7 @@ namespace Popcorn.Services.Movies.Movie
 
             var wrapper = new TrailerResponse();
 
-            var restClient = new RestClient(Constants.PopcornApi);
+            var restClient = new RestClient(Constants.Constants.PopcornApi);
             var request = new RestRequest("/{segment}/{key}", Method.GET);
             request.AddUrlSegment("segment", "trailer");
             request.AddUrlSegment("key", key);
@@ -623,7 +628,7 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetVideoTrailerUrlAsync ({key}) in {elapsedMs} milliseconds.");
             }
 
-            return wrapper?.TrailerUrl ?? string.Empty;;
+            return wrapper?.TrailerUrl ?? string.Empty;
         }
     }
 }
