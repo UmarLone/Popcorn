@@ -138,41 +138,39 @@
                                 Width="22"
                                 Height="22"
                                 Margin="14"
-                                Foreground="White"
                                 Content="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"
+                                Foreground="White"
                                 Style="{DynamicResource PathIconContentControlStyle}" />
                         </Button>
                     </Grid>
-                    <Grid
+                    <StackPanel
+                        x:Name="SearchBar"
                         Grid.Row="0"
                         Background="#cc4d4d"
+                        Orientation="Horizontal"
                         Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToInverseVisibilityConverter}}">
-                        <StackPanel
-                            x:Name="SearchBar"
-                            Background="#cc4d4d"
-                            Orientation="Horizontal">
-                            <Button
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Click="HamburgerButtonOnClick"
-                                Style="{StaticResource HamburgerButtonStyle}">
-                                <ContentControl
-                                    Width="22"
-                                    Height="22"
-                                    Margin="10"
-                                    Content="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"
-                                    Foreground="White"
-                                    Style="{DynamicResource PathIconContentControlStyle}" />
-                            </Button>
-                            <search:SearchMovieUserControl
-                                Width="{Binding ElementName=SearchBar, Path=ActualWidth, Converter={StaticResource RatioConverter}, ConverterParameter=0.7}"
-                                Margin="5,0,0,0"
-                                DataContext="{Binding Search}" />
-                        </StackPanel>
-                    </Grid>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Click="HamburgerButtonOnClick"
+                            Style="{StaticResource HamburgerButtonStyle}">
+                            <ContentControl
+                                Width="22"
+                                Height="22"
+                                Margin="10"
+                                Content="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"
+                                Foreground="White"
+                                Style="{DynamicResource PathIconContentControlStyle}" />
+                        </Button>
+                        <search:SearchMovieUserControl
+                            Width="{Binding ElementName=SearchBar, Path=ActualWidth, Converter={StaticResource RatioConverter}, ConverterParameter=0.7}"
+                            Margin="5,0,0,0"
+                            DataContext="{Binding Search}" />
+                    </StackPanel>
                     <Grid
                         Grid.Row="1"
                         Background="#11171c"
+                        PreviewMouseDown="OnPreviewMouseDown"
                         Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToVisibilityConverter}}">
                         <StackPanel Orientation="Vertical">
                             <Rectangle

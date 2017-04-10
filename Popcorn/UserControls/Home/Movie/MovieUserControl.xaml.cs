@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace Popcorn.UserControls.Home.Movie
 {
@@ -15,6 +16,11 @@ namespace Popcorn.UserControls.Home.Movie
         private void HamburgerButtonOnClick(object sender, RoutedEventArgs e)
         {
             SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        }
+
+        private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SplitView.IsPaneOpen = true;
         }
     }
 }
