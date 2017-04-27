@@ -20,10 +20,12 @@
         <ResourceDictionary>
             <converters:RatioConverter x:Key="RatioConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
-            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
 
+            <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Background" Value="#11171c" />
+            </Style>
             <Style
                 x:Key="ListBoxButtons"
                 BasedOn="{StaticResource MetroListBox}"
@@ -76,135 +78,23 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <controls1:SplitView x:Name="SplitView">
+        <controls1:SplitView IsPaneOpen="True">
             <controls1:SplitView.Pane>
-                <Grid x:Name="Pane" PreviewMouseDown="OnPreviewMouseDown">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid
-                        Grid.Row="0"
-                        Background="#cc4d4d"
-                        Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Viewbox
-                            Width="24"
-                            Height="24"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center">
-                            <Canvas Width="24" Height="24">
-                                <Path Data="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" Fill="White" />
-                            </Canvas>
-                        </Viewbox>
-                    </Grid>
-                    <Grid
                         x:Name="SearchBar"
                         Grid.Row="0"
-                        Background="#cc4d4d"
-                        Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToInverseVisibilityConverter}}">
+                        Background="#cc4d4d">
                         <search:SearchMovieUserControl Width="{Binding ElementName=SearchBar, Path=ActualWidth, Converter={StaticResource RatioConverter}, ConverterParameter=0.8}" DataContext="{Binding Search}" />
-                    </Grid>
-                    <Grid
-                        Grid.Row="1"
-                        Background="#11171c"
-                        Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel Orientation="Vertical">
-                            <Rectangle
-                                Width="24"
-                                Height="22"
-                                Margin="13,15,0,0"
-                                HorizontalAlignment="Left"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_medical_pulse}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-
-                            <Rectangle
-                                Width="24"
-                                Height="23"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_star}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                            <Rectangle
-                                Width="24"
-                                Height="24"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_calendar}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                            <Separator
-                                Width="38"
-                                Height="2"
-                                Margin="5,25,0,0"
-                                HorizontalAlignment="Left"
-                                Foreground="GhostWhite" />
-                            <Rectangle
-                                Width="24"
-                                Height="22"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_heart}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                            <Rectangle
-                                Width="24"
-                                Height="14"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_eye}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                            <Separator
-                                Width="38"
-                                Height="2"
-                                Margin="5,25,0,0"
-                                HorizontalAlignment="Left"
-                                Foreground="GhostWhite" />
-                            <Viewbox
-                                Width="24"
-                                Height="24"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M12,15.4V6.1L13.71,10.13L18.09,10.5L14.77,13.39L15.76,17.67M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z" Fill="White" />
-                                </Canvas>
-                            </Viewbox>
-                            <Separator
-                                Width="38"
-                                Height="2"
-                                Margin="5,25,0,0"
-                                HorizontalAlignment="Left"
-                                Foreground="GhostWhite" />
-                            <Viewbox
-                                Width="24"
-                                Height="24"
-                                Margin="13,25,0,0"
-                                HorizontalAlignment="Left">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M7,5H21V7H7V5M7,13V11H21V13H7M4,4.5A1.5,1.5 0 0,1 5.5,6A1.5,1.5 0 0,1 4,7.5A1.5,1.5 0 0,1 2.5,6A1.5,1.5 0 0,1 4,4.5M4,10.5A1.5,1.5 0 0,1 5.5,12A1.5,1.5 0 0,1 4,13.5A1.5,1.5 0 0,1 2.5,12A1.5,1.5 0 0,1 4,10.5M7,19V17H21V19H7M4,16.5A1.5,1.5 0 0,1 5.5,18A1.5,1.5 0 0,1 4,19.5A1.5,1.5 0 0,1 2.5,18A1.5,1.5 0 0,1 4,16.5Z" Fill="White" />
-                                </Canvas>
-                            </Viewbox>
-                        </StackPanel>
                     </Grid>
                     <Grid
                         x:Name="MenuBar"
                         Grid.Row="1"
-                        Background="#11171c"
-                        Visibility="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource BoolToInverseVisibilityConverter}}">
+                        Background="#11171c">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="15" />

@@ -12,21 +12,6 @@ namespace Popcorn.UserControls.Home.Movie
         public MovieUserControl()
         {
             InitializeComponent();
-            Loaded += MovieUserControl_Loaded;
-        }
-
-        private void MovieUserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            var window = System.Windows.Window.GetWindow(this);
-            if (window == null) return;
-
-            window.PreviewMouseDown += OnPreviewMouseDown;
-        }
-
-        private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var element = e.OriginalSource as FrameworkElement;
-            SplitView.IsPaneOpen = element?.FindParentElement("Pane") != null;
         }
     }
 }
