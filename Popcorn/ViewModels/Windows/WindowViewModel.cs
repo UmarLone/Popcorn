@@ -201,6 +201,7 @@ namespace Popcorn.ViewModels.Windows
                     {
                         Messenger.Default.Send(new StopPlayingEpisodeMessage());
                     },
+                    message.BufferProgress,
                     message.Episode.SelectedSubtitle?.FilePath);
 
                 ApplicationService.IsMediaPlaying = true;
@@ -221,6 +222,7 @@ namespace Popcorn.ViewModels.Windows
                         Messenger.Default.Send(new ChangeHasBeenSeenMovieMessage());
                         Messenger.Default.Send(new StopPlayingMovieMessage());
                     },
+                    message.BufferProgress,
                     message.Movie.SelectedSubtitle?.FilePath);
 
                 ApplicationService.IsMediaPlaying = true;

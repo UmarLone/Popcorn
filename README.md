@@ -37,7 +37,6 @@ Visual Studio 2017
 * MVVM framework: [MVVM Light](https://mvvmlight.codeplex.com) 
 * UI framework: [MahApps](https://github.com/MahApps/MahApps.Metro)
 * Media Player: [Meta.Vlc](https://github.com/higankanshi/Meta.Vlc)
-* libtorrent wrapper: [libtorrent-net](https://github.com/vktr/libtorrent-net)
 * ORM: [Entity Framework](https://github.com/aspnet/EntityFramework)
 * Database storage: [SqlServer Compact](https://www.nuget.org/packages/Microsoft.SqlServer.Compact/)
 * JSON Deserialization: [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
@@ -58,4 +57,4 @@ At this time, only Windows 7+ is supported (Windows 7, 8, 8.1, 10).
 Of course yes! Any pull-request will be considered.
 
 ## Installer
-Download full installer [here](https://github.com/bbougot/Popcorn/releases/download/v1.9.24/Setup.exe)
+Download full installer [here](https://github.com/bbougot/Popcorn/releases/download/v1.10.0/Setup.exe)

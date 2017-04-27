@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Popcorn.Helpers;
+using Popcorn.Models.Player;
 
 namespace Popcorn.Controls
 {
@@ -26,12 +27,20 @@ namespace Popcorn.Controls
                 new PropertyMetadata(0d));
 
         /// <summary>
-        /// Movie title property
+        /// Media title property
         /// </summary>
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title",
                 typeof(string), typeof(DownloadProgress),
                 new PropertyMetadata(string.Empty));
+
+        /// <summary>
+        /// Media type property
+        /// </summary>
+        public static readonly DependencyProperty TypeProperty =
+            DependencyProperty.Register("Type",
+                typeof(MediaType), typeof(DownloadProgress),
+                new PropertyMetadata(MediaType.Movie));
 
         /// <summary>
         /// Initialize a new instance of DownloadProgress
@@ -71,6 +80,15 @@ namespace Popcorn.Controls
         }
 
         /// <summary>
+        /// The type
+        /// </summary>
+        public MediaType Type
+        {
+            private get { return (MediaType) GetValue(TypeProperty); }
+            set { SetValue(TypeProperty, value); }
+        }
+
+        /// <summary>
         /// On download progress changed
         /// </summary>
         /// <param name="d">Dependency object</param>
@@ -86,13 +104,26 @@ namespace Popcorn.Controls
         /// </summary>
         private void DisplayDownloadProgress()
         {
-            if (Progress >= 2.0)
-                DisplayText.Text =
-                    $"{LocalizationProviderHelper.GetLocalizedValue<string>("CurrentlyPlayingLabel")} : {Title}";
-            else
-                DisplayText.Text = Rate >= 1000.0
-                    ? $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * 50d, 0)} % ({Rate / 1000d} MB/s)"
-                    : $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * 50d, 0)} % ({Rate} kB/s)";
+            if (Type == MediaType.Movie)
+            {
+                if (Progress >= Constants.Constants.MinimumMovieBuffering)
+                    DisplayText.Text =
+                        $"{LocalizationProviderHelper.GetLocalizedValue<string>("CurrentlyPlayingLabel")} : {Title}";
+                else
+                    DisplayText.Text = Rate >= 1000.0
+                        ? $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * (100d / Constants.Constants.MinimumMovieBuffering), 0)} % ({Rate / 1000d} MB/s)"
+                        : $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * (100d / Constants.Constants.MinimumMovieBuffering), 0)} % ({Rate} kB/s)";
+            }
+            else if (Type == MediaType.Show)
+            {
+                if (Progress >= Constants.Constants.MinimumShowBuffering)
+                    DisplayText.Text =
+                        $"{LocalizationProviderHelper.GetLocalizedValue<string>("CurrentlyPlayingLabel")} : {Title}";
+                else
+                    DisplayText.Text = Rate >= 1000.0
+                        ? $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * (100d / Constants.Constants.MinimumShowBuffering), 0)} % ({Rate / 1000d} MB/s)"
+                        : $"{LocalizationProviderHelper.GetLocalizedValue<string>("BufferingLabel")} : {Math.Round(Progress * (100d / Constants.Constants.MinimumShowBuffering), 0)} % ({Rate} kB/s)";
+            }
         }
     }
 }

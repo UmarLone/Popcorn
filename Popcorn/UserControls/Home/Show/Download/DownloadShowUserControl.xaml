@@ -84,7 +84,8 @@
                     <controls1:DownloadProgress
                         Title="{Binding Episode.Title}"
                         Progress="{Binding EpisodeDownloadProgress}"
-                        Rate="{Binding EpisodeDownloadRate}" />
+                        Rate="{Binding EpisodeDownloadRate}"
+                        Type="Show" />
                 </Label>
                 <StackPanel
                     Margin="0,10,0,10"
@@ -110,7 +111,7 @@
                 Margin="0"
                 VerticalAlignment="Center"
                 Foreground="{DynamicResource AccentColorBrush}"
-                Maximum="2.0"
+                Maximum="10.0"
                 Minimum="0.0"
                 Value="{Binding EpisodeDownloadProgress}" />
             <Button

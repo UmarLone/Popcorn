@@ -396,20 +396,6 @@
         <file src="MahApps.Metro.IconPacks.dll" target="lib\net45\MahApps.Metro.IconPacks.dll" />
         <file src="Meta.Vlc.dll" target="lib\net45\Meta.Vlc.dll" />
         <file src="Meta.Vlc.Wpf.dll" target="lib\net45\Meta.Vlc.Wpf.dll" />
-        <file src="mfc140.dll" target="lib\net45\mfc140.dll" />
-        <file src="mfc140chs.dll" target="lib\net45\mfc140chs.dll" />
-        <file src="mfc140cht.dll" target="lib\net45\mfc140cht.dll" />
-        <file src="mfc140deu.dll" target="lib\net45\mfc140deu.dll" />
-        <file src="mfc140enu.dll" target="lib\net45\mfc140enu.dll" />
-        <file src="mfc140esn.dll" target="lib\net45\mfc140esn.dll" />
-        <file src="mfc140fra.dll" target="lib\net45\mfc140fra.dll" />
-        <file src="mfc140ita.dll" target="lib\net45\mfc140ita.dll" />
-        <file src="mfc140jpn.dll" target="lib\net45\mfc140jpn.dll" />
-        <file src="mfc140kor.dll" target="lib\net45\mfc140kor.dll" />
-        <file src="mfc140rus.dll" target="lib\net45\mfc140rus.dll" />
-        <file src="mfc140u.dll" target="lib\net45\mfc140u.dll" />
-        <file src="mfcm140.dll" target="lib\net45\mfcm140.dll" />
-        <file src="mfcm140u.dll" target="lib\net45\mfcm140u.dll" />
         <file src="Microsoft.Practices.ServiceLocation.dll" target="lib\net45\Microsoft.Practices.ServiceLocation.dll" />
         <file src="Microsoft.Win32.Primitives.dll" target="lib\net45\Microsoft.Win32.Primitives.dll" />
         <file src="Mono.Cecil.dll" target="lib\net45\Mono.Cecil.dll" />
@@ -439,9 +425,7 @@
         <file src="System.Security.Cryptography.X509Certificates.dll" target="lib\net45\System.Security.Cryptography.X509Certificates.dll" />
         <file src="System.Windows.Interactivity.dll" target="lib\net45\System.Windows.Interactivity.dll" />
         <file src="TMDbLib.dll" target="lib\net45\TMDbLib.dll" />
-        <file src="vcamp140.dll" target="lib\net45\vcamp140.dll" />
         <file src="vccorlib140.dll" target="lib\net45\vccorlib140.dll" />
-        <file src="vcomp140.dll" target="lib\net45\vcomp140.dll" />
         <file src="vcruntime140.dll" target="lib\net45\vcruntime140.dll" />
         <file src="WPFLocalizeExtension.dll" target="lib\net45\WPFLocalizeExtension.dll" />
         <file src="XAMLMarkupExtensions.dll" target="lib\net45\XAMLMarkupExtensions.dll" />

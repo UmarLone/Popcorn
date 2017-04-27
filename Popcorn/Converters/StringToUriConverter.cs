@@ -3,9 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight.Threading;
 using Popcorn.IO;
 
 namespace Popcorn.Converters
@@ -36,7 +35,7 @@ namespace Popcorn.Converters
                 return new Uri(file.Path, UriKind.Absolute);
             }
 
-            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            Task.Run(async () =>
             {
                 using (var client = new HttpClient())
                 {

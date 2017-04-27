@@ -10,7 +10,7 @@ namespace Popcorn.Constants
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.9.24";
+        public const string AppVersion = "1.10.0";
 
         /// <summary>
         /// Endpoint to API
@@ -23,9 +23,14 @@ namespace Popcorn.Constants
         public const string TmDbClientId = "a21fe922d3bac6654e93450e9a18af1c";
 
         /// <summary>
-        /// In percentage, the minimum of buffering before we can actually start playing the media
+        /// In percentage, the minimum of buffering before we can actually start playing the movie
         /// </summary>
-        public const double MinimumBuffering = 2.0;
+        public const double MinimumMovieBuffering = 4.0;
+
+        /// <summary>
+        /// In percentage, the minimum of buffering before we can actually start playing the episode
+        /// </summary>
+        public const double MinimumShowBuffering = 10.0;
 
         /// <summary>
         /// The maximum number of movies per page to load from the API

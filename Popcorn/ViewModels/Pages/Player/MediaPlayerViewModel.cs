@@ -56,6 +56,11 @@ namespace Popcorn.ViewModels.Pages.Player
         public readonly string SubtitleFilePath;
 
         /// <summary>
+        /// The buffer progress
+        /// </summary>
+        public readonly Progress<double> BufferProgress;
+
+        /// <summary>
         /// Initializes a new instance of the MediaPlayerViewModel class.
         /// </summary>
         /// <param name="mediaType">The media type</param>
@@ -63,18 +68,21 @@ namespace Popcorn.ViewModels.Pages.Player
         /// <param name="mediaName">Media name</param>
         /// <param name="mediaStoppedAction">Media action to execute when media has been stopped</param>
         /// <param name="mediaEndedAction">Media action to execute when media has ended</param>
+        /// <param name="bufferProgress">The buffer progress</param>
         /// <param name="subtitleFilePath">Subtitle file path</param>
         public MediaPlayerViewModel(MediaType mediaType, string mediaPath, string mediaName, Action mediaStoppedAction,
-            Action mediaEndedAction, string subtitleFilePath = null)
+            Action mediaEndedAction, Progress<double> bufferProgress = null, string subtitleFilePath = null)
         {
             Logger.Info(
                 $"Loading media : {mediaName}.");
 
+            MediaType = mediaType;
             MediaPath = mediaPath;
             MediaName = mediaName;
             _mediaStoppedAction = mediaStoppedAction;
             _mediaEndedAction = mediaEndedAction;
             SubtitleFilePath = subtitleFilePath;
+            BufferProgress = bufferProgress;
 
             RegisterCommands();
         }
