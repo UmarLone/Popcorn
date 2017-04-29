@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Async;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +11,7 @@ using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;

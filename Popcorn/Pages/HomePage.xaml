@@ -5,8 +5,10 @@
     xmlns:anime="clr-namespace:Popcorn.ViewModels.Pages.Home.Anime"
     xmlns:anime1="clr-namespace:Popcorn.UserControls.Home.Anime"
     xmlns:attachedProperties="clr-namespace:Popcorn.AttachedProperties"
+    xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:movie="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie"
     xmlns:movie1="clr-namespace:Popcorn.UserControls.Home.Movie"
@@ -15,6 +17,7 @@
     Title="HomePage"
     d:DesignHeight="300"
     d:DesignWidth="300"
+    AllowDrop="True"
     mc:Ignorable="d">
 
     <Grid>

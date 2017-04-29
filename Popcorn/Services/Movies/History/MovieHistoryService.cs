@@ -10,9 +10,8 @@ using Popcorn.Entity;
 using Popcorn.Entity.Cast;
 using Popcorn.Entity.Movie;
 using Popcorn.Models.Cast;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
-using Popcorn.Models.Torrent;
 using Popcorn.Models.Torrent.Movie;
 
 namespace Popcorn.Services.Movies.History

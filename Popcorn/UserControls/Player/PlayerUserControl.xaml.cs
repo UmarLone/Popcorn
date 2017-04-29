@@ -9,11 +9,8 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using Popcorn.ViewModels.Pages.Player;
 using System.Threading;
-using System.Diagnostics;
 using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Messaging;
-using Popcorn.Helpers;
-using Popcorn.Models.Player;
 
 namespace Popcorn.UserControls.Player
 {
@@ -26,21 +23,6 @@ namespace Popcorn.UserControls.Player
         /// If control is disposed
         /// </summary>
         private bool _disposed;
-
-        /// <summary>
-        /// False if player is not fully initialised
-        /// </summary>
-        private bool _isPlayerFullyInitialised;
-
-        /// <summary>
-        /// The media type
-        /// </summary>
-        private MediaType _mediaType;
-
-        /// <summary>
-        /// Mutex for player initialization
-        /// </summary>
-        private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Indicates if a media is playing
@@ -144,8 +126,6 @@ namespace Popcorn.UserControls.Player
             {
                 vm.BufferProgress.ProgressChanged += OnBufferProgressChanged;
             }
-
-            _mediaType = vm.MediaType;
 
             Player.VlcMediaPlayer.EndReached += MediaPlayerEndReached;
 
@@ -364,7 +344,7 @@ namespace Popcorn.UserControls.Player
         /// </summary>
         /// <param name="sender">Sender object</param>
         /// <param name="e">ExecutedRoutedEventArgs</param>
-        private void MediaPlayerPlayExecuted(object sender, ExecutedRoutedEventArgs e) => PlayMedia();
+        private async void MediaPlayerPlayExecuted(object sender, ExecutedRoutedEventArgs e) => await PlayMedia();
 
         /// <summary>
         /// Pause media
@@ -508,70 +488,6 @@ namespace Popcorn.UserControls.Player
 
             if (disposing)
                 GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// On player length changed, make sure player have enough space to show fully
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void OnLengthChanged(object sender, EventArgs e)
-        {
-            if (_mediaType != MediaType.Trailer) return;
-
-            await SemaphoreSlim.WaitAsync();
-            try
-            {
-                if (_isPlayerFullyInitialised)
-                {
-                    return;
-                }
-
-                _isPlayerFullyInitialised = true;
-                Player.Visibility = Visibility.Hidden;
-
-                var wasMaximized = false;
-                var watcher = new Stopwatch();
-                watcher.Start();
-                while (Player.ActualHeight < 1d)
-                {
-                    if (Application.Current.MainWindow.WindowState != WindowState.Maximized)
-                    {
-                        Application.Current.MainWindow.Width -= 0.1d;
-                    }
-                    else
-                    {
-                        wasMaximized = true;
-                        Application.Current.MainWindow.WindowState = WindowState.Normal;
-                        Application.Current.MainWindow.Width -= 0.1d;
-                    }
-
-                    await Task.Delay(100);
-
-                    // Check if we are waiting for more than 2 seconds for the player to initialize. If so, something weird happen, so break the loop
-                    if (watcher.ElapsedMilliseconds > 2000)
-                    {
-                        watcher.Stop();
-                        Messenger.Default.Send(
-                            new ManageExceptionMessage(
-                                new Exception(
-                                    LocalizationProviderHelper.GetLocalizedValue<string>("TrailerNotAvailable"))));
-                        Messenger.Default.Send(new StopPlayingTrailerMessage());
-                        break;
-                    }
-                }
-
-                if (wasMaximized)
-                {
-                    Application.Current.MainWindow.WindowState = WindowState.Maximized;
-                }
-
-                Player.Visibility = Visibility.Visible;
-            }
-            finally
-            {
-                SemaphoreSlim.Release();
-            }
         }
     }
 }

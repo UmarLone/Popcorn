@@ -39,7 +39,7 @@ namespace Popcorn
                 "Popcorn starting...");
             var watchStart = Stopwatch.StartNew();
 
-            Directory.CreateDirectory(Constants.Constants.Logging);
+            Directory.CreateDirectory(Utils.Constants.Logging);
 
             DispatcherHelper.Initialize();
 
@@ -87,8 +87,7 @@ namespace Popcorn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Dispatcher_UnhandledException(object sender,
-            System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             CurrentDomainUnhandledException(sender, new UnhandledExceptionEventArgs(e.Exception, false));
@@ -99,8 +98,7 @@ namespace Popcorn
         /// </summary>
         /// <param name="sender"><see cref="App"/> instance</param>
         /// <param name="e">DispatcherUnhandledExceptionEventArgs args</param>
-        private void AppDispatcherUnhandledException(object sender,
-            System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             CurrentDomainUnhandledException(sender, new UnhandledExceptionEventArgs(e.Exception, false));

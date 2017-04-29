@@ -24,7 +24,9 @@
     lex:LocalizeDictionary.DesignCulture="en"
     lex:ResxLocalizationProvider.DefaultAssembly="Popcorn"
     lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+    AllowDrop="True"
     AllowsTransparency="True"
+    Background="Black"
     DataContext="{Binding Window, Source={StaticResource Locator}}"
     Icon="../Resources/Images/icon.ico"
     IgnoreTaskbarOnMaximize="True"
@@ -48,6 +50,18 @@
     </Window.Resources>
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Drop">
+            <command:EventToCommand Command="{Binding Mode=OneWay, Path=DropFileCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="DragEnter">
+            <command:EventToCommand Command="{Binding Mode=OneWay, Path=DragEnterFileCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="DragLeave">
+            <command:EventToCommand Command="{Binding Mode=OneWay, Path=DragLeaveFileCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
         <i:EventTrigger EventName="Closing">
             <command:EventToCommand Command="{Binding Mode=OneWay, Path=MainWindowClosingCommand}" PassEventArgsToCommand="False" />
         </i:EventTrigger>

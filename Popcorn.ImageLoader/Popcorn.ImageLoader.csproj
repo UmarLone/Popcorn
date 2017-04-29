@@ -107,9 +107,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Constants.csproj">
+    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Utils.csproj">
       <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
-      <Name>Popcorn.Constants</Name>
+      <Name>Popcorn.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Popcorn.IO\Popcorn.IO.csproj">
       <Project>{2ee35489-4761-44c6-a612-8619db2a45e6}</Project>

@@ -193,7 +193,7 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.7\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\squirrel.windows.1.5.2\lib\Net45\NuGet.Squirrel.dll</HintPath>
@@ -257,7 +257,6 @@
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -333,6 +332,9 @@
     <Compile Include="Controls\Movie\MovieNumberSummary.xaml.cs">
       <DependentUpon>MovieNumberSummary.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DropTorrentDialog.xaml.cs">
+      <DependentUpon>DropTorrentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>
@@ -352,11 +354,14 @@
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />
     <Compile Include="Messaging\ChangeHasBeenSeenMovieMessage.cs" />
+    <Compile Include="Messaging\DropFileMessage.cs" />
     <Compile Include="Messaging\LoadShowMessage.cs" />
     <Compile Include="Messaging\DownloadShowEpisodeMessage.cs" />
     <Compile Include="Messaging\PlayEpisodeShowMessage.cs" />
+    <Compile Include="Messaging\PlayMediaMessage.cs" />
     <Compile Include="Messaging\PlayTrailerMessage.cs" />
     <Compile Include="Messaging\StopPlayingEpisodeMessage.cs" />
+    <Compile Include="Messaging\StopPlayMediaMessage.cs" />
     <Compile Include="Messaging\UnhandledExceptionMessage.cs" />
     <Compile Include="Migrations\201703041706307_Initial.cs" />
     <Compile Include="Migrations\201703041706307_Initial.Designer.cs">
@@ -368,7 +373,7 @@
     <Compile Include="Models\ApplicationState\ApplicationService.cs" />
     <Compile Include="Models\ApplicationState\IApplicationService.cs" />
     <Compile Include="Models\Episode\EpisodeAnimeJson.cs" />
-    <Compile Include="Models\Genre\GenreJson.cs" />
+    <Compile Include="Models\Genres\Genre.cs" />
     <Compile Include="Models\Image\ImageAnimeJson.cs" />
     <Compile Include="Models\Movie\MovieJson.cs" />
     <Compile Include="Models\Movie\MovieResponse.cs" />
@@ -412,6 +417,8 @@
     <Compile Include="Models\Localization\Language.cs" />
     <Compile Include="Models\Subtitles\Subtitle.cs" />
     <Compile Include="Models\Trailer\Trailer.cs" />
+    <Compile Include="Services\Genres\GenreService.cs" />
+    <Compile Include="Services\Genres\IGenreService.cs" />
     <Compile Include="Services\Movies\History\IMovieHistoryService.cs" />
     <Compile Include="Services\Movies\History\MovieHistoryService.cs" />
     <Compile Include="Services\Language\ILanguageService.cs" />
@@ -565,6 +572,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Show\ShowNumberSummary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DropTorrentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -770,15 +781,11 @@
     <Content Include="Assets\SplashScreen.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="VCRedist\concrt140.dll" />
-    <Content Include="VCRedist\msvcp140.dll" />
-    <Content Include="VCRedist\vccorlib140.dll" />
-    <Content Include="VCRedist\vcruntime140.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Constants.csproj">
+    <ProjectReference Include="..\Popcorn.Constants\Popcorn.Utils.csproj">
       <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
-      <Name>Popcorn.Constants</Name>
+      <Name>Popcorn.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Popcorn.ImageLoader\Popcorn.ImageLoader.csproj">
       <Project>{7c68c43b-0e5c-4b9f-9f49-045caa39d8b3}</Project>
@@ -809,7 +816,10 @@ if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
 xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
 if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
 xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
-xcopy /s /y "$(SolutionDir)\Popcorn\VCRedist\*.*" "$(TargetDir)"</PostBuildEvent>
+xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
+xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
+xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"
+xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

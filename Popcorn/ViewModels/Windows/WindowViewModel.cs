@@ -11,6 +11,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using lt;
 using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using Popcorn.Dialogs;
@@ -180,6 +181,21 @@ namespace Popcorn.ViewModels.Windows
         public RelayCommand InitializeAsyncCommand { get; private set; }
 
         /// <summary>
+        /// Command used to drop files
+        /// </summary>
+        public RelayCommand<DragEventArgs> DropFileCommand { get; private set; }
+
+        /// <summary>
+        /// Command used to manage drag enter
+        /// </summary>
+        public RelayCommand<DragEventArgs> DragEnterFileCommand { get; private set; }
+
+        /// <summary>
+        /// Command used to manage drag leave
+        /// </summary>
+        public RelayCommand<DragEventArgs> DragLeaveFileCommand { get; private set; }
+
+        /// <summary>
         /// Register messages
         /// </summary>
         private void RegisterMessages()
@@ -206,6 +222,25 @@ namespace Popcorn.ViewModels.Windows
 
                 ApplicationService.IsMediaPlaying = true;
                 IsShowFlyoutOpen = false;
+                PageUri = "/Pages/PlayerPage.xaml";
+            }));
+
+            Messenger.Default.Register<PlayMediaMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                MediaPlayer = new MediaPlayerViewModel(MediaType.Show, message.MediaPath, message.MediaPath,
+                    () =>
+                    {
+                        Messenger.Default.Send(new StopPlayMediaMessage());
+                    },
+                    () =>
+                    {
+                        Messenger.Default.Send(new StopPlayMediaMessage());
+                    },
+                    message.BufferProgress);
+
+                ApplicationService.IsMediaPlaying = true;
+                IsShowFlyoutOpen = false;
+                IsMovieFlyoutOpen = false;
                 PageUri = "/Pages/PlayerPage.xaml";
             }));
 
@@ -243,6 +278,12 @@ namespace Popcorn.ViewModels.Windows
             {
                 ApplicationService.IsMediaPlaying = false;
                 IsMovieFlyoutOpen = true;
+                PageUri = "/Pages/HomePage.xaml";
+            });
+
+            Messenger.Default.Register<StopPlayMediaMessage>(this, message =>
+            {
+                ApplicationService.IsMediaPlaying = false;
                 PageUri = "/Pages/HomePage.xaml";
             });
 
@@ -309,6 +350,59 @@ namespace Popcorn.ViewModels.Windows
 
             OpenSettingsCommand = new RelayCommand(() => IsSettingsFlyoutOpen = !IsSettingsFlyoutOpen);
 
+            DropFileCommand = new RelayCommand<DragEventArgs>(async e =>
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    var torrentFile = files?.FirstOrDefault(a => a.Contains("torrent"));
+                    if (torrentFile != null)
+                    {
+                        var mediaFilePresent = false;
+                        using (var torrentInfos = new torrent_info(torrentFile))
+                        {
+                            for (var i = 0; i < torrentInfos.num_files(); i++)
+                            {
+                                using (var file = torrentInfos.file_at(i))
+                                {
+                                    if (file.path.EndsWith(".mp4") || file.path.EndsWith(".mkv") ||
+                                        file.path.EndsWith(".mov") || file.path.EndsWith(".avi"))
+                                    {
+                                        mediaFilePresent = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
+                        if (mediaFilePresent)
+                        {
+                            var dropTorrentDialog =
+                                new DropTorrentDialog(new DropTorrentDialogSettings(torrentFile, async args =>
+                                {
+                                    await _dialogCoordinator.HideMetroDialogAsync(this, args);
+                                }));
+                            await _dialogCoordinator.ShowMetroDialogAsync(this, dropTorrentDialog);
+                            await dropTorrentDialog.DownloadTorrentFile();
+                        }
+                    }
+                    else
+                    {
+                        Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
+                    }
+                }
+            });
+
+            DragEnterFileCommand = new RelayCommand<DragEventArgs>(e =>
+            {
+                Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Enter));
+            });
+
+            DragLeaveFileCommand = new RelayCommand<DragEventArgs>(e =>
+            {
+                Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
+            });
+
             InitializeAsyncCommand = new RelayCommand(async () =>
             {
 #if !DEBUG
@@ -322,10 +416,10 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         private void ClearFolders()
         {
-            if (Directory.Exists(Constants.Constants.MovieDownloads))
+            if (Directory.Exists(Utils.Constants.MovieDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetDirectories(Constants.Constants.MovieDownloads)
+                    var filePath in Directory.GetDirectories(Utils.Constants.MovieDownloads)
                 )
                 {
                     try
@@ -341,10 +435,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Constants.Constants.ShowDownloads))
+            if (Directory.Exists(Utils.Constants.ShowDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Constants.Constants.ShowDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Utils.Constants.ShowDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -361,10 +455,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Constants.Constants.MovieTorrentDownloads))
+            if (Directory.Exists(Utils.Constants.MovieTorrentDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Constants.Constants.MovieTorrentDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Utils.Constants.MovieTorrentDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -393,7 +487,7 @@ namespace Popcorn.ViewModels.Windows
                 "Looking for updates...");
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager(Constants.Constants.GithubRepository))
+                using (var updateManager = await UpdateManager.GitHubUpdateManager(Utils.Constants.GithubRepository))
                 {
                     var updateInfo = await updateManager.CheckForUpdate();
                     if (updateInfo == null)

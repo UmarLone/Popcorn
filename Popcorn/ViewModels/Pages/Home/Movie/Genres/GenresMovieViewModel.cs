@@ -8,9 +8,9 @@ using GalaSoft.MvvmLight.Threading;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
-using Popcorn.Models.Genre;
-using Popcorn.Services.Movies.Movie;
-using TMDbLib.Objects.General;
+using Popcorn.Models.Genres;
+using Popcorn.Services.Genres;
+using Popcorn.Services.Language;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
 {
@@ -22,9 +22,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Used to interact with movies
+        /// Language service
         /// </summary>
-        private readonly IMovieService _movieService;
+        private readonly ILanguageService _languageService;
+
+        /// <summary>
+        /// Genre service
+        /// </summary>
+        private readonly IGenreService _genreService;
 
         /// <summary>
         /// Used to cancel loading genres
@@ -44,10 +49,12 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// <summary>
         /// Initialize a new instance of GenresMovieViewModel class
         /// </summary>
-        /// <param name="movieService">The movie service</param>
-        public GenresMovieViewModel(IMovieService movieService)
+        /// <param name="languageService">The language service</param>
+        /// <param name="genreService">The genre service</param>
+        public GenresMovieViewModel(ILanguageService languageService, IGenreService genreService)
         {
-            _movieService = movieService;
+            _languageService = languageService;
+            _genreService = genreService;
             _cancellationLoadingGenres = new CancellationTokenSource();
             RegisterMessages();
         }
@@ -75,19 +82,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// </summary>
         public async Task LoadGenresAsync()
         {
+            var language = await _languageService.GetCurrentLanguageAsync();
             var genres =
                 new ObservableCollection<GenreJson>(
-                    await _movieService.GetGenresAsync(_cancellationLoadingGenres.Token));
+                    await _genreService.GetGenresAsync(language.Culture, _cancellationLoadingGenres.Token));
             if (_cancellationLoadingGenres.IsCancellationRequested)
                 return;
 
             genres.Insert(0, new GenreJson
             {
-                TmdbGenre = new Genre
-                {
-                    Id = int.MaxValue,
-                    Name = LocalizationProviderHelper.GetLocalizedValue<string>("AllLabel")
-                },
+                Name = LocalizationProviderHelper.GetLocalizedValue<string>("AllLabel"),
                 EnglishName = string.Empty
             });
 

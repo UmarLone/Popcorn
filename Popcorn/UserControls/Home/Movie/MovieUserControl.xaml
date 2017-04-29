@@ -337,7 +337,7 @@
                                                     x:Name="GenreText"
                                                     Margin="10,0,0,0"
                                                     FontSize="16"
-                                                    Text="{Binding TmdbGenre.Name}" />
+                                                    Text="{Binding Name}" />
                                             </RadioButton>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>

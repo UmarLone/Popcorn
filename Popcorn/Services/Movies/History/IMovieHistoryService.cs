@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
 
 namespace Popcorn.Services.Movies.History

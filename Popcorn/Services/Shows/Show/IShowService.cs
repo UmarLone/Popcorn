@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Popcorn.Models.Genre;
-using Popcorn.Models.Movie;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
 
 namespace Popcorn.Services.Shows.Show

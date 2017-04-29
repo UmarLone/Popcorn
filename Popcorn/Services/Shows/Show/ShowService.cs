@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using Popcorn.Helpers;
-using Popcorn.Models.Genre;
-using Popcorn.Models.Movie;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
 using RestSharp;
 
@@ -41,12 +37,12 @@ namespace Popcorn.Services.Shows.Show
             var wrapper = new ShowResponse();
 
             if (limit < 1 || limit > 50)
-                limit = Constants.Constants.MaxShowsPerPage;
+                limit = Utils.Constants.MaxShowsPerPage;
 
             if (page < 1)
                 page = 1;
 
-            var restClient = new RestClient(Constants.Constants.PopcornApi);
+            var restClient = new RestClient(Utils.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.GET);
             request.AddUrlSegment("segment", "shows");
             request.AddParameter("limit", limit);

@@ -15,12 +15,12 @@ namespace Popcorn.ImageLoader.ImageLoaders
         {
             var fileName = source.Substring(source.LastIndexOf("/images/", StringComparison.InvariantCulture) + 1);
             fileName = fileName.Replace('/', '_');
-            if (!Directory.Exists(Constants.Constants.Assets))
+            if (!Directory.Exists(Utils.Constants.Assets))
             {
-                Directory.CreateDirectory(Constants.Constants.Assets);
+                Directory.CreateDirectory(Utils.Constants.Assets);
             }
 
-            var files = FastDirectoryEnumerator.EnumerateFiles(Constants.Constants.Assets);
+            var files = FastDirectoryEnumerator.EnumerateFiles(Utils.Constants.Assets);
             var file = files.FirstOrDefault(a => a.Name.Contains(fileName));
             if (file != null)
             {
@@ -32,7 +32,7 @@ namespace Popcorn.ImageLoader.ImageLoaders
                 var data = await client.GetByteArrayAsync(source);
                 {
                     if (data == null || data.Length == 0) return null;
-                    File.WriteAllBytes(Constants.Constants.Assets + fileName, data);
+                    File.WriteAllBytes(Utils.Constants.Assets + fileName, data);
                     return new MemoryStream(data);
                 }
             }

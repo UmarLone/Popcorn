@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -10,7 +9,7 @@ using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
@@ -98,7 +97,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             RegisterMessages();
             RegisterCommands();
 
-            MaxMoviesPerPage = Constants.Constants.MaxMoviesPerPage;
+            MaxMoviesPerPage = Utils.Constants.MaxMoviesPerPage;
             CancellationLoadingMovies = new CancellationTokenSource();
         }
 
@@ -281,7 +280,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 });
 
             ChangeMovieGenreCommand =
-                new RelayCommand<GenreJson>(genre => Genre = genre.TmdbGenre.Name ==
+                new RelayCommand<GenreJson>(genre => Genre = genre.Name ==
                                                               LocalizationProviderHelper.GetLocalizedValue<string>(
                                                                   "AllLabel")
                     ? null

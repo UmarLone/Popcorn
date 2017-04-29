@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
-using Popcorn.Helpers;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
 using Popcorn.Services.Shows.Show;
 
@@ -26,12 +25,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// The genre used to filter shows
         /// </summary>
-        private static GenreJson _genre;
+        private GenreJson _genre;
 
         /// <summary>
         /// The rating used to filter shows
         /// </summary>
-        private static double _rating;
+        private double _rating;
 
         /// <summary>
         /// Services used to interact with shows
@@ -86,7 +85,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             RegisterMessages();
             RegisterCommands();
 
-            MaxShowsPerPage = Constants.Constants.MaxShowsPerPage;
+            MaxShowsPerPage = Utils.Constants.MaxShowsPerPage;
             CancellationLoadingShows = new CancellationTokenSource();
         }
 

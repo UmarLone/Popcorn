@@ -9,6 +9,8 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
+using Popcorn.Services.Genres;
+using Popcorn.Services.Language;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
 using Popcorn.ViewModels.Pages.Home.Movie.Genres;
@@ -75,13 +77,15 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <param name="movieService">Instance of MovieService</param>
         /// <param name="movieHistoryService">Instance of MovieHistoryService</param>
         /// <param name="applicationService">Instance of ApplicationService</param>
+        /// <param name="languageService">The language service</param>
+        /// <param name="genreService">The genre service</param>
         public MoviePageViewModel(IMovieService movieService,
-            IMovieHistoryService movieHistoryService, IApplicationService applicationService)
+            IMovieHistoryService movieHistoryService, IApplicationService applicationService, ILanguageService languageService, IGenreService genreService)
         {
             _movieService = movieService;
             _movieHistoryService = movieHistoryService;
             ApplicationService = applicationService;
-            GenresMovie = new GenresMovieViewModel(_movieService);
+            GenresMovie = new GenresMovieViewModel(languageService, genreService);
             RegisterMessages();
             RegisterCommands();
 
@@ -105,8 +109,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
 
                 await Task.WhenAll(new List<Task>
                 {
-                    loadMoviesTask,
-                    loadGenreTask
+                    loadGenreTask,
+                    loadMoviesTask
                 });
             });
         }

@@ -34,20 +34,14 @@
                 <system:String>--no-sub-autodetect-file</system:String>
             </x:Array>
         </Grid.Resources>
-        <StackPanel
-            x:Name="PlayerWrapper"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center">
-            <wpf:VlcPlayer
-                x:Name="Player"
-                attachedProperties:EnableDragHelper.EnableDrag="True"
-                attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
-                EndBehavior="Nothing"
-                LengthChanged="OnLengthChanged"
-                LibVlcPath="libvlc"
-                Stretch="UniformToFill"
-                VlcOption="{StaticResource VlcOptions}" />
-        </StackPanel>
+
+        <wpf:VlcPlayer
+            x:Name="Player"
+            attachedProperties:EnableDragHelper.EnableDrag="True"
+            attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
+            EndBehavior="Nothing"
+            LibVlcPath="libvlc"
+            VlcOption="{StaticResource VlcOptions}" />
         <StatusBar x:Name="PlayerStatusBar" VerticalAlignment="Bottom">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>

@@ -28,7 +28,7 @@ namespace Popcorn.Converters
             var path = value.ToString();
             var fileName = path.Substring(path.LastIndexOf("/images/", StringComparison.InvariantCulture) + 1);
             fileName = fileName.Replace('/', '_');
-            var files = FastDirectoryEnumerator.EnumerateFiles(Constants.Constants.Assets);
+            var files = FastDirectoryEnumerator.EnumerateFiles(Utils.Constants.Assets);
             var file = files.FirstOrDefault(a => a.Name.Contains(fileName));
             if (file != null)
             {
@@ -42,7 +42,7 @@ namespace Popcorn.Converters
                     var data = await client.GetByteArrayAsync(path);
                     {
                         if (data == null || data.Length == 0) return;
-                        File.WriteAllBytes(Constants.Constants.Assets + fileName, data);
+                        File.WriteAllBytes(Utils.Constants.Assets + fileName, data);
                     }
                 }
             });

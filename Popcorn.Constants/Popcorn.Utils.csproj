@@ -7,10 +7,11 @@
     <ProjectGuid>{094A69CE-C69E-4EF0-9321-BA16F7A89080}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Popcorn.Constants</RootNamespace>
-    <AssemblyName>Popcorn.Constants</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>Popcorn.Utils</RootNamespace>
+    <AssemblyName>Popcorn.Utils</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

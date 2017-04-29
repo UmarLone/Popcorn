@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Popcorn.Constants
+namespace Popcorn.Utils
 {
     /// <summary>
     /// Constants of the project

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Popcorn.Models.Genre;
+using Popcorn.Models.Genres;
 using Popcorn.Models.Localization;
 using Popcorn.Models.Movie;
 using TMDbLib.Objects.General;
@@ -16,13 +15,6 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         /// <param name="language">Language to set</param>
         void ChangeTmdbLanguage(ILanguage language);
-
-        /// <summary>
-        /// Get all movie's genres
-        /// </summary>
-        /// <param name="ct">Used to cancel loading genres</param>
-        /// <returns>Genres</returns>
-        Task<List<GenreJson>> GetGenresAsync(CancellationToken ct);
 
         /// <summary>
         /// Get popular movies by page
