@@ -346,8 +346,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     })
                     using (var handle = session.add_torrent(addParams))
                     {
-                        handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
-                        handle.set_download_limit(_applicationSettingsViewModel.UploadLimit * 1024);
+                        handle.set_upload_limit(_applicationSettingsViewModel.UploadLimit * 1024);
+                        handle.set_download_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
 
                         // We have to download sequentially, so that we're able to play the movie without waiting
                         handle.set_sequential_download(true);

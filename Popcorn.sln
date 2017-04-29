@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.GifLoader", "Popcor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.IO", "Popcorn.IO\Popcorn.IO.csproj", "{2EE35489-4761-44C6-A612-8619DB2A45E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.Utils", "Popcorn.Constants\Popcorn.Utils.csproj", "{094A69CE-C69E-4EF0-9321-BA16F7A89080}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Popcorn.Utils", "Popcorn.Utils\Popcorn.Utils.csproj", "{094A69CE-C69E-4EF0-9321-BA16F7A89080}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

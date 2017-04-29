@@ -7,12 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using lt;
 using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using Popcorn.Messaging;
-using Popcorn.Models.Movie;
+using Popcorn.ViewModels.Windows.Settings;
 
 namespace Popcorn.Dialogs
 {
@@ -25,17 +26,17 @@ namespace Popcorn.Dialogs
         /// Initialize a new instance of DropTorrentDialogSettings
         /// </summary>
         /// <param name="filePath">The torrent filePath</param>
-        /// <param name="buffered">The buffered action</param>
-        public DropTorrentDialogSettings(string filePath, Action<BaseMetroDialog> buffered)
+        /// <param name="hideDialog">The hideDialog action</param>
+        public DropTorrentDialogSettings(string filePath, Action<BaseMetroDialog> hideDialog)
         {
             FilePath = filePath;
-            Buffered = buffered;
+            HideDialog = hideDialog;
         }
 
         /// <summary>
         /// The torrent file path
         /// </summary>
-        public Action<BaseMetroDialog> Buffered { get; }
+        public Action<BaseMetroDialog> HideDialog { get; }
 
         /// <summary>
         /// The torrent file path
@@ -53,7 +54,7 @@ namespace Popcorn.Dialogs
         /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private Action<BaseMetroDialog> _buffered;
+        private Action<BaseMetroDialog> _hideDialog;
 
         private string _filePath;
 
@@ -149,7 +150,7 @@ namespace Popcorn.Dialogs
         {
             InitializeComponent();
             FilePath = settings.FilePath;
-            _buffered = settings.Buffered;
+            _hideDialog = settings.HideDialog;
             CancelCommand = new RelayCommand(() =>
             {
                 _cts.Cancel();
@@ -167,75 +168,83 @@ namespace Popcorn.Dialogs
         /// <returns></returns>
         internal async Task DownloadTorrentFile()
         {
-            using (var session = new session())
+            await Task.Run(async () =>
             {
-                Logger.Info(
-                    $"Start downloading : {FilePath}");
-
-                DownloadProgress = 0d;
-                DownloadRate = 0d;
-                NbSeeders = 0;
-                NbPeers = 0;
-
-                session.listen_on(6881, 6889);
-                using (var addParams = new add_torrent_params
+                using (var session = new session())
                 {
-                    save_path = Utils.Constants.MovieDownloads,
-                    ti = new torrent_info(FilePath)
-                })
-                using (var handle = session.add_torrent(addParams))
-                {
-                    // We have to download sequentially, so that we're able to play the movie without waiting
-                    handle.set_sequential_download(true);
-                    var alreadyBuffered = false;
-                    while (!_cts.IsCancellationRequested)
+                    Logger.Info(
+                        $"Start downloading : {FilePath}");
+
+                    DownloadProgress = 0d;
+                    DownloadRate = 0d;
+                    NbSeeders = 0;
+                    NbPeers = 0;
+
+                    session.listen_on(6881, 6889);
+                    using (var addParams = new add_torrent_params
                     {
-                        using (var status = handle.status())
+                        save_path = Utils.Constants.MovieDownloads,
+                        ti = new torrent_info(FilePath)
+                    })
+                    using (var handle = session.add_torrent(addParams))
+                    {
+                        var applicationSettingsViewModel =
+                            SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
+                        handle.set_upload_limit(applicationSettingsViewModel.UploadLimit * 1024);
+                        handle.set_download_limit(applicationSettingsViewModel.DownloadLimit * 1024);
+                        // We have to download sequentially, so that we're able to play the movie without waiting
+                        handle.set_sequential_download(true);
+                        var alreadyBuffered = false;
+                        while (!_cts.IsCancellationRequested)
                         {
-                            var progress = status.progress * 100d;
-
-                            NbSeeders = status.num_seeds;
-                            NbPeers = status.num_peers;
-                            DownloadProgress = progress;
-                            DownloadRate = Math.Round(status.download_rate / 1024d, 0);
-                            handle.flush_cache();
-                            if (handle.need_save_resume_data())
-                                handle.save_resume_data(1);
-
-                            if (progress >= Utils.Constants.MinimumMovieBuffering && !alreadyBuffered)
+                            using (var status = handle.status())
                             {
-                                // Get movie file
-                                foreach (
-                                    var filePath in
-                                    Directory
-                                        .GetFiles(status.save_path, "*.*",
-                                            SearchOption.AllDirectories)
-                                        .Where(s => s.Contains(handle.torrent_file().name()) &&
-                                                    (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
-                                                     s.EndsWith(".mov") || s.EndsWith(".avi")))
-                                )
+                                var progress = status.progress * 100d;
+
+                                NbSeeders = status.num_seeds;
+                                NbPeers = status.num_peers;
+                                DownloadProgress = progress;
+                                DownloadRate = Math.Round(status.download_rate / 1024d, 0);
+                                handle.flush_cache();
+                                if (handle.need_save_resume_data())
+                                    handle.save_resume_data(1);
+
+                                if (progress >= Utils.Constants.MinimumMovieBuffering && !alreadyBuffered)
                                 {
-                                    alreadyBuffered = true;
-                                    Messenger.Default.Send(new PlayMediaMessage(filePath, new Progress<double>(e =>
+                                    // Get movie file
+                                    foreach (
+                                        var filePath in
+                                        Directory
+                                            .GetFiles(status.save_path, "*.*",
+                                                SearchOption.AllDirectories)
+                                            .Where(s => s.Contains(handle.torrent_file().name()) &&
+                                                        (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
+                                                         s.EndsWith(".mov") || s.EndsWith(".avi")))
+                                    )
                                     {
-                                        DownloadProgress = e;
-                                    })));
-                                    _buffered.Invoke(this);
+                                        alreadyBuffered = true;
+                                        Messenger.Default.Send(new PlayMediaMessage(filePath, new Progress<double>(e =>
+                                        {
+                                            DownloadProgress = e;
+                                        })));
+                                        _hideDialog.Invoke(this);
+                                    }
                                 }
-                            }
 
-                            try
-                            {
-                                await Task.Delay(1000, _cts.Token);
-                            }
-                            catch (TaskCanceledException)
-                            {
-                                break;
+                                try
+                                {
+                                    await Task.Delay(1000, _cts.Token);
+                                }
+                                catch (TaskCanceledException)
+                                {
+                                    _hideDialog.Invoke(this);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
