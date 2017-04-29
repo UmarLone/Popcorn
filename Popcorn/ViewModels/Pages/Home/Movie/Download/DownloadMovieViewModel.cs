@@ -12,7 +12,6 @@ using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Movie;
-using Popcorn.Services.Language;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Windows.Settings;
 
@@ -92,11 +91,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
-        /// <param name="languageService">Language service</param>
-        public DownloadMovieViewModel(ISubtitlesService subtitlesService, ILanguageService languageService)
+        /// <param name="applicationSettingsViewModel">Applications settings</param>
+        public DownloadMovieViewModel(ISubtitlesService subtitlesService, ApplicationSettingsViewModel applicationSettingsViewModel)
         {
             _subtitlesService = subtitlesService;
-            _applicationSettingsViewModel = new ApplicationSettingsViewModel(languageService);
+            _applicationSettingsViewModel = applicationSettingsViewModel;
             _cancellationDownloadingMovie = new CancellationTokenSource();
             RegisterMessages();
             RegisterCommands();

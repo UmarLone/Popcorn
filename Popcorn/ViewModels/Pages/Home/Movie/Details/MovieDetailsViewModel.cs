@@ -14,13 +14,13 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Movie;
 using Popcorn.Models.Subtitles;
-using Popcorn.Services.Language;
 using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent.Movie;
+using Popcorn.ViewModels.Windows.Settings;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -123,17 +123,17 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// Initializes a new instance of the MovieDetailsViewModel class.
         /// </summary>
         /// <param name="movieService">Service used to interact with movies</param>
-        /// <param name="languageService">Language service</param>
         /// <param name="movieTrailerService">The movie trailer service</param>
         /// <param name="subtitlesService">The subtitles service</param>
-        public MovieDetailsViewModel(IMovieService movieService, ILanguageService languageService, IMovieTrailerService movieTrailerService, ISubtitlesService subtitlesService)
+        /// <param name="applicationSettingsViewModel">Application settings</param>
+        public MovieDetailsViewModel(IMovieService movieService, IMovieTrailerService movieTrailerService, ISubtitlesService subtitlesService, ApplicationSettingsViewModel applicationSettingsViewModel)
         {
             _movieTrailerService = movieTrailerService;
             _movieService = movieService;
             _subtitlesService = subtitlesService;
             _cancellationLoadingToken = new CancellationTokenSource();
             _cancellationLoadingTrailerToken = new CancellationTokenSource();
-            DownloadMovie = new DownloadMovieViewModel(subtitlesService, languageService);
+            DownloadMovie = new DownloadMovieViewModel(subtitlesService, applicationSettingsViewModel);
             RegisterMessages();
             RegisterCommands();
         }
