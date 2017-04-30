@@ -38,13 +38,13 @@ Visual Studio 2017
 * UI framework: [MahApps](https://github.com/MahApps/MahApps.Metro)
 * Media Player: [Meta.Vlc](https://github.com/higankanshi/Meta.Vlc)
 * ORM: [Entity Framework](https://github.com/aspnet/EntityFramework)
+* Torrent : [libtorrent-net](https://github.com/bbougot/libtorrent-net)
 * Database storage: [SqlServer Compact](https://www.nuget.org/packages/Microsoft.SqlServer.Compact/)
 * JSON Deserialization: [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * REST management: [RestSharp](https://github.com/restsharp/RestSharp)
 * Logging: [NLog](https://github.com/NLog/NLog)
 * Unit testing: [NUnit](https://github.com/nunit/nunit) & [AutoFixture](https://github.com/AutoFixture/AutoFixture)
 * IMDb data: [TMDbLib](https://github.com/LordMike/TMDbLib/)
-* Downloadable Youtube videos: [YoutubeExtractor](https://github.com/flagbug/YoutubeExtractor)
 * Localization: [WpfLocalizeExtension](https://github.com/SeriousM/WPFLocalizationExtension)
 
 ### API
