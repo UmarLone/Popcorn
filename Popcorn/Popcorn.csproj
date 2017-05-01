@@ -800,6 +800,10 @@
       <Project>{2ee35489-4761-44c6-a612-8619db2a45e6}</Project>
       <Name>Popcorn.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tor\Tor.csproj">
+      <Project>{8eecd857-f347-4102-97d3-62a88f4fa23c}</Project>
+      <Name>Tor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -820,7 +824,11 @@ xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\Nativ
 xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"
-xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEvent>
+xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"
+if not exist "$(TargetDir)Data" md "$(TargetDir)Data"
+if not exist "$(TargetDir)Tor" md "$(TargetDir)Tor"
+if not exist "$(TargetDir)Data" xcopy /s /y "$(SolutionDir)\libs\Data\*.*" "$(TargetDir)Data"
+if not exist "$(TargetDir)Tor" xcopy /s /y "$(SolutionDir)\libs\Tor\*.*" "$(TargetDir)Tor"</PostBuildEvent>
   </PropertyGroup>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

@@ -20,6 +20,7 @@ using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Player;
 using Popcorn.Services.Movies.History;
+using Popcorn.Utils;
 using Popcorn.ViewModels.Pages.Home;
 using Popcorn.ViewModels.Pages.Home.Anime;
 using Popcorn.ViewModels.Pages.Home.Movie;
@@ -352,44 +353,67 @@ namespace Popcorn.ViewModels.Windows
 
             DropFileCommand = new RelayCommand<DragEventArgs>(async e =>
             {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                try
                 {
-                    var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    var torrentFile = files?.FirstOrDefault(a => a.Contains("torrent"));
-                    if (torrentFile != null)
+                    if (e.Data.GetDataPresent(DataFormats.FileDrop))
                     {
-                        var mediaFilePresent = false;
-                        using (var torrentInfos = new torrent_info(torrentFile))
+                        var files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+                        var torrentFile = files?.FirstOrDefault(a => a.Contains("torrent"));
+                        if (torrentFile != null)
                         {
-                            for (var i = 0; i < torrentInfos.num_files(); i++)
+                            var mediaFilePresent = false;
+                            var type = TorrentType.File;
+                            if (File.ReadLines(torrentFile).Any(line => line.Contains("magnet")))
                             {
-                                using (var file = torrentInfos.file_at(i))
+                                type = TorrentType.Magnet;
+                            }
+                            else
+                            {
+                                using (var torrentInfos = new torrent_info(torrentFile))
                                 {
-                                    if (file.path.EndsWith(".mp4") || file.path.EndsWith(".mkv") ||
-                                        file.path.EndsWith(".mov") || file.path.EndsWith(".avi"))
+                                    for (var i = 0; i < torrentInfos.num_files(); i++)
                                     {
-                                        mediaFilePresent = true;
+                                        using (var file = torrentInfos.file_at(i))
+                                        {
+                                            if (file.path.EndsWith(".mp4") || file.path.EndsWith(".mkv") ||
+                                                file.path.EndsWith(".mov") || file.path.EndsWith(".avi"))
+                                            {
+                                                mediaFilePresent = true;
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
-                        if (mediaFilePresent)
+                            Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
+                            if (mediaFilePresent || type == TorrentType.Magnet)
+                            {
+                                var dropTorrentDialog =
+                                    new DropTorrentDialog(new DropTorrentDialogSettings(torrentFile, type, async args =>
+                                    {
+                                        try
+                                        {
+                                            await _dialogCoordinator.HideMetroDialogAsync(this, args);
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                    }));
+                                await _dialogCoordinator.ShowMetroDialogAsync(this, dropTorrentDialog);
+                                await dropTorrentDialog.DownloadTorrentFile();
+                            }
+                        }
+                        else
                         {
-                            var dropTorrentDialog =
-                                new DropTorrentDialog(new DropTorrentDialogSettings(torrentFile, async args =>
-                                {
-                                    await _dialogCoordinator.HideMetroDialogAsync(this, args);
-                                }));
-                            await _dialogCoordinator.ShowMetroDialogAsync(this, dropTorrentDialog);
-                            await dropTorrentDialog.DownloadTorrentFile();
+                            Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
                         }
                     }
-                    else
-                    {
-                        Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
-                    }
+                }
+                catch (Exception)
+                {
+                    Messenger.Default.Send(
+                        new UnhandledExceptionMessage(
+                            new Exception("An issue has occured while processing the dropped file.")));
                 }
             });
 

@@ -58,6 +58,11 @@ namespace Popcorn.Utils
         public static string MovieDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\Movies\\";
 
         /// <summary>
+        /// Directory of dropped files
+        /// </summary>
+        public static string DropFilesDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\Dropped\\";
+
+        /// <summary>
         /// Directory of downloaded shows
         /// </summary>
         public static string ShowDownloads { get; } = Path.GetTempPath() + "Popcorn\\Downloads\\Shows\\";
@@ -76,5 +81,15 @@ namespace Popcorn.Utils
         /// Logging directory
         /// </summary>
         public static string Logging { get; } = Path.GetTempPath() + "Popcorn\\Logs\\";
+
+        /// <summary>
+        /// Begin range of torrent ports
+        /// </summary>
+        public static int TorrentMinPort { get; } = 6881;
+
+        /// <summary>
+        /// End range of torrent ports
+        /// </summary>
+        public static int TorrentMaxPort { get; } = 6889;
     }
 }

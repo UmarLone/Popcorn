@@ -14,6 +14,7 @@ using Popcorn.Messaging;
 using Popcorn.Models.Episode;
 using Popcorn.Services.Language;
 using Popcorn.Services.Subtitles;
+using Popcorn.Utils;
 using Popcorn.ViewModels.Windows.Settings;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Download
@@ -304,10 +305,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
             CancellationTokenSource ct)
         {
             _episodeFilePath = string.Empty;
-            EpisodeDownloadProgress = 0d;
-            EpisodeDownloadRate = 0d;
-            NbSeeders = 0;
-            NbPeers = 0;
+            downloadProgress?.Report(0d);
+            downloadRate?.Report(0d);
+            nbSeeds?.Report(0);
+            nbPeers?.Report(0);
 
             await Task.Run(async () =>
             {
@@ -316,13 +317,16 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                     Logger.Info(
                         $"Start downloading episode : {episode.Title}");
 
+                    var settings = session.settings();
+                    settings.anonymous_mode = true;
+
                     IsDownloadingEpisode = true;
 
                     downloadProgress?.Report(0d);
                     downloadRate?.Report(0d);
                     nbSeeds?.Report(0);
                     nbPeers?.Report(0);
-                    session.listen_on(6881, 6889);
+                    session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
                     string magnetUri;
                     if (episode.WatchInFullHdQuality && (episode.Torrents.Torrent_720p?.Url != null ||
                                                          episode.Torrents.Torrent_1080p?.Url != null))
@@ -383,6 +387,22 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                                         Messenger.Default.Send(new PlayShowEpisodeMessage(episode,
                                             _reportDownloadProgress));
                                     }
+
+
+                                    if (!alreadyBuffered)
+                                    {
+                                        session.remove_torrent(handle, 0);
+                                        Messenger.Default.Send(
+                                            new UnhandledExceptionMessage(
+                                                new Exception("There is no media file in the torrent you dropped in the UI.")));
+                                        break;
+                                    }
+                                }
+
+                                if (status.is_finished)
+                                {
+                                    session.remove_torrent(handle, 0);
+                                    break;
                                 }
 
                                 try

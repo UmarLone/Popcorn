@@ -13,6 +13,7 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Movie;
 using Popcorn.Services.Subtitles;
+using Popcorn.Utils;
 using Popcorn.ViewModels.Windows.Settings;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Download
@@ -319,6 +320,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     Logger.Info(
                         $"Start downloading movie : {movie.Title}");
 
+                    var settings = session.settings();
+                    settings.anonymous_mode = true;
+
                     IsDownloadingMovie = true;
 
                     downloadProgress?.Report(0d);
@@ -326,7 +330,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     nbSeeds?.Report(0);
                     nbPeers?.Report(0);
 
-                    session.listen_on(6881, 6889);
+                    session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
                     var torrentUrl = movie.WatchInFullHdQuality
                         ? movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
                         : movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
@@ -385,6 +389,22 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                                         movie.FilePath = filePath;
                                         Messenger.Default.Send(new PlayMovieMessage(movie, _reportDownloadProgress));
                                     }
+
+
+                                    if (!alreadyBuffered)
+                                    {
+                                        session.remove_torrent(handle, 0);
+                                        Messenger.Default.Send(
+                                            new UnhandledExceptionMessage(
+                                                new Exception("There is no media file in the torrent you dropped in the UI.")));
+                                        break;
+                                    }
+                                }
+
+                                if (status.is_finished)
+                                {
+                                    session.remove_torrent(handle, 0);
+                                    break;
                                 }
 
                                 try
