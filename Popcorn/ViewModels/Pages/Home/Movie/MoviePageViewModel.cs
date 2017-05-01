@@ -100,7 +100,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
                 Tabs.Add(new SeenMovieTabViewModel(ApplicationService, _movieService, _movieHistoryService));
                 SelectedTab = Tabs.First();
                 SelectedMoviesIndexMenuTab = 0;
-                var loadMoviesTask = Tabs.ParallelForEachAsync(async tab =>
+                var loadMoviesTask = Tabs.ToList().ParallelForEachAsync(async tab =>
                 {
                     await tab.LoadMoviesAsync();
                 });
