@@ -70,3 +70,4 @@ Tor/Obj
 *.sdf
 
 Releases/
+/.vs/slnx.sqlite
