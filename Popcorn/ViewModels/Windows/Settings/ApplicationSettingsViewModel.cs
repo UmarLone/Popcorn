@@ -32,11 +32,17 @@ namespace Popcorn.ViewModels.Windows.Settings
         private int _uploadLimit;
 
         /// <summary>
+        /// The version of the app
+        /// </summary>
+        private string _version;
+
+        /// <summary>
         /// Initializes a new instance of the ApplicationSettingsViewModel class.
         /// </summary>
         public ApplicationSettingsViewModel(ILanguageService languageService)
         {
             _languageService = languageService;
+            Version = Utils.Constants.AppVersion;
             RegisterCommands();
         }
 
@@ -47,6 +53,15 @@ namespace Popcorn.ViewModels.Windows.Settings
         {
             get { return _downloadLimit; }
             set { Set(() => DownloadLimit, ref _downloadLimit, value); }
+        }
+
+        /// <summary>
+        /// The version of the app
+        /// </summary>
+        public string Version
+        {
+            get { return _version; }
+            set { Set(() => Version, ref _version, value); }
         }
 
         /// <summary>

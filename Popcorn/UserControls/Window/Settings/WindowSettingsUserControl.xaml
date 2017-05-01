@@ -92,7 +92,7 @@
             <TextBlock
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Text="1.11.0" />
+                Text="{Binding Version}" />
         </Grid>
     </Grid>
 </UserControl>
