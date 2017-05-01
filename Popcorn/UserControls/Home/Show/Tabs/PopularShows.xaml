@@ -233,9 +233,11 @@
             Height="40"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            controls1:ButtonHelper.PreserveTextCase="True"
             Command="{Binding ReloadShows}"
             Content="{lex:LocText ReloadLabel}"
-            FontSize="18">
+            FontSize="18"
+            Style="{DynamicResource AccentedSquareButtonStyle}">
             <Button.Visibility>
                 <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}" ConverterParameter="OR">
                     <Binding Path="Window.ApplicationService.IsConnectionInError" Source="{StaticResource Locator}" />

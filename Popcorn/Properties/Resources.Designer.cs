@@ -88,6 +88,24 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Average.
+        /// </summary>
+        public static string AverageLabel {
+            get {
+                return ResourceManager.GetString("AverageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Bad.
+        /// </summary>
+        public static string BadLabel {
+            get {
+                return ResourceManager.GetString("BadLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Buffering.
         /// </summary>
         public static string BufferingLabel {
@@ -250,11 +268,29 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Good.
+        /// </summary>
+        public static string GoodLabel {
+            get {
+                return ResourceManager.GetString("GoodLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Greatest.
         /// </summary>
         public static string GreatestMovieTitleTab {
             get {
                 return ResourceManager.GetString("GreatestMovieTitleTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Health.
+        /// </summary>
+        public static string HealthLabel {
+            get {
+                return ResourceManager.GetString("HealthLabel", resourceCulture);
             }
         }
         
@@ -601,6 +637,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown.
+        /// </summary>
+        public static string UnknownLabel {
+            get {
+                return ResourceManager.GetString("UnknownLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Release informations:.
         /// </summary>
         public static string UpdateReleasesInformationsLabel {
@@ -624,6 +669,24 @@ namespace Popcorn.Properties {
         public static string UsernameWatermark {
             get {
                 return ResourceManager.GetString("UsernameWatermark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Very bad.
+        /// </summary>
+        public static string VeryBadLabel {
+            get {
+                return ResourceManager.GetString("VeryBadLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Very good.
+        /// </summary>
+        public static string VeryGoodLabel {
+            get {
+                return ResourceManager.GetString("VeryGoodLabel", resourceCulture);
             }
         }
         

@@ -36,6 +36,7 @@
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
+            <converters:TorrentHealthToLabelConverter x:Key="TorrentHealthToLabelConverter" />
             <DataTemplate DataType="{x:Type downloadViewModel:DownloadMovieViewModel}">
                 <download:DownloadMovieUserControl />
             </DataTemplate>
@@ -208,13 +209,62 @@
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Row="0">
                         <DockPanel DockPanel.Dock="Top">
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                DockPanel.Dock="Top"
-                                FontSize="36"
-                                Text="{Binding Movie.Title}"
-                                TextTrimming="CharacterEllipsis" />
+                            <Grid VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    FontSize="36"
+                                    Text="{Binding Movie.Title}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <Grid
+                                    Grid.Column="2"
+                                    Width="32"
+                                    Height="32"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom">
+                                    <Viewbox
+                                        Width="32"
+                                        Height="32"
+                                        Opacity="0.8">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="White" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <Rectangle
+                                        Width="32"
+                                        Height="32"
+                                        Fill="Transparent" />
+                                    <Grid.ToolTip>
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Seeders:" />
+                                                <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Seeds}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                <TextBlock Text="Peers:" />
+                                                <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Peers}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                <TextBlock Text="Size:" />
+                                                <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Size}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                <TextBlock Text="{lex:LocText HealthLabel}" />
+                                                <TextBlock Text=":" />
+                                                <TextBlock
+                                                    Margin="5,0,0,0"
+                                                    Foreground="{Binding Path=TorrentHealth, Converter={StaticResource ValueToBrushConverter}, ConverterParameter='0|10', UpdateSourceTrigger=PropertyChanged}"
+                                                    Text="{Binding Path=TorrentHealth, Converter={StaticResource TorrentHealthToLabelConverter}, ConverterParameter='0|10', UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid.ToolTip>
+                                </Grid>
+                            </Grid>
                             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                                 <TextBlock
                                     VerticalAlignment="Center"
@@ -319,39 +369,8 @@
                                         IsTabStop="False" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                    <Grid
-                                        Width="35"
-                                        Height="35"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom">
-                                        <Viewbox Width="30" Height="30">
-                                            <Canvas Width="24" Height="24">
-                                                <Path Data="M7.5,4A5.5,5.5 0 0,0 2,9.5C2,10 2.09,10.5 2.22,11H6.3L7.57,7.63C7.87,6.83 9.05,6.75 9.43,7.63L11.5,13L12.09,11.58C12.22,11.25 12.57,11 13,11H21.78C21.91,10.5 22,10 22,9.5A5.5,5.5 0 0,0 16.5,4C14.64,4 13,4.93 12,6.34C11,4.93 9.36,4 7.5,4V4M3,12.5A1,1 0 0,0 2,13.5A1,1 0 0,0 3,14.5H5.44L11,20C12,20.9 12,20.9 13,20L18.56,14.5H21A1,1 0 0,0 22,13.5A1,1 0 0,0 21,12.5H13.4L12.47,14.8C12.07,15.81 10.92,15.67 10.55,14.83L8.5,9.5L7.54,11.83C7.39,12.21 7.05,12.5 6.6,12.5H3Z" Fill="{Binding Path=TorrentHealth, Converter={StaticResource ValueToBrushConverter}, ConverterParameter='0|10', UpdateSourceTrigger=PropertyChanged}" />
-                                            </Canvas>
-                                        </Viewbox>
-                                        <Rectangle
-                                            Width="35"
-                                            Height="35"
-                                            Fill="Transparent" />
-                                        <Grid.ToolTip>
-                                            <StackPanel Orientation="Vertical">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="Seeders:" />
-                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Seeds}" />
-                                                </StackPanel>
-                                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-                                                    <TextBlock Text="Peers:" />
-                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Peers}" />
-                                                </StackPanel>
-                                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-                                                    <TextBlock Text="Size:" />
-                                                    <TextBlock Margin="5,0,0,0" Text="{Binding SelectedTorrent.Size}" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Grid.ToolTip>
-                                    </Grid>
+
                                     <controls:ToggleSwitch
-                                        Margin="20,0,0,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
                                         Header="{lex:LocText MovieQualityLabel}"
@@ -456,7 +475,7 @@
                     Opacity="0.8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5" />
-                        <RowDefinition Height="35" />
+                        <RowDefinition Height="60" />
                         <RowDefinition Height="10" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="5" />
@@ -464,8 +483,8 @@
                     <TextBlock
                         Grid.Row="1"
                         HorizontalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="ExtraLight"
+                        VerticalAlignment="Center"
+                        FontSize="32"
                         Text="{lex:LocText SimilarLabel}" />
                     <customControls:AnimatedScrollViewer
                         Grid.Row="3"

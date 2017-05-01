@@ -30,6 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid
@@ -86,6 +87,12 @@
                 Maximum="10000"
                 Minimum="0"
                 Value="{Binding UploadLimit}" />
+        </Grid>
+        <Grid Grid.Row="3" Grid.Column="1">
+            <TextBlock
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Text="1.11.0" />
         </Grid>
     </Grid>
 </UserControl>

@@ -309,4 +309,25 @@
   <data name="NoSimilarLabel" xml:space="preserve">
     <value>Aucun film similaire trouvé</value>
   </data>
+  <data name="AverageLabel" xml:space="preserve">
+    <value>Moyen</value>
+  </data>
+  <data name="BadLabel" xml:space="preserve">
+    <value>Mauvais</value>
+  </data>
+  <data name="GoodLabel" xml:space="preserve">
+    <value>Bon</value>
+  </data>
+  <data name="HealthLabel" xml:space="preserve">
+    <value>Santé</value>
+  </data>
+  <data name="UnknownLabel" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="VeryBadLabel" xml:space="preserve">
+    <value>Très mauvais</value>
+  </data>
+  <data name="VeryGoodLabel" xml:space="preserve">
+    <value>Excellent</value>
+  </data>
 </root>
