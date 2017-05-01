@@ -431,7 +431,6 @@
         <file src="XAMLMarkupExtensions.dll" target="lib\net45\XAMLMarkupExtensions.dll" />
         <file src="Popcorn.ImageLoader.dll" target="lib\net45\Popcorn.ImageLoader.dll" />
         <file src="Popcorn.GifLoader.dll" target="lib\net45\Popcorn.GifLoader.dll" />
-        <file src="Popcorn.IO.dll" target="lib\net45\Popcorn.IO.dll" />
         <file src="Popcorn.Utils.dll" target="lib\net45\Popcorn.Utils.dll" />
         <file src="Assets\SplashScreen.gif" target="lib\net45\Assets\SplashScreen.gif" />
     </files>

@@ -111,10 +111,6 @@
       <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
       <Name>Popcorn.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Popcorn.IO\Popcorn.IO.csproj">
-      <Project>{2ee35489-4761-44c6-a612-8619db2a45e6}</Project>
-      <Name>Popcorn.IO</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

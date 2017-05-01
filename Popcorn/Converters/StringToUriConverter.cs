@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using Popcorn.IO;
+using Popcorn.Utils;
 
 namespace Popcorn.Converters
 {

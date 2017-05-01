@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Popcorn.IO;
+using Popcorn.Utils;
 
 namespace Popcorn.ImageLoader.ImageLoaders
 {

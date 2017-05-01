@@ -796,10 +796,6 @@
       <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
       <Name>Popcorn.GifLoader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Popcorn.IO\Popcorn.IO.csproj">
-      <Project>{2ee35489-4761-44c6-a612-8619db2a45e6}</Project>
-      <Name>Popcorn.IO</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tor\Tor.csproj">
       <Project>{8eecd857-f347-4102-97d3-62a88f4fa23c}</Project>
       <Name>Tor</Name>
