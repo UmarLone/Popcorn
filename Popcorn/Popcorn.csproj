@@ -816,11 +816,7 @@ xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\Nativ
 xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"
-xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"
-if not exist "$(TargetDir)Data" md "$(TargetDir)Data"
-if not exist "$(TargetDir)Tor" md "$(TargetDir)Tor"
-if not exist "$(TargetDir)Data" xcopy /s /y "$(SolutionDir)\libs\Data\*.*" "$(TargetDir)Data"
-if not exist "$(TargetDir)Tor" xcopy /s /y "$(SolutionDir)\libs\Tor\*.*" "$(TargetDir)Tor"</PostBuildEvent>
+xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
