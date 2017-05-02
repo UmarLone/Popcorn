@@ -28,7 +28,7 @@
                 VerticalAlignment="Center"
                 FontSize="24"
                 Foreground="White"
-                Text="{Binding FilePath, ElementName=TorrentDialog}" />
+                Text="{Binding TorrentPath, ElementName=TorrentDialog}" />
             <StackPanel
                 Margin="0,15,0,0"
                 HorizontalAlignment="Center"
