@@ -15,7 +15,6 @@ build_script:
     "Building project with Coverity..."
     & "cov-build.exe" `
       --dir cov-int `
-      --encoding=UTF-8 `
       $buildCmd $buildArgs
       
     # Compress results.
