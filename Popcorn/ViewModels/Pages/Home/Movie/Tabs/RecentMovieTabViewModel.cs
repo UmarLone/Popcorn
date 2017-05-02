@@ -38,7 +38,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentMovieTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentTitleTab");
         }
 
         /// <summary>
@@ -62,9 +62,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 IsLoadingMovies = true;
 
                 var movies =
-                    await MovieService.GetRecentMoviesAsync(Page,
+                    await MovieService.GetMoviesAsync(Page,
                         MaxMoviesPerPage,
                         Rating,
+                        "year",
                         CancellationLoadingMovies.Token,
                         Genre).ConfigureAwait(false);
 
@@ -103,7 +104,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentMovieTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {

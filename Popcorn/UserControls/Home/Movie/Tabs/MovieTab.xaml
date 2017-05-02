@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Popcorn.UserControls.Home.Movie.Tabs.FavoritesMovies"
+    x:Class="Popcorn.UserControls.Home.Movie.Tabs.MovieTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
@@ -10,9 +10,9 @@
     xmlns:imageLoader="clr-namespace:Popcorn.ImageLoader;assembly=Popcorn.ImageLoader"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tabs="clr-namespace:Popcorn.UserControls.Home.Movie.Tabs"
     xmlns:tabs1="clr-namespace:Popcorn.ViewModels.Pages.Home.Movie.Tabs"
-    xmlns:tabs2="clr-namespace:Popcorn.UserControls.Home.Movie.Tabs"
-    d:DataContext="{d:DesignInstance tabs1:FavoritesMovieTabViewModel}"
+    d:DataContext="{d:DesignInstance tabs1:PopularMovieTabViewModel}"
     lex:LocalizeDictionary.DesignCulture="en"
     lex:ResxLocalizationProvider.DefaultAssembly="Popcorn"
     lex:ResxLocalizationProvider.DefaultDictionary="Resources"
@@ -50,7 +50,10 @@
                 </MultiBinding>
             </TextBlock.Visibility>
         </TextBlock>
-        <customControls:AnimatedScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding Window.ApplicationService.IsConnectionInError, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Locator}}">
+        <customControls:AnimatedScrollViewer
+            ScrollChanged="ScrollViewerScrollChanged"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding Window.ApplicationService.IsConnectionInError, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Locator}}">
             <ItemsControl
                 VerticalAlignment="Top"
                 ItemsSource="{Binding Movies}"
@@ -258,7 +261,7 @@
                                         Height="50"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Command="{Binding DataContext.SetFavoriteMovieCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tabs2:FavoritesMovies}}}"
+                                        Command="{Binding DataContext.SetFavoriteMovieCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tabs:MovieTab}}}"
                                         CommandParameter="{Binding}"
                                         IsChecked="{Binding IsFavorite}"
                                         Opacity="0.0"

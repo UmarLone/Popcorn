@@ -362,6 +362,7 @@
     <Compile Include="Messaging\PlayEpisodeShowMessage.cs" />
     <Compile Include="Messaging\PlayMediaMessage.cs" />
     <Compile Include="Messaging\PlayTrailerMessage.cs" />
+    <Compile Include="Messaging\SearchShowMessage.cs" />
     <Compile Include="Messaging\StopPlayingEpisodeMessage.cs" />
     <Compile Include="Messaging\StopPlayMediaMessage.cs" />
     <Compile Include="Messaging\UnhandledExceptionMessage.cs" />
@@ -486,45 +487,34 @@
     <Compile Include="UserControls\Home\Show\ShowUserControl.xaml.cs">
       <DependentUpon>ShowUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Home\Show\Tabs\PopularShows.xaml.cs">
-      <DependentUpon>PopularShows.xaml</DependentUpon>
+    <Compile Include="UserControls\Home\Show\Tabs\ShowTab.xaml.cs">
+      <DependentUpon>ShowTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Player\PlayerUserControl.xaml.cs">
       <DependentUpon>PlayerUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Home\Movie\Search\SearchMovieUserControl.xaml.cs">
+    <Compile Include="UserControls\Home\Search\SearchMovieUserControl.xaml.cs">
       <DependentUpon>SearchMovieUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Window\Settings\WindowSettingsUserControl.xaml.cs">
       <DependentUpon>WindowSettingsUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\FavoritesMovies.xaml.cs">
-      <DependentUpon>FavoritesMovies.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\GreatestMovies.xaml.cs">
-      <DependentUpon>GreatestMovies.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\PopularMovies.xaml.cs">
-      <DependentUpon>PopularMovies.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\RecentMovies.xaml.cs">
-      <DependentUpon>RecentMovies.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\SearchMovies.xaml.cs">
-      <DependentUpon>SearchMovies.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Home\Movie\Tabs\SeenMovies.xaml.cs">
-      <DependentUpon>SeenMovies.xaml</DependentUpon>
+    <Compile Include="UserControls\Home\Movie\Tabs\MovieTab.xaml.cs">
+      <DependentUpon>MovieTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Home\Movie\Trailer\Trailer.xaml.cs">
       <DependentUpon>Trailer.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Pages\Home\IPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Movie\Download\DownloadMovieViewModel.cs" />
-    <Compile Include="ViewModels\Pages\Home\Movie\Genres\GenresMovieViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Genres\GenreViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Details\ShowDetailsViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Download\DownloadShowViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Search\SearchShowViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Tabs\GreatestShowTabViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Tabs\PopularShowTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Tabs\RecentShowTabViewModel.cs" />
+    <Compile Include="ViewModels\Pages\Home\Show\Tabs\SearchShowTabViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Show\Tabs\ShowTabsViewModel.cs" />
     <Compile Include="ViewModels\Windows\WindowViewModel.cs" />
     <Compile Include="ViewModels\Pages\Home\Anime\AnimePageViewModel.cs" />
@@ -651,15 +641,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\FavoritesMovies.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\SeenMovies.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Show\Tabs\PopularShows.xaml">
+    <Page Include="UserControls\Home\Show\Tabs\ShowTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -695,7 +677,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Home\Movie\Search\SearchMovieUserControl.xaml">
+    <Page Include="UserControls\Home\Search\SearchMovieUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -703,19 +685,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\GreatestMovies.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\PopularMovies.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\RecentMovies.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Home\Movie\Tabs\SearchMovies.xaml">
+    <Page Include="UserControls\Home\Movie\Tabs\MovieTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -759,6 +729,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,15 +1,20 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Messaging;
 
-namespace Popcorn.ViewModels.Pages.Home.Movie.Search
+namespace Popcorn.ViewModels.Pages.Home.Show.Search
 {
     /// <summary>
-    /// Movie's search
+    /// Show's search
     /// </summary>
-    public sealed class SearchMovieViewModel : ViewModelBase
+    public class SearchShowViewModel : ViewModelBase
     {
         /// <summary>
         /// Logger of the class
@@ -17,21 +22,21 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Search
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// The filter for searching movies
+        /// The filter for searching shows
         /// </summary>
         private string _searchFilter;
 
         /// <summary>
-        /// Initializes a new instance of the SearchMovieViewModel class.
+        /// Initializes a new instance of the SearchShowViewModel class.
         /// </summary>
-        public SearchMovieViewModel()
+        public SearchShowViewModel()
         {
             RegisterMessages();
             RegisterCommands();
         }
 
         /// <summary>
-        /// The filter for searching movies
+        /// The filter for searching shows
         /// </summary>
         public string SearchFilter
         {
@@ -40,7 +45,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Search
         }
 
         /// <summary>
-        /// Command used to search movies
+        /// Command used to search shows
         /// </summary>
         public RelayCommand SearchCommand { get; private set; }
 
@@ -50,7 +55,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Search
         private void RegisterMessages() => Messenger.Default.Register<PropertyChangedMessage<string>>(this, e =>
         {
             if (e.PropertyName == GetPropertyName(() => SearchFilter) && string.IsNullOrEmpty(e.NewValue))
-                Messenger.Default.Send(new SearchMovieMessage(string.Empty));
+                Messenger.Default.Send(new SearchShowMessage(string.Empty));
         });
 
         /// <summary>
@@ -61,7 +66,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Search
             {
                 Logger.Debug(
                     $"New search criteria: {SearchFilter}");
-                Messenger.Default.Send(new SearchMovieMessage(SearchFilter));
+                Messenger.Default.Send(new SearchShowMessage(SearchFilter));
             });
     }
 }

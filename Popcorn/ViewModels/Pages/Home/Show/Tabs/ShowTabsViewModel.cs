@@ -2,9 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
+using Popcorn.Helpers;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
@@ -160,7 +162,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Command used to reload shows
         /// </summary>
-        public RelayCommand ReloadShows { get; set; }
+        public ICommand ReloadShows { get; set; }
 
         /// <summary>
         /// Command used to set a show as favorite
@@ -248,7 +250,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <returns></returns>
         private void RegisterCommands()
         {
-
+            ChangeShowGenreCommand =
+                new RelayCommand<GenreJson>(genre => Genre = genre.Name ==
+                                                             LocalizationProviderHelper.GetLocalizedValue<string>(
+                                                                 "AllLabel")
+                    ? null
+                    : genre);
         }
     }
 }

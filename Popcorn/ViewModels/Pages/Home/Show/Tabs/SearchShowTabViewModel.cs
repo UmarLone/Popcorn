@@ -11,15 +11,11 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
-using Popcorn.Services.Movies.History;
-using Popcorn.Services.Movies.Movie;
+using Popcorn.Services.Shows.Show;
 
-namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
+namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 {
-    /// <summary>
-    /// The search movies tab
-    /// </summary>
-    public sealed class SearchMovieTabViewModel : MovieTabsViewModel
+    public class SearchShowTabViewModel : ShowTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -30,11 +26,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// Initializes a new instance of the SearchMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
-        /// <param name="movieService">Movie service</param>
-        /// <param name="movieHistoryService">Movie history service</param>
-        public SearchMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
-            IMovieHistoryService movieHistoryService)
-            : base(applicationService, movieService, movieHistoryService)
+        /// <param name="showService">Show service</param>
+        public SearchShowTabViewModel(IApplicationService applicationService, IShowService showService)
+            : base(applicationService, showService)
         {
             RegisterMessages();
             RegisterCommands();
@@ -47,27 +41,27 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         public string SearchFilter { get; private set; }
 
         /// <summary>
-        /// Search movies asynchronously
+        /// Search shows asynchronously
         /// </summary>
         /// <param name="searchFilter">The parameter of the search</param>
-        public async Task SearchMoviesAsync(string searchFilter)
+        public async Task SearchShowsAsync(string searchFilter)
         {
             if (SearchFilter != searchFilter)
             {
                 // We start an other search
-                StopLoadingMovies();
-                Movies.Clear();
+                StopLoadingShows();
+                Shows.Clear();
                 Page = 0;
-                CurrentNumberOfMovies = 0;
-                MaxNumberOfMovies = 0;
-                IsLoadingMovies = false;
+                CurrentNumberOfShows = 0;
+                MaxNumberOfShows = 0;
+                IsLoadingShows = false;
             }
 
             var watch = Stopwatch.StartNew();
 
             Page++;
 
-            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+            if (Page > 1 && Shows.Count == MaxNumberOfShows) return;
 
             Logger.Info(
                 $"Loading page {Page} with criteria: {searchFilter}");
@@ -78,25 +72,24 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             {
                 SearchFilter = searchFilter;
 
-                IsLoadingMovies = true;
+                IsLoadingShows = true;
 
                 var movies =
-                    await MovieService.SearchMoviesAsync(searchFilter,
+                    await ShowService.SearchShowsAsync(searchFilter,
                         Page,
-                        MaxMoviesPerPage,
+                        MaxNumberOfShows,
                         Genre,
                         Rating,
-                        CancellationLoadingMovies.Token).ConfigureAwait(false);
+                        CancellationLoadingShows.Token).ConfigureAwait(false);
 
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var moviesList = movies.Item1.ToList();
-                    Movies.AddRange(moviesList);
-                    IsLoadingMovies = false;
-                    IsMovieFound = Movies.Any();
-                    CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = movies.Item2;
-                    await MovieHistoryService.SetMovieHistoryAsync(movies.Item1).ConfigureAwait(false);
+                    Shows.AddRange(moviesList);
+                    IsLoadingShows = false;
+                    IsLoadingShows = Shows.Any();
+                    CurrentNumberOfShows = Shows.Count;
+                    MaxNumberOfShows = movies.Item2;
                 });
             }
             catch (Exception exception)
@@ -128,19 +121,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {
                 if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingMovies();
+                StopLoadingShows();
                 Page = 0;
-                Movies.Clear();
-                await SearchMoviesAsync(SearchFilter);
+                Shows.Clear();
+                await SearchShowsAsync(SearchFilter);
             });
 
             Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
             {
                 if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingMovies();
+                StopLoadingShows();
                 Page = 0;
-                Movies.Clear();
-                await SearchMoviesAsync(SearchFilter);
+                Shows.Clear();
+                await SearchShowsAsync(SearchFilter);
             });
         }
 
@@ -149,11 +142,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         private void RegisterCommands()
         {
-            ReloadMovies = new RelayCommand(async () =>
+            ReloadShows = new RelayCommand(async () =>
             {
                 ApplicationService.IsConnectionInError = false;
-                StopLoadingMovies();
-                await SearchMoviesAsync(SearchFilter);
+                StopLoadingShows();
+                await SearchShowsAsync(SearchFilter);
             });
         }
     }

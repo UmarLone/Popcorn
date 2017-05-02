@@ -23,41 +23,13 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="limit">The maximum number of movies to return</param>
         /// <param name="ct">Cancellation token</param>
         /// <param name="genre">The genre to filter</param>
+        /// <param name="sortBy">The sort</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular movies and the number of movies found</returns>
-        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetPopularMoviesAsync(int page,
+        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetMoviesAsync(int page,
             int limit,
             double ratingFilter,
-            CancellationToken ct,
-            GenreJson genre = null);
-
-        /// <summary>
-        /// Get greatest movies by page
-        /// </summary>
-        /// <param name="page">Page to return</param>
-        /// <param name="limit">The maximum number of movies to return</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <param name="genre">The genre to filter</param>
-        /// <param name="ratingFilter">Used to filter by rating</param>
-        /// <returns>Top rated movies and the number of movies found</returns>
-        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetGreatestMoviesAsync(int page,
-            int limit,
-            double ratingFilter,
-            CancellationToken ct,
-            GenreJson genre = null);
-
-        /// <summary>
-        /// Get recent movies by page
-        /// </summary>
-        /// <param name="page">Page to return</param>
-        /// <param name="limit">The maximum number of movies to return</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <param name="genre">The genre to filter</param>
-        /// <param name="ratingFilter">Used to filter by rating</param>
-        /// <returns>Recent movies and the number of movies found</returns>
-        Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetRecentMoviesAsync(int page,
-            int limit,
-            double ratingFilter,
+            string sortBy,
             CancellationToken ct,
             GenreJson genre = null);
 

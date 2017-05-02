@@ -167,17 +167,19 @@ namespace Popcorn.Services.Movies.Movie
         }
 
         /// <summary>
-        /// Get popular movies by page
+        /// Get movies by page
         /// </summary>
         /// <param name="page">Page to return</param>
         /// <param name="limit">The maximum number of movies to return</param>
         /// <param name="ct">Cancellation token</param>
         /// <param name="genre">The genre to filter</param>
+        /// <param name="sortBy">The sort</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular movies and the number of movies found</returns>
-        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetPopularMoviesAsync(int page,
+        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetMoviesAsync(int page,
             int limit,
             double ratingFilter,
+            string sortBy,
             CancellationToken ct,
             GenreJson genre = null)
         {
@@ -198,12 +200,11 @@ namespace Popcorn.Services.Movies.Movie
             request.AddParameter("page", page);
             if (genre != null) request.AddParameter("genre", genre.EnglishName);
             request.AddParameter("minimum_rating", ratingFilter);
-            request.AddParameter("sort_by", "seeds");
+            request.AddParameter("sort_by", sortBy);
 
-            IRestResponse<MovieResponse> response;
             try
             {
-                response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
+                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -253,148 +254,6 @@ namespace Popcorn.Services.Movies.Movie
                     TranslateMovieAsync(movie)
                 });
             });
-        }
-
-        /// <summary>
-        /// Get greatest movies by page
-        /// </summary>
-        /// <param name="page">Page to return</param>
-        /// <param name="limit">The maximum number of movies to return</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <param name="genre">The genre to filter</param>
-        /// <param name="ratingFilter">Used to filter by rating</param>
-        /// <returns>Top rated movies and the number of movies found</returns>
-        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetGreatestMoviesAsync(int page,
-            int limit,
-            double ratingFilter,
-            CancellationToken ct,
-            GenreJson genre = null)
-        {
-            var watch = Stopwatch.StartNew();
-
-            var wrapper = new MovieResponse();
-
-            if (limit < 1 || limit > 50)
-                limit = Utils.Constants.MaxMoviesPerPage;
-
-            if (page < 1)
-                page = 1;
-
-            var restClient = new RestClient(Utils.Constants.PopcornApi);
-            var request = new RestRequest("/{segment}", Method.GET);
-            request.AddUrlSegment("segment", "movies");
-            request.AddParameter("limit", limit);
-            request.AddParameter("page", page);
-            if (genre != null) request.AddParameter("genre", genre.EnglishName);
-            request.AddParameter("minimum_rating", ratingFilter);
-            request.AddParameter("sort_by", "download_count");
-
-            try
-            {
-                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
-                if (response.ErrorException != null)
-                    throw response.ErrorException;
-
-                wrapper = response.Data;
-            }
-            catch (Exception exception) when (exception is TaskCanceledException)
-            {
-                Logger.Debug(
-                    "GetGreatestMoviesAsync cancelled.");
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(
-                    $"GetGreatestMoviesAsync: {exception.Message}");
-                throw;
-            }
-            finally
-            {
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-                Logger.Debug(
-                    $"GetGreatestMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
-            }
-
-            var result = wrapper?.Movies ?? new List<MovieJson>();
-            Task.Run(async () =>
-            {
-                await ProcessTranslations(result);
-            });
-            var nbResult = wrapper?.TotalMovies ?? 0;
-
-            return (result, nbResult);
-        }
-
-        /// <summary>
-        /// Get recent movies by page
-        /// </summary>
-        /// <param name="page">Page to return</param>
-        /// <param name="limit">The maximum number of movies to return</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <param name="genre">The genre to filter</param>
-        /// <param name="ratingFilter">Used to filter by rating</param>
-        /// <returns>Recent movies and the number of movies found</returns>
-        public async Task<(IEnumerable<MovieJson> movies, int nbMovies)> GetRecentMoviesAsync(int page,
-            int limit,
-            double ratingFilter,
-            CancellationToken ct,
-            GenreJson genre = null)
-        {
-            var watch = Stopwatch.StartNew();
-
-            var wrapper = new MovieResponse();
-
-            if (limit < 1 || limit > 50)
-                limit = Utils.Constants.MaxMoviesPerPage;
-
-            if (page < 1)
-                page = 1;
-
-            var restClient = new RestClient(Utils.Constants.PopcornApi);
-            var request = new RestRequest("/{segment}", Method.GET);
-            request.AddUrlSegment("segment", "movies");
-            request.AddParameter("limit", limit);
-            request.AddParameter("page", page);
-            if (genre != null) request.AddParameter("genre", genre.EnglishName);
-            request.AddParameter("minimum_rating", ratingFilter);
-            request.AddParameter("sort_by", "year");
-
-            try
-            {
-                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
-                if (response.ErrorException != null)
-                    throw response.ErrorException;
-
-                wrapper = response.Data;
-            }
-            catch (Exception exception) when (exception is TaskCanceledException)
-            {
-                Logger.Debug(
-                    "GetRecentMoviesAsync cancelled.");
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(
-                    $"GetRecentMoviesAsync: {exception.Message}");
-                throw;
-            }
-            finally
-            {
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-                Logger.Debug(
-                    $"GetRecentMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
-            }
-
-            var result = wrapper?.Movies ?? new List<MovieJson>();
-            Task.Run(async () =>
-            {
-                await ProcessTranslations(result);
-            });
-            var nbResult = wrapper?.TotalMovies ?? 0;
-
-            return (result, nbResult);
         }
 
         /// <summary>

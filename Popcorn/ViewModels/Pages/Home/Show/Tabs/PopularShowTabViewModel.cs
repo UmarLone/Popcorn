@@ -10,6 +10,7 @@ using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
+using Popcorn.Models.Genres;
 using Popcorn.Services.Shows.Show;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
@@ -55,9 +56,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 IsLoadingShows = true;
 
                 var shows =
-                    await ShowService.GetPopularShowsAsync(Page,
+                    await ShowService.GetShowsAsync(Page,
                         MaxShowsPerPage,
                         Rating,
+                        "seeds",
                         CancellationLoadingShows.Token,
                         Genre).ConfigureAwait(false);
 
@@ -92,7 +94,27 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         private void RegisterMessages()
         {
+            Messenger.Default.Register<ChangeLanguageMessage>(
+                this,
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestTitleTab"));
 
+            Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
+                StopLoadingShows();
+                Page = 0;
+                Shows.Clear();
+                await LoadShowsAsync();
+            });
+
+            Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
+                StopLoadingShows();
+                Page = 0;
+                Shows.Clear();
+                await LoadShowsAsync();
+            });
         }
 
         /// <summary>

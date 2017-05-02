@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
@@ -11,12 +13,11 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
-using Popcorn.Services.Movies.History;
-using Popcorn.Services.Movies.Movie;
+using Popcorn.Services.Shows.Show;
 
-namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
+namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 {
-    public class SeenMovieTabViewModel : MovieTabsViewModel
+    public class RecentShowTabViewModel : ShowTabsViewModel
     {
         /// <summary>
         /// Logger of the class
@@ -24,52 +25,58 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Initializes a new instance of the SeenMovieTabViewModel class.
+        /// Initializes a new instance of the RecentShowTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
-        /// <param name="movieService">Movie service</param>
-        /// <param name="movieHistoryService">Movie history service</param>
-        public SeenMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
-            IMovieHistoryService movieHistoryService)
-            : base(applicationService, movieService, movieHistoryService)
+        /// <param name="showService">Show service</param>
+        public RecentShowTabViewModel(IApplicationService applicationService, IShowService showService)
+            : base(applicationService, showService)
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SeenTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularShowTitleTab");
         }
 
         /// <summary>
-        /// Load movies asynchronously
+        /// Load shows asynchronously
         /// </summary>
-        public override async Task LoadMoviesAsync()
+        public override async Task LoadShowsAsync()
         {
             var watch = Stopwatch.StartNew();
 
+            Page++;
+
+            if (Page > 1 && Shows.Count == MaxNumberOfShows) return;
+
             Logger.Info(
-                "Loading movies...");
+                $"Loading page {Page}...");
 
             HasLoadingFailed = false;
 
             try
             {
-                IsLoadingMovies = true;
+                IsLoadingShows = true;
 
-                var movies =
-                    await MovieHistoryService.GetSeenMoviesAsync(Genre, Rating).ConfigureAwait(false);
+                var shows =
+                    await ShowService.GetShowsAsync(Page,
+                        MaxShowsPerPage,
+                        Rating,
+                        "year",
+                        CancellationLoadingShows.Token,
+                        Genre).ConfigureAwait(false);
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    var moviesList = movies.ToList();
-                    Movies.Clear();
-                    Movies.AddRange(moviesList);
-                    IsLoadingMovies = false;
-                    IsMovieFound = Movies.Any();
-                    CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = Movies.Count;
+                    Shows.AddRange(shows.Item1);
+                    IsLoadingShows = false;
+                    IsShowFound = Shows.Any();
+                    CurrentNumberOfShows = Shows.Count;
+                    MaxNumberOfShows = shows.Item2;
                 });
             }
             catch (Exception exception)
             {
+                Page--;
                 Logger.Error(
                     $"Error while loading page {Page}: {exception.Message}");
                 HasLoadingFailed = true;
@@ -80,7 +87,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded movies in {elapsedMs} milliseconds.");
+                    $"Loaded page {Page} in {elapsedMs} milliseconds.");
             }
         }
 
@@ -91,28 +98,24 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SeenTitleTab"));
-
-            Messenger.Default.Register<ChangeHasBeenSeenMovieMessage>(
-                this,
-                async message =>
-                {
-                    StopLoadingMovies();
-                    await LoadMoviesAsync();
-                });
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {
                 if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingMovies();
-                await LoadMoviesAsync();
+                StopLoadingShows();
+                Page = 0;
+                Shows.Clear();
+                await LoadShowsAsync();
             });
 
             Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
             {
                 if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingMovies();
-                await LoadMoviesAsync();
+                StopLoadingShows();
+                Page = 0;
+                Shows.Clear();
+                await LoadShowsAsync();
             });
         }
 
@@ -121,11 +124,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         private void RegisterCommands()
         {
-            ReloadMovies = new RelayCommand(async () =>
+            ReloadShows = new RelayCommand(async () =>
             {
                 ApplicationService.IsConnectionInError = false;
-                StopLoadingMovies();
-                await LoadMoviesAsync();
+                StopLoadingShows();
+                await LoadShowsAsync();
             });
         }
     }

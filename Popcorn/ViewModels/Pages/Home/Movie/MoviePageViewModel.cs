@@ -13,7 +13,7 @@ using Popcorn.Services.Genres;
 using Popcorn.Services.Language;
 using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
-using Popcorn.ViewModels.Pages.Home.Movie.Genres;
+using Popcorn.ViewModels.Pages.Home.Genres;
 using Popcorn.ViewModels.Pages.Home.Movie.Search;
 using Popcorn.ViewModels.Pages.Home.Movie.Tabs;
 
@@ -42,14 +42,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         private IApplicationService _applicationService;
 
         /// <summary>
-        /// Manage movie's genres
+        /// Manage genres
         /// </summary>
-        private GenresMovieViewModel _genresMovie;
+        private GenreViewModel _genreViewModel;
 
         /// <summary>
         /// Specify if a search is actually active
         /// </summary>
-        private bool _isMovieSearchActive;
+        private bool _isSearchActive;
 
         /// <summary>
         /// <see cref="SelectedMoviesIndexMenuTab"/>
@@ -80,12 +80,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <param name="languageService">The language service</param>
         /// <param name="genreService">The genre service</param>
         public MoviePageViewModel(IMovieService movieService,
-            IMovieHistoryService movieHistoryService, IApplicationService applicationService, ILanguageService languageService, IGenreService genreService)
+            IMovieHistoryService movieHistoryService, IApplicationService applicationService,
+            ILanguageService languageService, IGenreService genreService)
         {
             _movieService = movieService;
             _movieHistoryService = movieHistoryService;
             ApplicationService = applicationService;
-            GenresMovie = new GenresMovieViewModel(languageService, genreService);
+            GenreViewModel = new GenreViewModel(languageService, genreService);
             RegisterMessages();
             RegisterCommands();
 
@@ -105,7 +106,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
                     await tab.LoadMoviesAsync();
                 });
 
-                var loadGenreTask = GenresMovie.LoadGenresAsync();
+                var loadGenreTask = GenreViewModel.LoadGenresAsync();
 
                 await Task.WhenAll(new List<Task>
                 {
@@ -136,10 +137,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// Specify if a movie search is active
         /// </summary>
-        public bool IsMovieSearchActive
+        public bool IsSearchActive
         {
-            get => _isMovieSearchActive;
-            private set { Set(() => IsMovieSearchActive, ref _isMovieSearchActive, value); }
+            get => _isSearchActive;
+            private set { Set(() => IsSearchActive, ref _isSearchActive, value); }
         }
 
         /// <summary>
@@ -226,10 +227,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// Manage movie's genres
         /// </summary>
-        public GenresMovieViewModel GenresMovie
+        public GenreViewModel GenreViewModel
         {
-            get => _genresMovie;
-            set { Set(() => GenresMovie, ref _genresMovie, value); }
+            get => _genreViewModel;
+            set { Set(() => GenreViewModel, ref _genreViewModel, value); }
         }
 
         /// <summary>
@@ -297,14 +298,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
 
                     Tabs.Remove(searchTabToRemove);
                     searchTabToRemove.Cleanup();
-                    IsMovieSearchActive = false;
+                    IsSearchActive = false;
                     SelectedMoviesIndexMenuTab = 0;
                     return;
                 }
             }
             else
             {
-                IsMovieSearchActive = true;
+                IsSearchActive = true;
                 SelectedMoviesIndexMenuTab = 3;
                 foreach (var searchTab in Tabs.OfType<SearchMovieTabViewModel>())
                 {

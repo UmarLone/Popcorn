@@ -144,7 +144,7 @@
   <data name="EmptyMovieSearchLabel" xml:space="preserve">
     <value>Aucun film trouvé</value>
   </data>
-  <data name="GreatestMovieTitleTab" xml:space="preserve">
+  <data name="GreatestTitleTab" xml:space="preserve">
     <value>Réputé</value>
   </data>
   <data name="LanguageLabel" xml:space="preserve">
@@ -159,10 +159,10 @@
   <data name="PlayLabel" xml:space="preserve">
     <value>Lecture</value>
   </data>
-  <data name="PopularMovieTitleTab" xml:space="preserve">
+  <data name="PopularTitleTab" xml:space="preserve">
     <value>Populaire</value>
   </data>
-  <data name="RecentMovieTitleTab" xml:space="preserve">
+  <data name="RecentTitleTab" xml:space="preserve">
     <value>Récent</value>
   </data>
   <data name="ReloadLabel" xml:space="preserve">
@@ -174,7 +174,7 @@
   <data name="SearchBoxWatermark" xml:space="preserve">
     <value>Rechercher...</value>
   </data>
-  <data name="SearchMovieTitleTab" xml:space="preserve">
+  <data name="SearchTitleTab" xml:space="preserve">
     <value>Recherche</value>
   </data>
   <data name="SettingsMenuTitle" xml:space="preserve">
@@ -228,10 +228,10 @@
   <data name="CollectionsLabel" xml:space="preserve">
     <value>Collections</value>
   </data>
-  <data name="FavoritesMovieTitleTab" xml:space="preserve">
+  <data name="FavoritesTitleTab" xml:space="preserve">
     <value>Favoris</value>
   </data>
-  <data name="SeenMovieTitleTab" xml:space="preserve">
+  <data name="SeenTitleTab" xml:space="preserve">
     <value>Visionnés</value>
   </data>
   <data name="NewUpdateDescriptionLabel" xml:space="preserve">

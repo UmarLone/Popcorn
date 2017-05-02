@@ -35,7 +35,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesMovieTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab");
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesMovieTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab"));
 
             Messenger.Default.Register<ChangeFavoriteMovieMessage>(
                 this,

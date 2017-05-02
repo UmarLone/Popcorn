@@ -12,9 +12,9 @@ using Popcorn.Models.Genres;
 using Popcorn.Services.Genres;
 using Popcorn.Services.Language;
 
-namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
+namespace Popcorn.ViewModels.Pages.Home.Genres
 {
-    public class GenresMovieViewModel : ViewModelBase
+    public class GenreViewModel : ViewModelBase
     {
         /// <summary>
         /// Logger of the class
@@ -39,7 +39,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// <summary>
         /// Movie genres
         /// </summary>
-        private ObservableCollection<GenreJson> _movieGenres = new ObservableCollection<GenreJson>();
+        private ObservableCollection<GenreJson> _genres = new ObservableCollection<GenreJson>();
 
         /// <summary>
         /// Selected genre
@@ -51,7 +51,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// </summary>
         /// <param name="languageService">The language service</param>
         /// <param name="genreService">The genre service</param>
-        public GenresMovieViewModel(ILanguageService languageService, IGenreService genreService)
+        public GenreViewModel(ILanguageService languageService, IGenreService genreService)
         {
             _languageService = languageService;
             _genreService = genreService;
@@ -62,10 +62,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
         /// <summary>
         /// Movie genres
         /// </summary>
-        public ObservableCollection<GenreJson> MovieGenres
+        public ObservableCollection<GenreJson> Genres
         {
-            get => _movieGenres;
-            set { Set(() => MovieGenres, ref _movieGenres, value); }
+            get => _genres;
+            set { Set(() => Genres, ref _genres, value); }
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Genres
                 EnglishName = string.Empty
             });
 
-            MovieGenres = genres;
+            Genres = genres;
             SelectedGenre = genres.ElementAt(0);
         }
 
