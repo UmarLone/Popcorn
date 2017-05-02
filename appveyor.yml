@@ -7,12 +7,9 @@ install:
 before_build:
 - nuget restore ".\Popcorn.sln"
 
-build_script:
-- ps: >-
-    & cov-build.exe --dir cov-int msbuild "$Env:APPVEYOR_BUILD_FOLDER\Popcorn.sln" `
-          /verbosity:minimal `
-          /p:Configuration=Release `
-          /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+build:
+  project: .\Popcorn.sln
+  verbosity: minimal
 
 test_script:
 - ps: >-
@@ -26,6 +23,11 @@ test_script:
 
 after_test:
 - ps: >-
+    & cov-build.exe --dir cov-int msbuild "$Env:APPVEYOR_BUILD_FOLDER\Popcorn.sln" `
+          /verbosity:minimal `
+          /p:Configuration=Release `
+          /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+          
     & nuget install PublishCoverity -Version 0.11.0 -ExcludeVersion -OutputDirectory .\packages
 
     & .\packages\PublishCoverity\PublishCoverity.exe compress `
