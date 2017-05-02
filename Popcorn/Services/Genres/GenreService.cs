@@ -91,13 +91,8 @@ namespace Popcorn.Services.Genres
                     },
                     new GenreJson
                     {
-                        EnglishName = "Science Fiction",
-                        Name = language == "fr" ? "Science-Fiction" : "Science Fiction"
-                    },
-                    new GenreJson
-                    {
-                        EnglishName = "TV Movie",
-                        Name = language == "fr" ? "Téléfilm" : "TV Movie"
+                        EnglishName = "Sci-Fi",
+                        Name = language == "fr" ? "Sci-Fi" : "Sci-Fi"
                     },
                     new GenreJson
                     {
