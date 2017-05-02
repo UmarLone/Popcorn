@@ -25,5 +25,5 @@ test_script:
     curl.exe -F token=%COVERITY_TOKEN% -F email=%COVERITY_EMAIL% -F file=@coverity.zip -F version="$Env:VERSION" https://scan.coverity.com/builds?project=%APPVEYOR_REPO_NAME%
 
 artifacts:
-  - path: C:/projects/popcorn/cov-int/build-log.txt
+  - path: ./cov-int/build-log.txt
     name: build-log.txt
