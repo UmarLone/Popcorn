@@ -11,7 +11,9 @@ install:
       -Body @{ project = "$env:APPVEYOR_REPO_NAME";
                token = "$env:COVERITY_TOKEN" } `
       -OutFile "$env:APPVEYOR_BUILD_FOLDER\coverity.zip"
+
     Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+    
     [IO.Compression.ZipFile]::ExtractToDirectory(
       "$env:APPVEYOR_BUILD_FOLDER\coverity.zip",
       "$env:APPVEYOR_BUILD_FOLDER")
