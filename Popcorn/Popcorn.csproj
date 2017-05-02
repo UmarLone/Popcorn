@@ -796,10 +796,6 @@
       <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
       <Name>Popcorn.GifLoader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tor\Tor.csproj">
-      <Project>{8eecd857-f347-4102-97d3-62a88f4fa23c}</Project>
-      <Name>Tor</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

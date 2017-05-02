@@ -4,12 +4,12 @@ image: Visual Studio 2017
 install: 
 - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
 
-before_build:
-- nuget restore ".\Popcorn.sln"
-
-build:
-  project: .\Popcorn.sln
-  verbosity: minimal
+cache: packages -> **\packages.config
+build_script:
+- cmd: >-
+    nuget restore
+    cov-build --dir cov-int msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    MSBuild Popcorn.sln /t:Rebuild /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 test_script:
 - ps: >-
@@ -21,23 +21,10 @@ test_script:
     
     & $coveralls --opencover -i opencoverCoverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --useRelativePaths --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
 
-after_test:
-- ps: >-
-    cov-build.exe --dir cov-int msbuild ".\Popcorn.sln" `
-          /verbosity:minimal `
-          /p:Configuration=Debug `
-          /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-
-    & nuget install PublishCoverity -Version 0.11.0 -ExcludeVersion -OutputDirectory .\packages
-
-    & .\packages\PublishCoverity\PublishCoverity.exe compress `
-      -i ".\cov-int" `
-      -o ".\$Env:APPVEYOR_PROJECT_NAME.zip"
-
-    & .\packages\PublishCoverity\PublishCoverity.exe publish `
-      -t "$Env:coverity_token" `
-      -r "$Env:APPVEYOR_REPO_NAME" `
-      -z ".\$env:APPVEYOR_PROJECT_NAME.zip" `
-      -d "CI server scheduled build." `
-      --codeVersion "$Env:ASSEMBLY_INFORMATIONAL_VERSION" `
-      --nologo
+- cmd: >-
+    set PATH="C:\Python34;C:\Python34\Scripts";%PATH%
+    pip install codecov
+    codecov -f .\CoverityTestbed_coverage.xml -X gcov
+    IF %CONFIGURATION% NEQ Debug EXIT
+    7z a -r coverity.zip cov-int
+    curl.exe -F token=%COVERITY_TOKEN% -F file=@coverity.zip -F version="1.0.0" https://scan.coverity.com/builds?project=%APPVEYOR_REPO_NAME%
