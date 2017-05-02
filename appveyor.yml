@@ -37,7 +37,7 @@ build_script:
       "/p:Platform=$env:PLATFORM")
   
     "Building project with Coverity..."
-    & ".\cov-analysis-win64-7.6.0\bin\cov-build.exe" `
+    & ".\cov-analysis-win64-8.7.0\bin\cov-build.exe" `
       --dir cov-int `
       --encoding=UTF-8 `
       $buildCmd $buildArgs
