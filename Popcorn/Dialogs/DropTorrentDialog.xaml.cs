@@ -181,74 +181,44 @@ namespace Popcorn.Dialogs
         {
             await Task.Run(async () =>
             {
-                //var createParams = new ClientCreateParams
-                //{
-                //    ControlPassword = "",
-                //    ControlPort = 9051,
-                //    Path = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + @"\Tor\tor.exe",
-                //    ConfigurationFile = "",
-                //    DefaultConfigurationFile = ""
+                using (var session = new session())
+                {
+                    var settings = session.settings();
+                    settings.anonymous_mode = true;
+                    Logger.Info(
+                        $"Start downloading : {FilePath}");
 
-                //};
-                //createParams.SetConfig(ConfigurationNames.AvoidDiskWrites, true);
-                //createParams.SetConfig(ConfigurationNames.GeoIPFile, Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString(), @"Data\Tor\geoip"));
-                //createParams.SetConfig(ConfigurationNames.GeoIPv6File, Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString(), @"Data\Tor\geoip6"));
-                //using (var client = Client.Create(createParams))
-                //{
-                    //client.Logging.DebugReceived += (s, e) => Console.WriteLine(e.Message);
-                    //client.Logging.ErrorReceived += (s, e) => Console.WriteLine(e.Message);
-                    //client.Status.BandwidthChanged += (s, e) => Console.WriteLine(e.Downloaded);
-
-                    using (var session = new session())
+                    DownloadProgress = 0d;
+                    DownloadRate = 0d;
+                    NbSeeders = 0;
+                    NbPeers = 0;
+                    session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
+                    if (_type == TorrentType.File)
                     {
-                        //var proxy = new proxy_settings
-                        //{
-                        //    proxy_hostnames = true,
-                        //    proxy_peer_connections = true,
-                        //    hostname = client.Proxy.Address,
-                        //    port = client.Proxy.Port,
-                        //    type = proxy_type.socks5,
-                        //    proxy_tracker_connections = true,
-                        //};
-                        var settings = session.settings();
-                        settings.anonymous_mode = true;
-                        //settings.force_proxy = true;
-                        //session.set_proxy(proxy);
-                        Logger.Info(
-                            $"Start downloading : {FilePath}");
-
-                        DownloadProgress = 0d;
-                        DownloadRate = 0d;
-                        NbSeeders = 0;
-                        NbPeers = 0;
-                        session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
-                        if (_type == TorrentType.File)
+                        using (var addParams = new add_torrent_params
                         {
-                            using (var addParams = new add_torrent_params
-                            {
-                                save_path = Constants.DropFilesDownloads,
-                                ti = new torrent_info(FilePath)
-                            })
-                            using (var handle = session.add_torrent(addParams))
-                            {
-                                await HandleDownload(handle, session);
-                            }
-                        }
-                        else
+                            save_path = Constants.DropFilesDownloads,
+                            ti = new torrent_info(FilePath)
+                        })
+                        using (var handle = session.add_torrent(addParams))
                         {
-                            var magnet = new magnet_uri();
-                            var error = new error_code();
-                            var addParams = new add_torrent_params
-                            {
-                                save_path = Constants.DropFilesDownloads,
-                            };
-                            magnet.parse_magnet_uri(FilePath, addParams, error);
-                            using (var handle = session.add_torrent(addParams))
-                            {
-                                await HandleDownload(handle, session);
-                            }
+                            await HandleDownload(handle, session);
                         }
-                    //}
+                    }
+                    else
+                    {
+                        var magnet = new magnet_uri();
+                        var error = new error_code();
+                        var addParams = new add_torrent_params
+                        {
+                            save_path = Constants.DropFilesDownloads,
+                        };
+                        magnet.parse_magnet_uri(FilePath, addParams, error);
+                        using (var handle = session.add_torrent(addParams))
+                        {
+                            await HandleDownload(handle, session);
+                        }
+                    }
                 }
             });
         }
