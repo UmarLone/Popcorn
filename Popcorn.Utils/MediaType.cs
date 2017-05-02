@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Popcorn.Models.Player
+namespace Popcorn.Utils
 {
     public enum MediaType
     {
-        Trailer,
         Movie,
-        Show
+        Show,
+        Unkown
     }
 }

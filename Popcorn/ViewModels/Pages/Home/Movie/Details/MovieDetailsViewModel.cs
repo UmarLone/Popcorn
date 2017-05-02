@@ -21,6 +21,7 @@ using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent.Movie;
 using Popcorn.ViewModels.Windows.Settings;
+using Popcorn.Services.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -125,15 +126,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// <param name="movieService">Service used to interact with movies</param>
         /// <param name="movieTrailerService">The movie trailer service</param>
         /// <param name="subtitlesService">The subtitles service</param>
-        /// <param name="applicationSettingsViewModel">Application settings</param>
-        public MovieDetailsViewModel(IMovieService movieService, IMovieTrailerService movieTrailerService, ISubtitlesService subtitlesService, ApplicationSettingsViewModel applicationSettingsViewModel)
+        public MovieDetailsViewModel(IMovieService movieService, IMovieTrailerService movieTrailerService, ISubtitlesService subtitlesService)
         {
             _movieTrailerService = movieTrailerService;
             _movieService = movieService;
             _subtitlesService = subtitlesService;
             _cancellationLoadingToken = new CancellationTokenSource();
             _cancellationLoadingTrailerToken = new CancellationTokenSource();
-            DownloadMovie = new DownloadMovieViewModel(subtitlesService, applicationSettingsViewModel);
+            DownloadMovie = new DownloadMovieViewModel(subtitlesService, new DownloadMovieService<MovieJson>());
             RegisterMessages();
             RegisterCommands();
         }

@@ -7,6 +7,9 @@ using Popcorn.Messaging;
 using Popcorn.Models.Shows;
 using Popcorn.Services.Language;
 using Popcorn.ViewModels.Pages.Home.Show.Download;
+using Popcorn.Services.Subtitles;
+using Popcorn.Services.Download;
+using Popcorn.Models.Episode;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Details
 {
@@ -45,12 +48,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="languageService">The language service</param>
-        public ShowDetailsViewModel(ILanguageService languageService)
+        /// <param name="subtitlesService">The subtitles service</param>
+        public ShowDetailsViewModel(ISubtitlesService subtitlesService)
         {
             RegisterCommands();
             RegisterMessages();
-            DownloadShow = new DownloadShowViewModel(languageService);
+            var downloadService = new DownloadShowService<EpisodeShowJson>();
+            DownloadShow = new DownloadShowViewModel(downloadService, subtitlesService);
         }
 
         /// <summary>

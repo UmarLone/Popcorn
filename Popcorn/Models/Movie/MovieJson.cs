@@ -6,10 +6,11 @@ using Popcorn.Models.Cast;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent.Movie;
 using RestSharp.Deserializers;
+using Popcorn.Models.Media;
 
 namespace Popcorn.Models.Movie
 {
-    public class MovieJson : ObservableObject
+    public class MovieJson : ObservableObject, IMediaFile
     {
         private List<CastJson> _cast;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Popcorn.Helpers;
-using Popcorn.Models.Player;
+using Popcorn.Utils;
 
 namespace Popcorn.Controls
 {

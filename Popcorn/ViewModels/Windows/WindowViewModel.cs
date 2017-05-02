@@ -11,14 +11,12 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using lt;
 using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using Popcorn.Dialogs;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Player;
 using Popcorn.Services.Movies.History;
 using Popcorn.Utils;
 using Popcorn.ViewModels.Pages.Home;
@@ -27,6 +25,7 @@ using Popcorn.ViewModels.Pages.Home.Movie;
 using Popcorn.ViewModels.Pages.Home.Show;
 using Popcorn.ViewModels.Pages.Player;
 using Squirrel;
+using Popcorn.ViewModels.Windows.Settings;
 
 namespace Popcorn.ViewModels.Windows
 {
@@ -207,28 +206,29 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<LoadShowMessage>(this, e => IsShowFlyoutOpen = true);
 
-            Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                MediaPlayer = new MediaPlayerViewModel(MediaType.Show, message.Episode.FilePath, message.Episode.Title,
-                    () =>
-                    {
-                        Messenger.Default.Send(new StopPlayingEpisodeMessage());
-                    },
-                    () =>
-                    {
-                        Messenger.Default.Send(new StopPlayingEpisodeMessage());
-                    },
-                    message.BufferProgress,
-                    message.Episode.SelectedSubtitle?.FilePath);
+            Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath, message.Episode.Title,
+                        () =>
+                        {
+                            Messenger.Default.Send(new StopPlayingEpisodeMessage());
+                        },
+                        () =>
+                        {
+                            Messenger.Default.Send(new StopPlayingEpisodeMessage());
+                        },
+                        message.BufferProgress,
+                        message.Episode.SelectedSubtitle?.FilePath);
 
-                ApplicationService.IsMediaPlaying = true;
-                IsShowFlyoutOpen = false;
-                PageUri = "/Pages/PlayerPage.xaml";
-            }));
+                    ApplicationService.IsMediaPlaying = true;
+                    IsShowFlyoutOpen = false;
+                    PageUri = "/Pages/PlayerPage.xaml";
+                }));
 
             Messenger.Default.Register<PlayMediaMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(MediaType.Show, message.MediaPath, message.MediaPath,
+                MediaPlayer = new MediaPlayerViewModel(message.MediaPath, message.MediaPath,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayMediaMessage());
@@ -247,7 +247,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(MediaType.Movie, message.Movie.FilePath, message.Movie.Title,
+                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath, message.Movie.Title,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayingMovieMessage());
@@ -268,7 +268,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayTrailerMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(MediaType.Trailer, message.TrailerUrl, message.MovieTitle,
+                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl, message.MovieTitle,
                     message.TrailerStoppedAction, message.TrailerEndedAction);
                 ApplicationService.IsMediaPlaying = true;
                 IsMovieFlyoutOpen = false;
@@ -361,52 +361,24 @@ namespace Popcorn.ViewModels.Windows
                         var torrentFile = files?.FirstOrDefault(a => a.Contains("torrent"));
                         if (torrentFile != null)
                         {
-                            var mediaFilePresent = false;
-                            var type = TorrentType.File;
-                            if (File.ReadLines(torrentFile).Any(line => line.Contains("magnet")))
-                            {
-                                type = TorrentType.Magnet;
-                            }
-                            else
-                            {
-                                using (var torrentInfos = new torrent_info(torrentFile))
-                                {
-                                    for (var i = 0; i < torrentInfos.num_files(); i++)
-                                    {
-                                        using (var file = torrentInfos.file_at(i))
-                                        {
-                                            if (file.path.EndsWith(".mp4") || file.path.EndsWith(".mkv") ||
-                                                file.path.EndsWith(".mov") || file.path.EndsWith(".avi"))
-                                            {
-                                                mediaFilePresent = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            var dropTorrentDialog = new DropTorrentDialog(new DropTorrentDialogSettings(torrentFile));
 
-                            Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
-                            if (mediaFilePresent || type == TorrentType.Magnet)
+                            await _dialogCoordinator.ShowMetroDialogAsync(this, dropTorrentDialog);
+                            var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
+                            Task.Run(async () =>
                             {
-                                var dropTorrentDialog =
-                                    new DropTorrentDialog(new DropTorrentDialogSettings(torrentFile, type, async args =>
+                                await dropTorrentDialog.Download(settings.UploadLimit, settings.DownloadLimit,
+                                    async () =>
                                     {
-                                        try
-                                        {
-                                            await _dialogCoordinator.HideMetroDialogAsync(this, args);
-                                        }
-                                        catch (Exception)
-                                        {
-                                        }
-                                    }));
-                                await _dialogCoordinator.ShowMetroDialogAsync(this, dropTorrentDialog);
-                                await dropTorrentDialog.DownloadTorrentFile();
-                            }
+                                        await _dialogCoordinator.HideMetroDialogAsync(this, dropTorrentDialog);
+                                    }, async () =>
+                                    {
+                                        await _dialogCoordinator.HideMetroDialogAsync(this, dropTorrentDialog);
+                                    });
+                            });
                         }
-                        else
-                        {
-                            Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
-                        }
+
+                        Messenger.Default.Send(new DropFileMessage(DropFileMessage.DropFileEvent.Leave));
                     }
                 }
                 catch (Exception)
@@ -440,10 +412,10 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         private void ClearFolders()
         {
-            if (Directory.Exists(Utils.Constants.MovieDownloads))
+            if (Directory.Exists(Constants.MovieDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetDirectories(Utils.Constants.MovieDownloads)
+                    var filePath in Directory.GetDirectories(Constants.MovieDownloads)
                 )
                 {
                     try
@@ -459,10 +431,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Utils.Constants.ShowDownloads))
+            if (Directory.Exists(Constants.ShowDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Utils.Constants.ShowDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -479,10 +451,10 @@ namespace Popcorn.ViewModels.Windows
                 }
             }
 
-            if (Directory.Exists(Utils.Constants.MovieTorrentDownloads))
+            if (Directory.Exists(Constants.MovieTorrentDownloads))
             {
                 foreach (
-                    var filePath in Directory.GetFiles(Utils.Constants.MovieTorrentDownloads, "*.*",
+                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
                         SearchOption.AllDirectories)
                 )
                 {
@@ -511,7 +483,7 @@ namespace Popcorn.ViewModels.Windows
                 "Looking for updates...");
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager(Utils.Constants.GithubRepository))
+                using (var updateManager = await UpdateManager.GitHubUpdateManager(Constants.GithubRepository))
                 {
                     var updateInfo = await updateManager.CheckForUpdate();
                     if (updateInfo == null)

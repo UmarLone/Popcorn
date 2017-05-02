@@ -1,21 +1,20 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using lt;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Episode;
-using Popcorn.Services.Language;
 using Popcorn.Services.Subtitles;
 using Popcorn.Utils;
 using Popcorn.ViewModels.Windows.Settings;
+using GalaSoft.MvvmLight.Ioc;
+using Popcorn.Services.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Download
 {
@@ -32,9 +31,9 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private readonly ISubtitlesService _subtitlesService;
 
         /// <summary>
-        /// Manage the application settings
+        /// The download service
         /// </summary>
-        private readonly ApplicationSettingsViewModel _applicationSettingsViewModel;
+        private readonly IDownloadService<EpisodeShowJson> _downloadService;
 
         /// <summary>
         /// Token to cancel the download
@@ -45,11 +44,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// Specify if an episode is downloading
         /// </summary>
         private bool _isDownloadingEpisode;
-
-        /// <summary>
-        /// Specify if an episode is buffered
-        /// </summary>
-        private bool _isEpisodeBuffered;
 
         /// <summary>
         /// The episode to download
@@ -77,26 +71,18 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private int _nbPeers;
 
         /// <summary>
-        /// Episode file path
-        /// </summary>
-        private string _episodeFilePath;
-
-        /// <summary>
-        /// The download progress
-        /// </summary>
-        private Progress<double> _reportDownloadProgress;
-
-        /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="languageService">The language service</param>
-        public DownloadShowViewModel(ILanguageService languageService)
+        /// <param name="downloadService">The download service</param>
+        /// <param name="subtitlesService">The subtitles service</param>
+        public DownloadShowViewModel(IDownloadService<EpisodeShowJson> downloadService,
+            ISubtitlesService subtitlesService)
         {
+            _downloadService = downloadService;
+            _subtitlesService = subtitlesService;
+            _cancellationDownloadingEpisode = new CancellationTokenSource();
             RegisterCommands();
             RegisterMessages();
-
-            _applicationSettingsViewModel = new ApplicationSettingsViewModel(languageService);
-            _cancellationDownloadingEpisode = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -161,22 +147,21 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// <summary>
         /// Stop downloading an episode
         /// </summary>
-        public void StopDownloadingEpisode()
+        private void StopDownloadingEpisode()
         {
             Logger.Info(
-                "Stop downloading an episode");
+                $"Stop downloading the episode {Episode.Title}");
 
             IsDownloadingEpisode = false;
-            _isEpisodeBuffered = false;
             _cancellationDownloadingEpisode.Cancel(true);
             _cancellationDownloadingEpisode = new CancellationTokenSource();
 
-            if (!string.IsNullOrEmpty(_episodeFilePath))
+            if (!string.IsNullOrEmpty(Episode?.FilePath))
             {
                 try
                 {
-                    File.Delete(_episodeFilePath);
-                    _episodeFilePath = string.Empty;
+                    File.Delete(Episode.FilePath);
+                    Episode.FilePath = string.Empty;
                 }
                 catch (Exception)
                 {
@@ -201,12 +186,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
             this,
             message =>
             {
+                IsDownloadingEpisode = true;
                 Episode = message.Episode;
                 EpisodeDownloadRate = 0d;
                 EpisodeDownloadProgress = 0d;
                 NbPeers = 0;
                 NbSeeders = 0;
-                _reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
+                var reportDownloadProgress = new Progress<double>(ReportEpisodeDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportEpisodeDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
@@ -219,7 +205,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                             message.Episode.SelectedSubtitle.Sub.LanguageName !=
                             LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
                         {
-                            var path = Path.Combine(Utils.Constants.Subtitles + message.Episode.ImdbId);
+                            var path = Path.Combine(Constants.Subtitles + message.Episode.ImdbId);
                             Directory.CreateDirectory(path);
                             var subtitlePath =
                                 _subtitlesService.DownloadSubtitleToPath(path,
@@ -235,10 +221,22 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                     {
                         try
                         {
-                            await
-                                DownloadEpisodeAsync(message.Episode,
-                                    _reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
-                                    _cancellationDownloadingEpisode);
+                            string magnetUri;
+                            if (Episode.WatchInFullHdQuality && (Episode.Torrents.Torrent_720p?.Url != null ||
+                                                                 Episode.Torrents.Torrent_1080p?.Url != null))
+                            {
+                                magnetUri = Episode.Torrents.Torrent_720p?.Url ?? Episode.Torrents.Torrent_1080p.Url;
+                            }
+                            else
+                            {
+                                magnetUri = Episode.Torrents.Torrent_480p?.Url ?? Episode.Torrents.Torrent_0.Url;
+                            }
+
+                            var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
+                            await _downloadService.Download(message.Episode, TorrentType.Magnet, MediaType.Show,
+                                magnetUri, settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
+                                reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
+                                _cancellationDownloadingEpisode);
                         }
                         catch (Exception ex)
                         {
@@ -284,140 +282,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private void ReportEpisodeDownloadProgress(double value)
         {
             EpisodeDownloadProgress = value;
-            if (value < Utils.Constants.MinimumMovieBuffering)
-                return;
-
-            if (!_isEpisodeBuffered)
-                _isEpisodeBuffered = true;
-        }
-
-        /// <summary>
-        /// Download an episode asynchronously
-        /// </summary>
-        /// <param name="episode">The episode to download</param>
-        /// <param name="downloadProgress">Report download progress</param>
-        /// <param name="downloadRate">Report download rate</param>
-        /// <param name="nbSeeds">Report number of seeders</param>
-        /// <param name="nbPeers">Report number of peers</param>
-        /// <param name="ct">Cancellation token</param>
-        private async Task DownloadEpisodeAsync(EpisodeShowJson episode, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers,
-            CancellationTokenSource ct)
-        {
-            _episodeFilePath = string.Empty;
-            downloadProgress?.Report(0d);
-            downloadRate?.Report(0d);
-            nbSeeds?.Report(0);
-            nbPeers?.Report(0);
-
-            await Task.Run(async () =>
-            {
-                using (var session = new session())
-                {
-                    Logger.Info(
-                        $"Start downloading episode : {episode.Title}");
-
-                    var settings = session.settings();
-                    settings.anonymous_mode = true;
-
-                    IsDownloadingEpisode = true;
-
-                    downloadProgress?.Report(0d);
-                    downloadRate?.Report(0d);
-                    nbSeeds?.Report(0);
-                    nbPeers?.Report(0);
-                    session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
-                    string magnetUri;
-                    if (episode.WatchInFullHdQuality && (episode.Torrents.Torrent_720p?.Url != null ||
-                                                         episode.Torrents.Torrent_1080p?.Url != null))
-                    {
-                        magnetUri = episode.Torrents.Torrent_720p?.Url ?? episode.Torrents.Torrent_1080p.Url;
-                    }
-                    else
-                    {
-                        magnetUri = episode.Torrents.Torrent_480p?.Url ?? episode.Torrents.Torrent_0.Url;
-                    }
-
-                    var magnet = new magnet_uri();
-                    var error = new error_code();
-                    var addParams = new add_torrent_params
-                    {
-                        save_path = Utils.Constants.ShowDownloads,
-                    };
-                    magnet.parse_magnet_uri(magnetUri, addParams, error);
-                    using (var handle = session.add_torrent(addParams))
-                    {
-                        handle.set_upload_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
-                        handle.set_download_limit(_applicationSettingsViewModel.UploadLimit * 1024);
-
-                        // We have to download sequentially, so that we're able to play the episode without waiting
-                        handle.set_sequential_download(true);
-                        var alreadyBuffered = false;
-                        while (IsDownloadingEpisode)
-                        {
-                            using (var status = handle.status())
-                            {
-                                var progress = status.progress * 100d;
-
-                                nbSeeds?.Report(status.num_seeds);
-                                nbPeers?.Report(status.num_peers);
-                                downloadProgress?.Report(progress);
-                                downloadRate?.Report(Math.Round(status.download_rate / 1024d, 0));
-
-                                handle.flush_cache();
-                                if (handle.need_save_resume_data())
-                                    handle.save_resume_data(1);
-
-                                if (progress >= Utils.Constants.MinimumShowBuffering && !alreadyBuffered)
-                                {
-                                    // Get episode file
-                                    foreach (
-                                        var filePath in
-                                        Directory
-                                            .GetFiles(status.save_path, "*.*",
-                                                SearchOption.AllDirectories)
-                                            .Where(s => s.Contains(handle.torrent_file().name()) &&
-                                                        (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
-                                                         s.EndsWith(".mov") || s.EndsWith(".avi")))
-                                    )
-                                    {
-                                        _episodeFilePath = filePath;
-                                        alreadyBuffered = true;
-                                        episode.FilePath = filePath;
-                                        Messenger.Default.Send(new PlayShowEpisodeMessage(episode,
-                                            _reportDownloadProgress));
-                                    }
-
-
-                                    if (!alreadyBuffered)
-                                    {
-                                        session.remove_torrent(handle, 0);
-                                        Messenger.Default.Send(
-                                            new UnhandledExceptionMessage(
-                                                new Exception("There is no media file in the torrent you dropped in the UI.")));
-                                        break;
-                                    }
-                                }
-
-                                if (status.is_finished)
-                                {
-                                    session.remove_torrent(handle, 0);
-                                    break;
-                                }
-
-                                try
-                                {
-                                    await Task.Delay(1000, ct.Token);
-                                }
-                                catch (TaskCanceledException)
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }, ct.Token);
         }
     }
 }

@@ -3,10 +3,11 @@ using GalaSoft.MvvmLight;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent.Show;
 using RestSharp.Deserializers;
+using Popcorn.Models.Media;
 
 namespace Popcorn.Models.Episode
 {
-    public class EpisodeShowJson : ObservableObject
+    public class EpisodeShowJson : ObservableObject, IMediaFile
     {
         private bool _watchInFullHqQuality;
 

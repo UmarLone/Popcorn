@@ -376,9 +376,10 @@
     <Compile Include="Models\Episode\EpisodeAnimeJson.cs" />
     <Compile Include="Models\Genres\Genre.cs" />
     <Compile Include="Models\Image\ImageAnimeJson.cs" />
+    <Compile Include="Models\Media\IMediaFile.cs" />
+    <Compile Include="Models\Media\MediaFile.cs" />
     <Compile Include="Models\Movie\MovieJson.cs" />
     <Compile Include="Models\Movie\MovieResponse.cs" />
-    <Compile Include="Models\Player\MediaType.cs" />
     <Compile Include="Models\Rating\RatingJson.cs" />
     <Compile Include="Models\Episode\EpisodeShowJson.cs" />
     <Compile Include="Models\Image\ImageShowJson.cs" />
@@ -418,6 +419,11 @@
     <Compile Include="Models\Localization\Language.cs" />
     <Compile Include="Models\Subtitles\Subtitle.cs" />
     <Compile Include="Models\Trailer\Trailer.cs" />
+    <Compile Include="Services\Download\DownloadMediaService.cs" />
+    <Compile Include="Services\Download\DownloadMovieService.cs" />
+    <Compile Include="Services\Download\DownloadService.cs" />
+    <Compile Include="Services\Download\DownloadShowService.cs" />
+    <Compile Include="Services\Download\IDownloadService.cs" />
     <Compile Include="Services\Genres\GenreService.cs" />
     <Compile Include="Services\Genres\IGenreService.cs" />
     <Compile Include="Services\Movies\History\IMovieHistoryService.cs" />

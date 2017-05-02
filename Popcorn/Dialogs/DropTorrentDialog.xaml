@@ -40,7 +40,7 @@
                     FontSize="18"
                     Foreground="White">
                     <controls1:DownloadProgress
-                        Title="{Binding TorrentTitle, ElementName=TorrentDialog}"
+                        Title="{Binding TorrentPath, ElementName=TorrentDialog}"
                         Foreground="White"
                         Progress="{Binding DownloadProgress, ElementName=TorrentDialog}"
                         Rate="{Binding DownloadRate, ElementName=TorrentDialog}"

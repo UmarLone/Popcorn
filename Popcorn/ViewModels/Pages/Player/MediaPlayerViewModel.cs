@@ -1,7 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight.CommandWpf;
 using NLog;
-using Popcorn.Models.Player;
 
 namespace Popcorn.ViewModels.Pages.Player
 {
@@ -36,11 +35,6 @@ namespace Popcorn.ViewModels.Pages.Player
         public readonly string MediaName;
 
         /// <summary>
-        /// The media type
-        /// </summary>
-        public readonly MediaType MediaType;
-
-        /// <summary>
         /// Media action to execute when media has ended
         /// </summary>
         private readonly Action _mediaEndedAction;
@@ -70,13 +64,12 @@ namespace Popcorn.ViewModels.Pages.Player
         /// <param name="mediaEndedAction">Media action to execute when media has ended</param>
         /// <param name="bufferProgress">The buffer progress</param>
         /// <param name="subtitleFilePath">Subtitle file path</param>
-        public MediaPlayerViewModel(MediaType mediaType, string mediaPath, string mediaName, Action mediaStoppedAction,
+        public MediaPlayerViewModel(string mediaPath, string mediaName, Action mediaStoppedAction,
             Action mediaEndedAction, Progress<double> bufferProgress = null, string subtitleFilePath = null)
         {
             Logger.Info(
                 $"Loading media : {mediaName}.");
 
-            MediaType = mediaType;
             MediaPath = mediaPath;
             MediaName = mediaName;
             _mediaStoppedAction = mediaStoppedAction;

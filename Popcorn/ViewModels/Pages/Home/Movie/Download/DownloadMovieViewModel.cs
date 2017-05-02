@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using lt;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
@@ -15,6 +14,8 @@ using Popcorn.Models.Movie;
 using Popcorn.Services.Subtitles;
 using Popcorn.Utils;
 using Popcorn.ViewModels.Windows.Settings;
+using Popcorn.Services.Download;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Download
 {
@@ -34,9 +35,9 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private readonly ISubtitlesService _subtitlesService;
 
         /// <summary>
-        /// Manage th application settings
+        /// The download service
         /// </summary>
-        private readonly ApplicationSettingsViewModel _applicationSettingsViewModel;
+        private readonly IDownloadService<MovieJson> _downloadService;
 
         /// <summary>
         /// Token to cancel the download
@@ -47,11 +48,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// Specify if a movie is downloading
         /// </summary>
         private bool _isDownloadingMovie;
-
-        /// <summary>
-        /// Specify if a movie is buffered
-        /// </summary>
-        private bool _isMovieBuffered;
 
         /// <summary>
         /// The movie to download
@@ -79,24 +75,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private int _nbPeers;
 
         /// <summary>
-        /// Movie file path
-        /// </summary>
-        private string _movieFilePath;
-
-        /// <summary>
-        /// The download progress
-        /// </summary>
-        private Progress<double> _reportDownloadProgress;
-
-        /// <summary>
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
-        /// <param name="applicationSettingsViewModel">Applications settings</param>
-        public DownloadMovieViewModel(ISubtitlesService subtitlesService, ApplicationSettingsViewModel applicationSettingsViewModel)
+        /// <param name="downloadService">Download service</param>
+        public DownloadMovieViewModel(ISubtitlesService subtitlesService, IDownloadService<MovieJson> downloadService)
         {
             _subtitlesService = subtitlesService;
-            _applicationSettingsViewModel = applicationSettingsViewModel;
+            _downloadService = downloadService;
             _cancellationDownloadingMovie = new CancellationTokenSource();
             RegisterMessages();
             RegisterCommands();
@@ -167,19 +153,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         public void StopDownloadingMovie()
         {
             Logger.Info(
-                "Stop downloading a movie");
+                $"Stop downloading the movie {Movie.Title}.");
 
             IsDownloadingMovie = false;
-            _isMovieBuffered = false;
             _cancellationDownloadingMovie.Cancel(true);
             _cancellationDownloadingMovie = new CancellationTokenSource();
 
-            if (!string.IsNullOrEmpty(_movieFilePath))
+            if (!string.IsNullOrEmpty(Movie?.FilePath))
             {
                 try
                 {
-                    File.Delete(_movieFilePath);
-                    _movieFilePath = string.Empty;
+                    File.Delete(Movie.FilePath);
+                    Movie.FilePath = string.Empty;
                 }
                 catch (Exception)
                 {
@@ -205,12 +190,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
             this,
             message =>
             {
+                IsDownloadingMovie = true;
                 Movie = message.Movie;
                 MovieDownloadRate = 0d;
                 MovieDownloadProgress = 0d;
                 NbPeers = 0;
                 NbSeeders = 0;
-                _reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
+                var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
                 var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
@@ -223,7 +209,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                             message.Movie.SelectedSubtitle.Sub.LanguageName !=
                             LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
                         {
-                            var path = Path.Combine(Utils.Constants.Subtitles + message.Movie.ImdbCode);
+                            var path = Path.Combine(Constants.Subtitles + message.Movie.ImdbCode);
                             Directory.CreateDirectory(path);
                             var subtitlePath =
                                 _subtitlesService.DownloadSubtitleToPath(path,
@@ -239,10 +225,23 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                     {
                         try
                         {
-                            await
-                                DownloadMovieAsync(message.Movie,
-                                    _reportDownloadProgress, reportDownloadRate, reportNbSeeders, reportNbPeers,
-                                    _cancellationDownloadingMovie);
+                            var torrentUrl = Movie.WatchInFullHdQuality
+                                ? Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
+                                : Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
+
+                            var result =
+                                await
+                                    DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
+                                        Constants.MovieTorrentDownloads + Movie.ImdbCode + ".torrent");
+                            var torrentPath = string.Empty;
+                            if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
+                                torrentPath = result.Item2;
+
+                            var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
+                            await _downloadService.Download(Movie, TorrentType.File, MediaType.Movie, torrentPath,
+                                settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
+                                reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
+                                _cancellationDownloadingMovie);
                         }
                         catch (Exception ex)
                         {
@@ -287,139 +286,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private void ReportMovieDownloadProgress(double value)
         {
             MovieDownloadProgress = value;
-            if (value < Utils.Constants.MinimumMovieBuffering)
-                return;
-
-            if (!_isMovieBuffered)
-                _isMovieBuffered = true;
-        }
-
-        /// <summary>
-        /// Download a movie asynchronously
-        /// </summary>
-        /// <param name="movie">The movie to download</param>
-        /// <param name="downloadProgress">Report download progress</param>
-        /// <param name="downloadRate">Report download rate</param>
-        /// <param name="nbSeeds">Report number of seeders</param>
-        /// <param name="nbPeers">Report number of peers</param>
-        /// <param name="ct">Cancellation token</param>
-        private async Task DownloadMovieAsync(MovieJson movie, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers,
-            CancellationTokenSource ct)
-        {
-            _movieFilePath = string.Empty;
-            MovieDownloadProgress = 0d;
-            MovieDownloadRate = 0d;
-            NbSeeders = 0;
-            NbPeers = 0;
-
-            await Task.Run(async () =>
-            {
-                using (var session = new session())
-                {
-                    Logger.Info(
-                        $"Start downloading movie : {movie.Title}");
-
-                    var settings = session.settings();
-                    settings.anonymous_mode = true;
-
-                    IsDownloadingMovie = true;
-
-                    downloadProgress?.Report(0d);
-                    downloadRate?.Report(0d);
-                    nbSeeds?.Report(0);
-                    nbPeers?.Report(0);
-
-                    session.listen_on(Constants.TorrentMinPort, Constants.TorrentMaxPort);
-                    var torrentUrl = movie.WatchInFullHdQuality
-                        ? movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
-                        : movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
-
-                    var result =
-                        await
-                            DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
-                                Utils.Constants.MovieTorrentDownloads + movie.ImdbCode + ".torrent");
-                    var torrentPath = string.Empty;
-                    if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
-                        torrentPath = result.Item2;
-
-                    using (var addParams = new add_torrent_params
-                    {
-                        save_path = Utils.Constants.MovieDownloads,
-                        ti = new torrent_info(torrentPath)
-                    })
-                    using (var handle = session.add_torrent(addParams))
-                    {
-                        handle.set_upload_limit(_applicationSettingsViewModel.UploadLimit * 1024);
-                        handle.set_download_limit(_applicationSettingsViewModel.DownloadLimit * 1024);
-
-                        // We have to download sequentially, so that we're able to play the movie without waiting
-                        handle.set_sequential_download(true);
-                        var alreadyBuffered = false;
-                        while (IsDownloadingMovie)
-                        {
-                            using (var status = handle.status())
-                            {
-                                var progress = status.progress * 100d;
-
-                                nbSeeds?.Report(status.num_seeds);
-                                nbPeers?.Report(status.num_peers);
-                                downloadProgress?.Report(progress);
-                                downloadRate?.Report(Math.Round(status.download_rate / 1024d, 0));
-
-                                handle.flush_cache();
-                                if (handle.need_save_resume_data())
-                                    handle.save_resume_data(1);
-
-                                if (progress >= Utils.Constants.MinimumMovieBuffering && !alreadyBuffered)
-                                {
-                                    // Get movie file
-                                    foreach (
-                                        var filePath in
-                                        Directory
-                                            .GetFiles(status.save_path, "*.*",
-                                                SearchOption.AllDirectories)
-                                            .Where(s => s.Contains(handle.torrent_file().name()) &&
-                                                        (s.EndsWith(".mp4") || s.EndsWith(".mkv") ||
-                                                         s.EndsWith(".mov") || s.EndsWith(".avi")))
-                                    )
-                                    {
-                                        _movieFilePath = filePath;
-                                        alreadyBuffered = true;
-                                        movie.FilePath = filePath;
-                                        Messenger.Default.Send(new PlayMovieMessage(movie, _reportDownloadProgress));
-                                    }
-
-
-                                    if (!alreadyBuffered)
-                                    {
-                                        session.remove_torrent(handle, 0);
-                                        Messenger.Default.Send(
-                                            new UnhandledExceptionMessage(
-                                                new Exception("There is no media file in the torrent you dropped in the UI.")));
-                                        break;
-                                    }
-                                }
-
-                                if (status.is_finished)
-                                {
-                                    session.remove_torrent(handle, 0);
-                                    break;
-                                }
-
-                                try
-                                {
-                                    await Task.Delay(1000, ct.Token);
-                                }
-                                catch (TaskCanceledException)
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }, ct.Token);
         }
     }
 }
