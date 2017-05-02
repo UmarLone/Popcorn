@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.Threading;
 using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using Popcorn.Dialogs;
+using Popcorn.Exceptions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
@@ -209,7 +210,7 @@ namespace Popcorn.ViewModels.Windows
             Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath, message.Episode.Title,
+                    MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath,
                         () =>
                         {
                             Messenger.Default.Send(new StopPlayingEpisodeMessage());
@@ -228,7 +229,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayMediaMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.MediaPath, message.MediaPath,
+                MediaPlayer = new MediaPlayerViewModel(message.MediaPath,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayMediaMessage());
@@ -247,7 +248,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath, message.Movie.Title,
+                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayingMovieMessage());
@@ -268,7 +269,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayTrailerMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl, message.MovieTitle,
+                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl,
                     message.TrailerStoppedAction, message.TrailerEndedAction);
                 ApplicationService.IsMediaPlaying = true;
                 IsMovieFlyoutOpen = false;
@@ -385,7 +386,7 @@ namespace Popcorn.ViewModels.Windows
                 {
                     Messenger.Default.Send(
                         new UnhandledExceptionMessage(
-                            new Exception("An issue has occured while processing the dropped file.")));
+                            new PopcornException("An issue has occured while processing the dropped file.")));
                 }
             });
 
@@ -568,7 +569,8 @@ namespace Popcorn.ViewModels.Windows
             if (ex != null)
             {
                 Logger.Fatal(ex);
-                ManageException(new Exception(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError")));
+                ManageException(
+                    new PopcornException(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError")));
             }
         }
 

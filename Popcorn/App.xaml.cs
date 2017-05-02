@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
+using Popcorn.Exceptions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Windows;
@@ -117,7 +118,7 @@ namespace Popcorn
                 Logger.Fatal(ex);
                 Messenger.Default.Send(
                     new UnhandledExceptionMessage(
-                        new Exception(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError"))));
+                        new PopcornException(LocalizationProviderHelper.GetLocalizedValue<string>("FatalError"))));
             }
         }
 

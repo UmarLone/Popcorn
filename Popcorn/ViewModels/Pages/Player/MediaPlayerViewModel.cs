@@ -30,11 +30,6 @@ namespace Popcorn.ViewModels.Pages.Player
         public readonly string MediaPath;
 
         /// <summary>
-        /// The media name
-        /// </summary>
-        public readonly string MediaName;
-
-        /// <summary>
         /// Media action to execute when media has ended
         /// </summary>
         private readonly Action _mediaEndedAction;
@@ -57,27 +52,26 @@ namespace Popcorn.ViewModels.Pages.Player
         /// <summary>
         /// Initializes a new instance of the MediaPlayerViewModel class.
         /// </summary>
-        /// <param name="mediaType">The media type</param>
         /// <param name="mediaPath">Media path</param>
-        /// <param name="mediaName">Media name</param>
         /// <param name="mediaStoppedAction">Media action to execute when media has been stopped</param>
         /// <param name="mediaEndedAction">Media action to execute when media has ended</param>
         /// <param name="bufferProgress">The buffer progress</param>
         /// <param name="subtitleFilePath">Subtitle file path</param>
-        public MediaPlayerViewModel(string mediaPath, string mediaName, Action mediaStoppedAction,
+        public MediaPlayerViewModel(string mediaPath, Action mediaStoppedAction,
             Action mediaEndedAction, Progress<double> bufferProgress = null, string subtitleFilePath = null)
         {
             Logger.Info(
-                $"Loading media : {mediaName}.");
+                $"Loading media : {mediaPath}.");
+            RegisterCommands();
 
             MediaPath = mediaPath;
-            MediaName = mediaName;
             _mediaStoppedAction = mediaStoppedAction;
             _mediaEndedAction = mediaEndedAction;
             SubtitleFilePath = subtitleFilePath;
             BufferProgress = bufferProgress;
 
-            RegisterCommands();
+            // Prevent windows from sleeping
+            Utils.SleepMode.PreventWindowsFromSleeping();
         }
 
         /// <summary>

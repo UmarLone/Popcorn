@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Threading;
 using Popcorn.ViewModels.Pages.Player;
 using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
+using Popcorn.Exceptions;
 using Popcorn.Messaging;
 
 namespace Popcorn.UserControls.Player
@@ -163,7 +164,7 @@ namespace Popcorn.UserControls.Player
             {
                 Messenger.Default.Send(
                     new UnhandledExceptionMessage(
-                        new Exception("An error has occured while trying to play the media.")));
+                        new PopcornException("An error has occured while trying to play the media.")));
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null)
                     return;
@@ -399,7 +400,6 @@ namespace Popcorn.UserControls.Player
                 MouseActivitySemaphore.Release();
                 return;
             }
-            ;
 
             var inputEventArgs = e.StagingItem.Input;
             if (!(inputEventArgs is MouseEventArgs) && !(inputEventArgs is KeyboardEventArgs))

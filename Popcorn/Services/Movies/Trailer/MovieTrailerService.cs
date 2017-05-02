@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
+using Popcorn.Exceptions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Movie;
@@ -53,7 +54,7 @@ namespace Popcorn.Services.Movies.Trailer
                         $"Failed loading movie's trailer: {movie.Title}");
                     Messenger.Default.Send(
                         new ManageExceptionMessage(
-                            new Exception(
+                            new PopcornException(
                                 LocalizationProviderHelper.GetLocalizedValue<string>("TrailerNotAvailable"))));
                     Messenger.Default.Send(new StopPlayingTrailerMessage());
                     return;
@@ -85,7 +86,7 @@ namespace Popcorn.Services.Movies.Trailer
                     $"GetMovieTrailerAsync: {exception.Message}");
                 Messenger.Default.Send(
                     new ManageExceptionMessage(
-                        new Exception(
+                        new PopcornException(
                             LocalizationProviderHelper.GetLocalizedValue<string>(
                                 "TrailerNotAvailable"))));
                 Messenger.Default.Send(new StopPlayingTrailerMessage());

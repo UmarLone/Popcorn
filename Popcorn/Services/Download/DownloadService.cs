@@ -7,32 +7,44 @@ using lt;
 using NLog;
 using System.IO;
 using GalaSoft.MvvmLight.Messaging;
+using Popcorn.Exceptions;
 using Popcorn.Messaging;
 using Popcorn.Models.Media;
 
 namespace Popcorn.Services.Download
 {
+    /// <summary>
+    /// Generic download service for torrent download
+    /// </summary>
+    /// <typeparam name="T"><see cref="IMediaFile"/></typeparam>
     public class DownloadService<T> : IDownloadService<T> where T : IMediaFile
     {
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Action to execute when a media has been buffered
+        /// </summary>
+        /// <param name="media"><see cref="MediaFile"/></param>
+        /// <param name="reportDownloadProgress">Download progress</param>
         protected virtual void BroadcastMediaBuffered(T media, Progress<double> reportDownloadProgress)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Download torrent
+        /// Download a torrent
         /// </summary>
-        /// <returns></returns>
-        public async Task Download(T media, TorrentType torrentType, MediaType mediaType, string torrentPath, int uploadLimit, int downloadLimit, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, Action buffered, Action cancelled,
+        /// <returns><see cref="Task"/></returns>
+        public async Task Download(T media, TorrentType torrentType, MediaType mediaType, string torrentPath,
+            int uploadLimit, int downloadLimit, IProgress<double> downloadProgress,
+            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, Action buffered,
+            Action cancelled,
             CancellationTokenSource cts)
         {
-            Logger.Info(
+            _logger.Info(
                 $"Start downloading : {torrentPath}");
             await Task.Run(async () =>
             {
@@ -68,7 +80,8 @@ namespace Popcorn.Services.Download
                         })
                         using (var handle = session.add_torrent(addParams))
                         {
-                            await HandleDownload(media, mediaType, uploadLimit, downloadLimit, downloadProgress, downloadRate, nbSeeds, nbPeers, handle, session, buffered, cancelled, cts);
+                            await HandleDownload(media, mediaType, uploadLimit, downloadLimit, downloadProgress,
+                                downloadRate, nbSeeds, nbPeers, handle, session, buffered, cancelled, cts);
                         }
                     }
                     else
@@ -83,7 +96,8 @@ namespace Popcorn.Services.Download
                             magnet.parse_magnet_uri(torrentPath, addParams, error);
                             using (var handle = session.add_torrent(addParams))
                             {
-                                await HandleDownload(media, mediaType, uploadLimit, downloadLimit, downloadProgress, downloadRate, nbSeeds, nbPeers, handle, session, buffered, cancelled, cts);
+                                await HandleDownload(media, mediaType, uploadLimit, downloadLimit, downloadProgress,
+                                    downloadRate, nbSeeds, nbPeers, handle, session, buffered, cancelled, cts);
                             }
                         }
                     }
@@ -91,8 +105,27 @@ namespace Popcorn.Services.Download
             });
         }
 
-        private async Task HandleDownload(T media, MediaType type, int uploadLimit, int downloadLimit, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, torrent_handle handle, session session, Action buffered, Action cancelled, CancellationTokenSource cts)
+        /// <summary>
+        /// Download media
+        /// </summary>
+        /// <param name="media">Media file <see cref="IMediaFile"/></param>
+        /// <param name="type">Media type <see cref="MediaType"/></param>
+        /// <param name="uploadLimit">Upload limit</param>
+        /// <param name="downloadLimit">Download limit</param>
+        /// <param name="downloadProgress">Download progress</param>
+        /// <param name="downloadRate">Download rate</param>
+        /// <param name="nbSeeds">Number of seeders</param>
+        /// <param name="nbPeers">Number of peers</param>
+        /// <param name="handle"><see cref="torrent_handle"/></param>
+        /// <param name="session"><see cref="session"/></param>
+        /// <param name="buffered">Action to execute when media has been buffered</param>
+        /// <param name="cancelled">Action to execute when media download has been cancelled</param>
+        /// <param name="cts"><see cref="CancellationTokenSource"/></param>
+        /// <returns><see cref="Task"/></returns>
+        private async Task HandleDownload(T media, MediaType type, int uploadLimit, int downloadLimit,
+            IProgress<double> downloadProgress,
+            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, torrent_handle handle,
+            session session, Action buffered, Action cancelled, CancellationTokenSource cts)
         {
             handle.set_upload_limit(uploadLimit * 1024);
             handle.set_download_limit(downloadLimit * 1024);
@@ -120,6 +153,9 @@ namespace Popcorn.Services.Download
                         case MediaType.Show:
                             minimumBuffering = Constants.MinimumShowBuffering;
                             break;
+                        case MediaType.Unkown:
+                            minimumBuffering = Constants.MinimumMovieBuffering;
+                            break;
                         default:
                             minimumBuffering = Constants.MinimumMovieBuffering;
                             break;
@@ -141,7 +177,7 @@ namespace Popcorn.Services.Download
                             alreadyBuffered = true;
                             media.FilePath = filePath;
                             BroadcastMediaBuffered(media, new Progress<double>(
-                                e => { downloadProgress.Report(e); }));
+                                downloadProgress.Report));
 
                             break;
                         }
@@ -153,13 +189,14 @@ namespace Popcorn.Services.Download
                             {
                                 Messenger.Default.Send(
                                     new UnhandledExceptionMessage(
-                                        new Exception("There is no media file in the torrent you dropped in the UI.")));
+                                        new PopcornException(
+                                            "There is no media file in the torrent you dropped in the UI.")));
                             }
                             else
                             {
                                 Messenger.Default.Send(
                                     new UnhandledExceptionMessage(
-                                        new Exception("There is no media file in the torrent.")));
+                                        new PopcornException("There is no media file in the torrent.")));
                             }
 
                             break;
