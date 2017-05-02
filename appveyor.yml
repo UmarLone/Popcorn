@@ -3,11 +3,10 @@ image: Visual Studio 2017
 
 init:
 - ps: >-
-    patch: true
-      file: Popcorn\Properties\AssemblyInfo.cs
-      assembly_version: '$(VERSION)'
-      assembly_file_version: '$(VERSION)'
-      assembly_informational_version: '$(ASSEMBLY_INFORMATIONAL_VERSION)'
+    file: Popcorn\Properties\AssemblyInfo.cs
+    assembly_version: '$(VERSION)'
+    assembly_file_version: '$(VERSION)'
+    assembly_informational_version: '$(ASSEMBLY_INFORMATIONAL_VERSION)'
 
 install: 
 - ps: >-
@@ -34,7 +33,7 @@ install:
     $Env:SHOULD_PUBLISH_COVERITY_ANALYSIS = $($Env:APPVEYOR_SCHEDULED_BUILD -eq $True)
     Write-Host "Should publish Coverity analysis = " -NoNewLine
     Write-Host $Env:SHOULD_PUBLISH_COVERITY_ANALYSIS -ForegroundColor "Green"
-    
+
 - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
 
 before_build:
