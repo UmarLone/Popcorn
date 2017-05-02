@@ -23,21 +23,21 @@ test_script:
 
 after_test:
 - ps: >-
-    & cov-build.exe --dir cov-int msbuild "$Env:APPVEYOR_BUILD_FOLDER\Popcorn.sln" `
+    cov-build.exe --dir cov-int msbuild ".\Popcorn.sln" `
           /verbosity:minimal `
-          /p:Configuration=Release `
+          /p:Configuration=Debug `
           /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-          
+
     & nuget install PublishCoverity -Version 0.11.0 -ExcludeVersion -OutputDirectory .\packages
 
     & .\packages\PublishCoverity\PublishCoverity.exe compress `
-      -i "$Env:APPVEYOR_BUILD_FOLDER\cov-int" `
-      -o "$Env:APPVEYOR_BUILD_FOLDER\$Env:APPVEYOR_PROJECT_NAME.zip"
+      -i ".\cov-int" `
+      -o ".\$Env:APPVEYOR_PROJECT_NAME.zip"
 
     & .\packages\PublishCoverity\PublishCoverity.exe publish `
       -t "$Env:coverity_token" `
       -r "$Env:APPVEYOR_REPO_NAME" `
-      -z "$Env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip" `
+      -z ".\$env:APPVEYOR_PROJECT_NAME.zip" `
       -d "CI server scheduled build." `
       --codeVersion "$Env:ASSEMBLY_INFORMATIONAL_VERSION" `
       --nologo
