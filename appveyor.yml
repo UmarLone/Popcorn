@@ -4,13 +4,11 @@ image: Visual Studio 2017
 install: 
 - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
 
-cache: packages -> **\packages.config
-
 build_script:
 - cmd: >-
     nuget restore
 
-    cov-build --dir cov-int msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    cov-build --dir cov-int --fs-capture-search "$Env:APPVEYOR_BUILD_FOLDER" msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 test_script:
 - ps: >-
@@ -25,4 +23,4 @@ test_script:
 - cmd: >-
     7z a -r coverity.zip cov-int
 
-    curl.exe -F token=%COVERITY_TOKEN% -F email=%COVERITY_EMAIL% -F file=@coverity.zip -F version="1.0.0" https://scan.coverity.com/builds?project=%APPVEYOR_REPO_NAME%
+    curl.exe -F token=%COVERITY_TOKEN% -F email=%COVERITY_EMAIL% -F file=@coverity.zip -F version="$Env:VERSION" https://scan.coverity.com/builds?project=%APPVEYOR_REPO_NAME%
