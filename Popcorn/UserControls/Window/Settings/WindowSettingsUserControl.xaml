@@ -46,7 +46,7 @@
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                DisplayMemberPath="LocalizedName"
+                DisplayMemberPath="Name"
                 ItemsSource="{Binding Language.Languages}"
                 SelectedItem="{Binding Language.CurrentLanguage}" />
         </Grid>
