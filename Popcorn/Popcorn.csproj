@@ -349,6 +349,7 @@
     <Compile Include="Entity\Movie\Torrent.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
+    <Compile Include="Exceptions\PopcornException.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
     <Compile Include="Helpers\FindVisualChildHelper.cs" />

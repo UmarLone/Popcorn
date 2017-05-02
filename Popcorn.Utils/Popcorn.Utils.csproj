@@ -44,7 +44,9 @@
     <Compile Include="Constants.cs" />
     <Compile Include="FastDirectoryEnumerator.cs" />
     <Compile Include="MediaType.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SleepMode.cs" />
     <Compile Include="TorrentType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
