@@ -4,11 +4,15 @@ image: Visual Studio 2017
 install: 
 - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
 
+before_build:
+- cmd: >-
+    cov-configure --cs
+
 build_script:
 - cmd: >-
     nuget restore
 
-    cov-build --dir cov-int --fs-capture-search "$Env:APPVEYOR_BUILD_FOLDER" msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    cov-build --dir cov-int msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 test_script:
 - ps: >-
