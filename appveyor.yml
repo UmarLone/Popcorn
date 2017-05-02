@@ -5,7 +5,7 @@ build_script:
 - cmd: >-
     nuget restore
 
-    cov-configure --comptype MSBuild --compiler "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+    cov-configure --comptype msvc --compiler "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX64\x64\cl.exe"
 
     cov-build --dir cov-int msbuild Popcorn.sln /p:UseSharedCompilation=false /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
