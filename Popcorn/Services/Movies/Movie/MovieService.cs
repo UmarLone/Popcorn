@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using Popcorn.Models.Localization;
 using Popcorn.Models.Movie;
 using RestSharp;
 using TMDbLib.Client;
@@ -14,6 +13,7 @@ using TMDbLib.Objects.Movies;
 using System.Collections.Async;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Trailer;
+using Popcorn.Models.User;
 
 namespace Popcorn.Services.Movies.Movie
 {
@@ -61,7 +61,7 @@ namespace Popcorn.Services.Movies.Movie
         /// Change the culture of TMDb
         /// </summary>
         /// <param name="language">Language to set</param>
-        public void ChangeTmdbLanguage(ILanguage language)
+        public void ChangeTmdbLanguage(LanguageJson language)
         {
             if (TmdbClient.DefaultLanguage == null && language.Culture == "en")
             {
@@ -84,7 +84,7 @@ namespace Popcorn.Services.Movies.Movie
         /// </summary>
         /// <param name="imdbCode">Movie's Imdb code</param>
         /// <returns>The movie</returns>
-        private async Task<MovieJson> GetMovieAsync(string imdbCode)
+        public async Task<MovieJson> GetMovieAsync(string imdbCode)
         {
             var watch = Stopwatch.StartNew();
 

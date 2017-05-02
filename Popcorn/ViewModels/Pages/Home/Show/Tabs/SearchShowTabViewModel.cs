@@ -76,18 +76,19 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 
                 var movies =
                     await ShowService.SearchShowsAsync(searchFilter,
-                        Page,
-                        MaxNumberOfShows,
-                        Genre,
-                        Rating,
-                        CancellationLoadingShows.Token).ConfigureAwait(false);
+                            Page,
+                            MaxNumberOfShows,
+                            Genre,
+                            Rating * 10,
+                            CancellationLoadingShows.Token)
+                        .ConfigureAwait(false);
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var moviesList = movies.Item1.ToList();
                     Shows.AddRange(moviesList);
                     IsLoadingShows = false;
-                    IsLoadingShows = Shows.Any();
+                    IsShowFound = Shows.Any();
                     CurrentNumberOfShows = Shows.Count;
                     MaxNumberOfShows = movies.Item2;
                 });

@@ -32,7 +32,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularShowTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularTitleTab");
         }
 
         /// <summary>
@@ -57,11 +57,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 
                 var shows =
                     await ShowService.GetShowsAsync(Page,
-                        MaxShowsPerPage,
-                        Rating,
-                        "seeds",
-                        CancellationLoadingShows.Token,
-                        Genre).ConfigureAwait(false);
+                            MaxShowsPerPage,
+                            Rating * 10,
+                            "watching",
+                            CancellationLoadingShows.Token,
+                            Genre)
+                        .ConfigureAwait(false);
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
@@ -96,7 +97,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestTitleTab"));
+                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularTitleTab"));
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {

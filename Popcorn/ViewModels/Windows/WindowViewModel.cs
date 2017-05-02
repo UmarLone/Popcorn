@@ -18,7 +18,7 @@ using Popcorn.Exceptions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Services.Movies.History;
+using Popcorn.Services.User;
 using Popcorn.Utils;
 using Popcorn.ViewModels.Pages.Home;
 using Popcorn.ViewModels.Pages.Home.Anime;
@@ -73,7 +73,7 @@ namespace Popcorn.ViewModels.Windows
         /// <summary>
         /// The movie history service
         /// </summary>
-        private readonly IMovieHistoryService _movieHistoryService;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// <see cref="MediaPlayer"/>
@@ -89,10 +89,10 @@ namespace Popcorn.ViewModels.Windows
         /// Initializes a new instance of the WindowViewModel class.
         /// </summary>
         /// <param name="applicationService">Instance of Application state</param>
-        /// <param name="movieHistoryService">Instance of movie history service</param>
-        public WindowViewModel(IApplicationService applicationService, IMovieHistoryService movieHistoryService)
+        /// <param name="userService">Instance of movie history service</param>
+        public WindowViewModel(IApplicationService applicationService, IUserService userService)
         {
-            _movieHistoryService = movieHistoryService;
+            _userService = userService;
             _dialogCoordinator = DialogCoordinator.Instance;
             _applicationService = applicationService;
             RegisterMessages();
@@ -255,7 +255,7 @@ namespace Popcorn.ViewModels.Windows
                     },
                     async () =>
                     {
-                        await _movieHistoryService.SetHasBeenSeenMovieAsync(message.Movie);
+                        await _userService.SetMovieAsync(message.Movie);
                         Messenger.Default.Send(new ChangeHasBeenSeenMovieMessage());
                         Messenger.Default.Send(new StopPlayingMovieMessage());
                     },

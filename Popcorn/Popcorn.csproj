@@ -113,18 +113,6 @@
       <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.SqlServerCompact.6.1.3\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
@@ -159,6 +147,7 @@
       <HintPath>..\packages\Meta.Vlc.Wpf.16.11.19\lib\net45\x86\Meta.Vlc.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.Data.Edm, Version=5.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.8.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
     </Reference>
@@ -217,12 +206,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
       <Private>True</Private>
@@ -342,11 +328,6 @@
     <Compile Include="Dialogs\UpdateDialog.xaml.cs">
       <DependentUpon>UpdateDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entity\Cast\Cast.cs" />
-    <Compile Include="Entity\Movie\Genre.cs" />
-    <Compile Include="Entity\Movie\MovieEntity.cs" />
-    <Compile Include="Entity\Movie\MovieHistory.cs" />
-    <Compile Include="Entity\Movie\Torrent.cs" />
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
     <Compile Include="Exceptions\PopcornException.cs" />
@@ -366,11 +347,6 @@
     <Compile Include="Messaging\StopPlayingEpisodeMessage.cs" />
     <Compile Include="Messaging\StopPlayMediaMessage.cs" />
     <Compile Include="Messaging\UnhandledExceptionMessage.cs" />
-    <Compile Include="Migrations\201703041706307_Initial.cs" />
-    <Compile Include="Migrations\201703041706307_Initial.Designer.cs">
-      <DependentUpon>201703041706307_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Anime\AnimeJson.cs" />
     <Compile Include="Models\Anime\AnimeResponse.cs" />
     <Compile Include="Models\ApplicationState\ApplicationService.cs" />
@@ -390,6 +366,10 @@
     <Compile Include="Models\Torrent\Show\TorrentShowJson.cs" />
     <Compile Include="Models\Torrent\Show\TorrentShowNodeJson.cs" />
     <Compile Include="Models\Trailer\TrailerResponse.cs" />
+    <Compile Include="Models\User\LanguageJson.cs" />
+    <Compile Include="Models\User\MovieHistoryJson.cs" />
+    <Compile Include="Models\User\ShowHistoryJson.cs" />
+    <Compile Include="Models\User\UserJson.cs" />
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -397,8 +377,6 @@
       <DependentUpon>PlayerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Panels\ElasticWrapPanel.cs" />
-    <Compile Include="Entity\Localization\Language.cs" />
-    <Compile Include="Entity\Application\Settings.cs" />
     <Compile Include="Events\WindowStateChangedEventArgs.cs" />
     <Compile Include="Helpers\DownloadFileHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
@@ -417,7 +395,6 @@
     <Compile Include="AttachedProperties\TabContent.cs" />
     <Compile Include="Messaging\PlayMovieMessage.cs" />
     <Compile Include="Messaging\StopPlayingMovieMessage.cs" />
-    <Compile Include="Entity\ApplicationDbContext.cs" />
     <Compile Include="Models\Localization\Language.cs" />
     <Compile Include="Models\Subtitles\Subtitle.cs" />
     <Compile Include="Models\Trailer\Trailer.cs" />
@@ -428,9 +405,8 @@
     <Compile Include="Services\Download\IDownloadService.cs" />
     <Compile Include="Services\Genres\GenreService.cs" />
     <Compile Include="Services\Genres\IGenreService.cs" />
-    <Compile Include="Services\Movies\History\IMovieHistoryService.cs" />
-    <Compile Include="Services\Movies\History\MovieHistoryService.cs" />
-    <Compile Include="Services\Language\ILanguageService.cs" />
+    <Compile Include="Services\User\IUserService.cs" />
+    <Compile Include="Services\User\UserService.cs" />
     <Compile Include="Services\Movies\Movie\IMovieService.cs" />
     <Compile Include="Services\Movies\Movie\MovieService.cs" />
     <Compile Include="Models\Torrent\Movie\TorrentJson.cs" />
@@ -450,18 +426,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Movie\MovieRatingFiltering.xaml.cs">
-      <DependentUpon>MovieRatingFiltering.xaml</DependentUpon>
+    <Compile Include="Controls\RatingFiltering.xaml.cs">
+      <DependentUpon>RatingFiltering.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Services\Language\LanguageService.cs" />
     <Compile Include="Services\Movies\Trailer\IMovieTrailerService.cs" />
-    <Compile Include="Services\Settings\SettingsService.cs" />
-    <Compile Include="Services\Settings\ISettingsService.cs" />
     <Compile Include="Services\Shows\Show\IShowService.cs" />
     <Compile Include="Services\Shows\Show\ShowService.cs" />
     <Compile Include="Services\Subtitles\ISubtitlesService.cs" />
@@ -657,7 +630,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Controls\Movie\MovieRatingFiltering.xaml">
+    <Page Include="Controls\RatingFiltering.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -713,9 +686,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703041706307_Initial.resx">
-      <DependentUpon>201703041706307_Initial.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.fr.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.fr.Designer.cs</LastGenOutput>
@@ -787,10 +757,6 @@
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(TargetDir)libvlc" md "$(TargetDir)libvlc"
 xcopy /s /y "$(SolutionDir)packages\Meta.Vlc.Lib.16.05.01\content\LibVlc\*.*" "$(TargetDir)libvlc"
-if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
 xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
 xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Localization;
 using Popcorn.Models.Movie;
+using Popcorn.Models.User;
 using TMDbLib.Objects.General;
 
 namespace Popcorn.Services.Movies.Movie
@@ -14,7 +15,14 @@ namespace Popcorn.Services.Movies.Movie
         /// Change the culture of TMDb
         /// </summary>
         /// <param name="language">Language to set</param>
-        void ChangeTmdbLanguage(ILanguage language);
+        void ChangeTmdbLanguage(LanguageJson language);
+
+        /// <summary>
+        /// Get movie by its Imdb code
+        /// </summary>
+        /// <param name="imdbCode">Movie's Imdb code</param>
+        /// <returns>The movie</returns>
+        Task<MovieJson> GetMovieAsync(string imdbCode);
 
         /// <summary>
         /// Get popular movies by page

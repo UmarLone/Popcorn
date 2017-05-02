@@ -24,7 +24,7 @@ namespace Popcorn.UserControls.Home.Show.Tabs
             if (totalHeight < 2d / 3d * e.ExtentHeight) return;
             var vm = DataContext as ShowTabsViewModel;
             if (vm == null) return;
-            if (vm is PopularShowTabViewModel)
+            if (vm is PopularShowTabViewModel || vm is GreatestShowTabViewModel || vm is RecentShowTabViewModel)
             {
                 if (!vm.IsLoadingShows)
                     await vm.LoadShowsAsync();

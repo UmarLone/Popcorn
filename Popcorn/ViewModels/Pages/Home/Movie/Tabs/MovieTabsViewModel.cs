@@ -11,8 +11,8 @@ using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
-using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
@@ -39,7 +39,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Services used to interact with movie history
         /// </summary>
-        protected readonly IMovieHistoryService MovieHistoryService;
+        protected readonly IUserService UserService;
 
         /// <summary>
         /// Services used to interact with movies
@@ -86,13 +86,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         /// <param name="applicationService">The application state</param>
         /// <param name="movieService">Used to interact with movies</param>
-        /// <param name="movieHistoryService">Used to interact with movie history</param>
+        /// <param name="userService">Used to interact with movie history</param>
         protected MovieTabsViewModel(IApplicationService applicationService, IMovieService movieService,
-            IMovieHistoryService movieHistoryService)
+            IUserService userService)
         {
             ApplicationService = applicationService;
             MovieService = movieService;
-            MovieHistoryService = movieHistoryService;
+            UserService = userService;
 
             RegisterMessages();
             RegisterCommands();
@@ -263,7 +263,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 
             Messenger.Default.Register<ChangeFavoriteMovieMessage>(
                 this,
-                async message => await MovieHistoryService.SetMovieHistoryAsync(Movies));
+                async message => await UserService.SyncMovieHistoryAsync(Movies));
         }
 
         /// <summary>
@@ -275,14 +275,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             SetFavoriteMovieCommand =
                 new RelayCommand<MovieJson>(async movie =>
                 {
-                    await MovieHistoryService.SetFavoriteMovieAsync(movie);
+                    await UserService.SetMovieAsync(movie);
                     Messenger.Default.Send(new ChangeFavoriteMovieMessage());
                 });
 
             ChangeMovieGenreCommand =
                 new RelayCommand<GenreJson>(genre => Genre = genre.Name ==
-                                                              LocalizationProviderHelper.GetLocalizedValue<string>(
-                                                                  "AllLabel")
+                                                             LocalizationProviderHelper.GetLocalizedValue<string>(
+                                                                 "AllLabel")
                     ? null
                     : genre);
         }

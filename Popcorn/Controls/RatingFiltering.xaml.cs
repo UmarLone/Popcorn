@@ -7,12 +7,12 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Extensions = Popcorn.Helpers.Extensions;
 
-namespace Popcorn.Controls.Movie
+namespace Popcorn.Controls
 {
     /// <summary>
     /// Interaction logic for Rating.xaml
     /// </summary>
-    public partial class MovieRatingFiltering
+    public partial class RatingFiltering
     {
         /// <summary>
         /// Max rating value
@@ -23,13 +23,13 @@ namespace Popcorn.Controls.Movie
         /// Rating property
         /// </summary>
         public static readonly DependencyProperty RatingValueProperty = DependencyProperty.Register("RatingValue",
-            typeof(double), typeof(MovieRatingFiltering),
+            typeof(double), typeof(RatingFiltering),
             new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, RatingChanged));
 
         /// <summary>
-        /// Initialize a new instance of MovieRatingFiltering
+        /// Initialize a new instance of RatingFiltering
         /// </summary>
-        public MovieRatingFiltering()
+        public RatingFiltering()
         {
             InitializeComponent();
         }
@@ -57,7 +57,7 @@ namespace Popcorn.Controls.Movie
         /// <param name="e">Event args</param>
         private static void RatingChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var rating = sender as MovieRatingFiltering;
+            var rating = sender as RatingFiltering;
             if (rating == null)
                 return;
 

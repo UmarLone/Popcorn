@@ -304,7 +304,7 @@
                                 FontSize="14"
                                 Foreground="#637D8C"
                                 Text="{lex:LocText RatingLabel}" />
-                            <movie:MovieRatingFiltering
+                            <controls1:RatingFiltering
                                 Grid.Row="11"
                                 Grid.Column="1"
                                 Width="125"

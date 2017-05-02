@@ -13,8 +13,8 @@ using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
-using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
@@ -33,10 +33,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
-        /// <param name="movieHistoryService">Movie history service</param>
+        /// <param name="userService">User service</param>
         public PopularMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
-            IMovieHistoryService movieHistoryService)
-            : base(applicationService, movieService, movieHistoryService)
+            IUserService userService)
+            : base(applicationService, movieService, userService)
         {
             RegisterMessages();
             RegisterCommands();
@@ -80,7 +80,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                     IsMovieFound = Movies.Any();
                     CurrentNumberOfMovies = Movies.Count;
                     MaxNumberOfMovies = movies.Item2;
-                    await MovieHistoryService.SetMovieHistoryAsync(movies.Item1).ConfigureAwait(false);
+                    await UserService.SyncMovieHistoryAsync(movies.Item1).ConfigureAwait(false);
                 });
             }
             catch (Exception exception)

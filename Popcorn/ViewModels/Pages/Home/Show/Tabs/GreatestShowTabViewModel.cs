@@ -34,7 +34,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         {
             RegisterMessages();
             RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("PopularShowTitleTab");
+            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("GreatestTitleTab");
         }
 
         /// <summary>
@@ -59,11 +59,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 
                 var shows =
                     await ShowService.GetShowsAsync(Page,
-                        MaxShowsPerPage,
-                        Rating,
-                        "download_count",
-                        CancellationLoadingShows.Token,
-                        Genre).ConfigureAwait(false);
+                            MaxShowsPerPage,
+                            Rating * 10,
+                            "votes",
+                            CancellationLoadingShows.Token,
+                            Genre)
+                        .ConfigureAwait(false);
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {

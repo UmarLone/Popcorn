@@ -3,13 +3,11 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Services.Genres;
-using Popcorn.Services.Language;
-using Popcorn.Services.Movies.History;
 using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
-using Popcorn.Services.Settings;
 using Popcorn.Services.Shows.Show;
 using Popcorn.Services.Subtitles;
+using Popcorn.Services.User;
 using Popcorn.ViewModels.Pages.Home;
 using Popcorn.ViewModels.Pages.Home.Anime;
 using Popcorn.ViewModels.Pages.Home.Movie;
@@ -32,11 +30,9 @@ namespace Popcorn.ViewModels
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             #region Services
-
-            SimpleIoc.Default.Register<ISettingsService, SettingsService>();
-            SimpleIoc.Default.Register<IMovieService, MovieService>();
-            SimpleIoc.Default.Register<ILanguageService, LanguageService>();
-            SimpleIoc.Default.Register<IMovieHistoryService, MovieHistoryService>();
+            var movieService = new MovieService();
+            SimpleIoc.Default.Register<IUserService>(() => new UserService(movieService, Utils.Registry.GetMachineGuid()));
+            SimpleIoc.Default.Register<IMovieService>(() => movieService);
             SimpleIoc.Default.Register<IMovieTrailerService, MovieTrailerService>();
             SimpleIoc.Default.Register<IApplicationService, ApplicationService>();
             SimpleIoc.Default.Register<ISubtitlesService, SubtitlesService>();

@@ -10,7 +10,7 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Genres;
 using Popcorn.Services.Genres;
-using Popcorn.Services.Language;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Genres
 {
@@ -24,7 +24,7 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// <summary>
         /// Language service
         /// </summary>
-        private readonly ILanguageService _languageService;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// Genre service
@@ -49,11 +49,11 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// <summary>
         /// Initialize a new instance of GenresMovieViewModel class
         /// </summary>
-        /// <param name="languageService">The language service</param>
+        /// <param name="userService">The user service</param>
         /// <param name="genreService">The genre service</param>
-        public GenreViewModel(ILanguageService languageService, IGenreService genreService)
+        public GenreViewModel(IUserService userService, IGenreService genreService)
         {
-            _languageService = languageService;
+            _userService = userService;
             _genreService = genreService;
             _cancellationLoadingGenres = new CancellationTokenSource();
             RegisterMessages();
@@ -82,7 +82,7 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// </summary>
         public async Task LoadGenresAsync()
         {
-            var language = await _languageService.GetCurrentLanguageAsync();
+            var language = await _userService.GetCurrentLanguageAsync();
             var genres =
                 new ObservableCollection<GenreJson>(
                     await _genreService.GetGenresAsync(language.Culture, _cancellationLoadingGenres.Token));

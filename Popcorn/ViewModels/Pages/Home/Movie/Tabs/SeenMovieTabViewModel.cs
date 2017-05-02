@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Async;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,8 +13,9 @@ using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
-using Popcorn.Services.Movies.History;
+using Popcorn.Models.Movie;
 using Popcorn.Services.Movies.Movie;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 {
@@ -23,16 +26,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IMovieService _movieService;
+
         /// <summary>
         /// Initializes a new instance of the SeenMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="movieService">Movie service</param>
-        /// <param name="movieHistoryService">Movie history service</param>
+        /// <param name="userService">Movie history service</param>
         public SeenMovieTabViewModel(IApplicationService applicationService, IMovieService movieService,
-            IMovieHistoryService movieHistoryService)
-            : base(applicationService, movieService, movieHistoryService)
+            IUserService userService)
+            : base(applicationService, movieService, userService)
         {
+            _movieService = movieService;
             RegisterMessages();
             RegisterCommands();
             TabName = LocalizationProviderHelper.GetLocalizedValue<string>("SeenTitleTab");
@@ -54,14 +60,20 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             {
                 IsLoadingMovies = true;
 
-                var movies =
-                    await MovieHistoryService.GetSeenMoviesAsync(Genre, Rating).ConfigureAwait(false);
+                var imdbIds =
+                    await UserService.GetSeenMovies().ConfigureAwait(false);
+                var movies = new List<MovieJson>();
+                await imdbIds.ParallelForEachAsync(async imdbId =>
+                {
+                    var movie = await _movieService.GetMovieAsync(imdbId);
+                    movie.HasBeenSeen = true;
+                    movies.Add(movie);
+                });
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    var moviesList = movies.ToList();
                     Movies.Clear();
-                    Movies.AddRange(moviesList);
+                    Movies.AddRange(movies.Where(a => Genre != null ? a.Genres.Contains(Genre.EnglishName) : a.Genres.TrueForAll(b => true) && a.Rating >= Rating));
                     IsLoadingMovies = false;
                     IsMovieFound = Movies.Any();
                     CurrentNumberOfMovies = Movies.Count;

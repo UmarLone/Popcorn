@@ -1,36 +1,21 @@
 ﻿using GalaSoft.MvvmLight;
+using Popcorn.Models.User;
 
 namespace Popcorn.Models.Localization
 {
     /// <summary>
     /// French language
     /// </summary>
-    public sealed class FrenchLanguage : ObservableObject, ILanguage
+    public sealed class FrenchLanguage : LanguageJson
     {
         /// <summary>
         /// Initialize a new instance of FrenchLanguage
         /// </summary>
         public FrenchLanguage()
         {
-            LocalizedName = "Français";
-            EnglishName = "French";
+            Name = "French";
             Culture = "fr";
         }
-
-        /// <summary>
-        /// Language's name
-        /// </summary>
-        public string LocalizedName { get; }
-
-        /// <summary>
-        /// English language's name
-        /// </summary>
-        public string EnglishName { get; }
-
-        /// <summary>
-        /// Language's culture
-        /// </summary>
-        public string Culture { get; }
 
         /// <summary>
         /// Check equality based on is localized name
@@ -41,13 +26,13 @@ namespace Popcorn.Models.Localization
         {
             var item = obj as FrenchLanguage;
 
-            return item != null && LocalizedName.Equals(item.LocalizedName);
+            return item != null && Name.Equals(item.Name);
         }
 
         /// <summary>
         /// Get hash code based on it localized name
         /// </summary>
         /// <returns>Hash code</returns>
-        public override int GetHashCode() => LocalizedName.GetHashCode();
+        public override int GetHashCode() => Name.GetHashCode();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using Microsoft.Win32;
 using NLog;
 using Popcorn.Exceptions;
 using Popcorn.Helpers;
@@ -45,7 +47,6 @@ namespace Popcorn
             DispatcherHelper.Initialize();
 
             LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
-
             watchStart.Stop();
             var elapsedStartMs = watchStart.ElapsedMilliseconds;
             Logger.Info(

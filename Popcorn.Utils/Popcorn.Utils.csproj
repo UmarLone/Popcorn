@@ -46,6 +46,7 @@
     <Compile Include="MediaType.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registry.cs" />
     <Compile Include="SleepMode.cs" />
     <Compile Include="TorrentType.cs" />
   </ItemGroup>

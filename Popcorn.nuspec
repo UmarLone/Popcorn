@@ -11,15 +11,6 @@
         <description>Popcorn Windows native app made in .NET/WPF</description>
     </metadata>
     <files>
-        <file src="amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" target="lib\net45\amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
-        <file src="amd64\Microsoft.VC90.CRT\msvcr90.dll" target="lib\net45\amd64\Microsoft.VC90.CRT\msvcr90.dll" />
-        <file src="amd64\Microsoft.VC90.CRT\README_ENU.txt" target="lib\net45\amd64\Microsoft.VC90.CRT\README_ENU.txt" />
-        <file src="amd64\sqlceca40.dll" target="lib\net45\amd64\sqlceca40.dll" />
-        <file src="amd64\sqlcecompact40.dll" target="lib\net45\amd64\sqlcecompact40.dll" />
-        <file src="amd64\sqlceer40EN.dll" target="lib\net45\amd64\sqlceer40EN.dll" />
-        <file src="amd64\sqlceme40.dll" target="lib\net45\amd64\sqlceme40.dll" />
-        <file src="amd64\sqlceqp40.dll" target="lib\net45\amd64\sqlceqp40.dll" />
-        <file src="amd64\sqlcese40.dll" target="lib\net45\amd64\sqlcese40.dll" />
         <file src="en\Popcorn.resources.dll" target="lib\net45\en\Popcorn.resources.dll" />
         <file src="fr\Popcorn.resources.dll" target="lib\net45\fr\Popcorn.resources.dll" />
         <file src="de\Microsoft.Data.Edm.resources.dll" target="lib\net45\de\Microsoft.Data.Edm.resources.dll" />
@@ -369,24 +360,12 @@
         <file src="libvlc\plugins\plugins.dat" target="lib\net45\libvlc\plugins\plugins.dat" />
         <file src="libvlc\libvlc.dll" target="lib\net45\libvlc\libvlc.dll" />
         <file src="libvlc\libvlccore.dll" target="lib\net45\libvlc\libvlccore.dll" />
-        <file src="x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" target="lib\net45\x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
-        <file src="x86\Microsoft.VC90.CRT\msvcr90.dll" target="lib\net45\x86\Microsoft.VC90.CRT\msvcr90.dll" />
-        <file src="x86\Microsoft.VC90.CRT\README_ENU.txt" target="lib\net45\x86\Microsoft.VC90.CRT\README_ENU.txt" />
-        <file src="x86\sqlceca40.dll" target="lib\net45\x86\sqlceca40.dll" />
-        <file src="x86\sqlcecompact40.dll" target="lib\net45\x86\sqlcecompact40.dll" />
-        <file src="x86\sqlceer40EN.dll" target="lib\net45\x86\sqlceer40EN.dll" />
-        <file src="x86\sqlceme40.dll" target="lib\net45\x86\sqlceme40.dll" />
-        <file src="x86\sqlceqp40.dll" target="lib\net45\x86\sqlceqp40.dll" />
-        <file src="x86\sqlcese40.dll" target="lib\net45\x86\sqlcese40.dll" />
         <file src="AsyncEnumerable.dll" target="lib\net45\AsyncEnumerable.dll" />
         <file src="concrt140.dll" target="lib\net45\concrt140.dll" />
         <file src="CookComputing.XmlRpcV2.dll" target="lib\net45\CookComputing.XmlRpcV2.dll" />
         <file src="DeltaCompressionDotNet.dll" target="lib\net45\DeltaCompressionDotNet.dll" />
         <file src="DeltaCompressionDotNet.MsDelta.dll" target="lib\net45\DeltaCompressionDotNet.MsDelta.dll" />
         <file src="DeltaCompressionDotNet.PatchApi.dll" target="lib\net45\DeltaCompressionDotNet.PatchApi.dll" />
-        <file src="EntityFramework.dll" target="lib\net45\EntityFramework.dll" />
-        <file src="EntityFramework.SqlServer.dll" target="lib\net45\EntityFramework.SqlServer.dll" />
-        <file src="EntityFramework.SqlServerCompact.dll" target="lib\net45\EntityFramework.SqlServerCompact.dll" />
         <file src="GalaSoft.MvvmLight.dll" target="lib\net45\GalaSoft.MvvmLight.dll" />
         <file src="GalaSoft.MvvmLight.Extras.dll" target="lib\net45\GalaSoft.MvvmLight.Extras.dll" />
         <file src="GalaSoft.MvvmLight.Platform.dll" target="lib\net45\GalaSoft.MvvmLight.Platform.dll" />
@@ -416,7 +395,6 @@
         <file src="System.Spatial.dll" target="lib\net45\System.Spatial.dll" />
         <file src="Microsoft.Data.Edm.dll" target="lib\net45\Microsoft.Data.Edm.dll" />
         <file src="Microsoft.Data.OData.dll" target="lib\net45\Microsoft.Data.OData.dll" />
-        <file src="System.Data.SqlServerCe.dll" target="lib\net45\System.Data.SqlServerCe.dll" />
         <file src="System.Diagnostics.DiagnosticSource.dll" target="lib\net45\System.Diagnostics.DiagnosticSource.dll" />
         <file src="System.Net.Http.dll" target="lib\net45\System.Net.Http.dll" />
         <file src="System.Security.Cryptography.Algorithms.dll" target="lib\net45\System.Security.Cryptography.Algorithms.dll" />

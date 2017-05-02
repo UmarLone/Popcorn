@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using NLog;
-using Popcorn.Services.Language;
+using Popcorn.Models.User;
+using Popcorn.Services.User;
 
 namespace Popcorn.Models.Localization
 {
@@ -20,23 +21,24 @@ namespace Popcorn.Models.Localization
         /// <summary>
         /// Services used to interacts with languages
         /// </summary>
-        private readonly ILanguageService _languageService;
+        private readonly IUserService _userService;
 
-        private ILanguage _currentLanguages;
-        private ICollection<ILanguage> _languages;
+        private LanguageJson _currentLanguage;
+
+        private ICollection<LanguageJson> _languages;
 
         /// <summary>
         /// Initialize a new instance of Language
         /// </summary>
-        public Language(ILanguageService languageService)
+        public Language(IUserService userService)
         {
-            _languageService = languageService;
+            _userService = userService;
         }
 
         /// <summary>
         /// Available languages of the application
         /// </summary>
-        public ICollection<ILanguage> Languages
+        public ICollection<LanguageJson> Languages
         {
             get { return _languages; }
             set { Set(() => Languages, ref _languages, value); }
@@ -45,13 +47,13 @@ namespace Popcorn.Models.Localization
         /// <summary>
         /// Current language used in the application
         /// </summary>
-        public ILanguage CurrentLanguage
+        public LanguageJson CurrentLanguage
         {
-            get { return _currentLanguages; }
+            get => _currentLanguage;
             set
             {
-                Task.Run(async () => { await _languageService.SetCurrentLanguageAsync(value); });
-                Set(() => CurrentLanguage, ref _currentLanguages, value);
+                Task.Run(async () => { await _userService.SetCurrentLanguageAsync(value); });
+                Set(() => CurrentLanguage, ref _currentLanguage, value);
             }
         }
 
@@ -62,8 +64,8 @@ namespace Popcorn.Models.Localization
         {
             var watchStart = Stopwatch.StartNew();
 
-            CurrentLanguage = await _languageService.GetCurrentLanguageAsync();
-            Languages = await _languageService.GetAvailableLanguagesAsync();
+            CurrentLanguage = await _userService.GetCurrentLanguageAsync();
+            Languages = _userService.GetAvailableLanguages();
 
             watchStart.Stop();
             var elapsedLanguageMs = watchStart.ElapsedMilliseconds;

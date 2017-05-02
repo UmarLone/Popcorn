@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Messaging;
 using Popcorn.Models.Shows;
-using Popcorn.Services.Language;
 using Popcorn.ViewModels.Pages.Home.Show.Download;
 using Popcorn.Services.Subtitles;
 using Popcorn.Services.Download;

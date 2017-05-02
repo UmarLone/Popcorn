@@ -10,8 +10,8 @@ using GalaSoft.MvvmLight.Threading;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Services.Genres;
-using Popcorn.Services.Language;
 using Popcorn.Services.Shows.Show;
+using Popcorn.Services.User;
 using Popcorn.ViewModels.Pages.Home.Genres;
 using Popcorn.ViewModels.Pages.Home.Show.Search;
 using Popcorn.ViewModels.Pages.Home.Show.Tabs;
@@ -100,14 +100,14 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// </summary>
         /// <param name="applicationService">The application service</param>
         /// <param name="showService">The show service</param>
-        /// <param name="languageService">The language service</param>
+        /// <param name="userService">The user service</param>
         /// <param name="genreService">The genre service</param>
         public ShowPageViewModel(IApplicationService applicationService, IShowService showService,
-            ILanguageService languageService, IGenreService genreService)
+            IUserService userService, IGenreService genreService)
         {
             _showService = showService;
             _applicationService = applicationService;
-            GenreViewModel = new GenreViewModel(languageService, genreService);
+            GenreViewModel = new GenreViewModel(userService, genreService);
             RegisterCommands();
             RegisterMessages();
 
@@ -120,17 +120,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                 Tabs.Add(new RecentShowTabViewModel(_applicationService, showService));
                 SelectedTab = Tabs.First();
                 SelectedShowsIndexMenuTab = 0;
-                var loadMoviesTask = Tabs.ParallelForEachAsync(async tab =>
+                await GenreViewModel.LoadGenresAsync();
+                await Tabs.ParallelForEachAsync(async tab =>
                 {
                     await tab.LoadShowsAsync();
-                });
-
-                var loadGenreTask = GenreViewModel.LoadGenresAsync();
-
-                await Task.WhenAll(new List<Task>
-                {
-                    loadGenreTask,
-                    loadMoviesTask
                 });
             });
         }

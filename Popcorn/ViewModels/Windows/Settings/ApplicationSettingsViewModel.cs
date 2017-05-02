@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Popcorn.Models.Localization;
-using Popcorn.Services.Language;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Windows.Settings
 {
@@ -14,7 +14,7 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// <summary>
         /// Services used to interacts with languages
         /// </summary>
-        private readonly ILanguageService _languageService;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// The download limit
@@ -39,9 +39,9 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// <summary>
         /// Initializes a new instance of the ApplicationSettingsViewModel class.
         /// </summary>
-        public ApplicationSettingsViewModel(ILanguageService languageService)
+        public ApplicationSettingsViewModel(IUserService userService)
         {
-            _languageService = languageService;
+            _userService = userService;
             Version = Utils.Constants.AppVersion;
             RegisterCommands();
         }
@@ -92,7 +92,7 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// </summary>
         private async Task InitializeAsync()
         {
-            Language = new Language(_languageService);
+            Language = new Language(_userService);
             await Language.LoadLanguages();
         }
 
