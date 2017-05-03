@@ -258,6 +258,50 @@ namespace Popcorn.Services.User
         }
 
         /// <summary>
+        /// Get the download rate
+        /// </summary>
+        /// <returns>Download rate</returns>
+        public async Task<int> GetDownloadLimit()
+        {
+            await GetHistoryAsync();
+            return User.DownloadLimit;
+        }
+
+        /// <summary>
+        /// Get the upload rate
+        /// </summary>
+        /// <returns>Upload rate</returns>
+        public async Task<int> GetUploadLimit()
+        {
+            await GetHistoryAsync();
+            return User.UploadLimit;
+        }
+
+        /// <summary>
+        /// Set the download rate
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public async Task SetDownloadLimit(int limit)
+        {
+            await GetHistoryAsync();
+            User.DownloadLimit = limit;
+            await UpdateHistoryAsync();
+        }
+
+        /// <summary>
+        /// Set the upload rate
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public async Task SetUploadLimit(int limit)
+        {
+            await GetHistoryAsync();
+            User.UploadLimit = limit;
+            await UpdateHistoryAsync();
+        }
+
+        /// <summary>
         /// Get all available languages from the database
         /// </summary>
         /// <returns>All available languages</returns>

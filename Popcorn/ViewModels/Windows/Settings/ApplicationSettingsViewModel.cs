@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Threading;
 using Popcorn.Models.Localization;
 using Popcorn.Services.User;
 
@@ -44,6 +45,12 @@ namespace Popcorn.ViewModels.Windows.Settings
             _userService = userService;
             Version = Utils.Constants.AppVersion;
             RegisterCommands();
+
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                DownloadLimit = await _userService.GetDownloadLimit();
+                UploadLimit = await _userService.GetUploadLimit();
+            });
         }
 
         /// <summary>
@@ -51,8 +58,15 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// </summary>
         public int DownloadLimit
         {
-            get { return _downloadLimit; }
-            set { Set(() => DownloadLimit, ref _downloadLimit, value); }
+            get => _downloadLimit;
+            set
+            {
+                Set(() => DownloadLimit, ref _downloadLimit, value);
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                {
+                    await _userService.SetDownloadLimit(value);
+                });
+            }
         }
 
         /// <summary>
@@ -60,7 +74,7 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// </summary>
         public string Version
         {
-            get { return _version; }
+            get => _version;
             set { Set(() => Version, ref _version, value); }
         }
 
@@ -69,8 +83,15 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// </summary>
         public int UploadLimit
         {
-            get { return _uploadLimit; }
-            set { Set(() => UploadLimit, ref _uploadLimit, value); }
+            get => _uploadLimit;
+            set
+            {
+                Set(() => UploadLimit, ref _uploadLimit, value);
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                {
+                    await _userService.SetUploadLimit(value);
+                });
+            }
         }
 
         /// <summary>
@@ -78,7 +99,7 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// </summary>
         public Language Language
         {
-            get { return _language; }
+            get => _language;
             set { Set(() => Language, ref _language, value); }
         }
 

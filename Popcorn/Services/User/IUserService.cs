@@ -73,5 +73,31 @@ namespace Popcorn.Services.User
         /// </summary>
         /// <returns>List of ImdbId</returns>
         Task<IEnumerable<string>> GetFavoritesShows();
+
+        /// <summary>
+        /// Get the download limit
+        /// </summary>
+        /// <returns>Download rate</returns>
+        Task<int> GetDownloadLimit();
+
+        /// <summary>
+        /// Get the upload limit
+        /// </summary>
+        /// <returns>Upload rate</returns>
+        Task<int> GetUploadLimit();
+
+        /// <summary>
+        /// Set the download limit
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task SetDownloadLimit(int limit);
+
+        /// <summary>
+        /// Set the upload limit
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task SetUploadLimit(int limit);
     }
 }
