@@ -109,12 +109,12 @@ namespace Popcorn.Services.Shows.Show
             catch (Exception exception) when (exception is TaskCanceledException)
             {
                 Logger.Debug(
-                    "GetPopularShowsAsync cancelled.");
+                    "GetShowsAsync cancelled.");
             }
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"GetPopularShowsAsync: {exception.Message}");
+                    $"GetShowsAsync: {exception.Message}");
                 throw;
             }
             finally
@@ -122,7 +122,7 @@ namespace Popcorn.Services.Shows.Show
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Debug(
-                    $"GetPopularShowsAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
+                    $"GetShowsAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
             var shows = wrapper?.Shows ?? new List<ShowJson>();
@@ -177,12 +177,12 @@ namespace Popcorn.Services.Shows.Show
             catch (Exception exception) when (exception is TaskCanceledException)
             {
                 Logger.Debug(
-                    "SearchMoviesAsync cancelled.");
+                    "SearchShowsAsync cancelled.");
             }
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"SearchMoviesAsync: {exception.Message}");
+                    $"SearchShowsAsync: {exception.Message}");
                 throw;
             }
             finally
@@ -190,7 +190,7 @@ namespace Popcorn.Services.Shows.Show
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Debug(
-                    $"SearchMoviesAsync ({criteria}, {page}, {limit}) in {elapsedMs} milliseconds.");
+                    $"SearchShowsAsync ({criteria}, {page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
             var result = wrapper?.Shows ?? new List<ShowJson>();

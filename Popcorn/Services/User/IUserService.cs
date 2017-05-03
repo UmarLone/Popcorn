@@ -53,26 +53,30 @@ namespace Popcorn.Services.User
         /// <summary>
         /// Get seen movies
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        Task<IEnumerable<string>> GetSeenMovies();
+        Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetSeenMovies(int page);
 
         /// <summary>
         /// Get seen shows
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        Task<IEnumerable<string>> GetSeenShows();
+        Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)> GetSeenShows(int page);
 
         /// <summary>
         /// Get favorites movies
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        Task<IEnumerable<string>> GetFavoritesMovies();
+        Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetFavoritesMovies(int page);
 
         /// <summary>
         /// Get favorites shows
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        Task<IEnumerable<string>> GetFavoritesShows();
+        Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)> GetFavoritesShows(int page);
 
         /// <summary>
         /// Get the download limit

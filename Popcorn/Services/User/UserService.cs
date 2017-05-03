@@ -12,6 +12,7 @@ using Popcorn.Models.Movie;
 using Popcorn.Models.Shows;
 using Popcorn.Models.User;
 using Popcorn.Services.Movies.Movie;
+using Popcorn.Utils;
 using RestSharp;
 using WPFLocalizeExtension.Engine;
 
@@ -220,41 +221,73 @@ namespace Popcorn.Services.User
         /// <summary>
         /// Get seen movies
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<IEnumerable<string>> GetSeenMovies()
+        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetSeenMovies(int page)
         {
             await GetHistoryAsync();
-            return User.MovieHistory.Where(a => a.Seen).Select(a => a.ImdbId);
+            var movies = User.MovieHistory.Where(a => a.Seen).Select(a => a.ImdbId).ToList();
+            var skip = (page - 1) * Constants.MaxMoviesPerPage;
+            if (movies.Count <= Constants.MaxMoviesPerPage)
+            {
+                skip = 0;
+            }
+
+            return (movies.Skip(skip).Take(Constants.MaxMoviesPerPage), movies, movies.Count);
         }
 
         /// <summary>
         /// Get seen shows
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<IEnumerable<string>> GetSeenShows()
+        public async Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)> GetSeenShows(int page)
         {
             await GetHistoryAsync();
-            return User.ShowHistory.Where(a => a.Seen).Select(a => a.ImdbId);
+            var shows = User.ShowHistory.Where(a => a.Seen).Select(a => a.ImdbId).ToList();
+            var skip = (page - 1) * Constants.MaxShowsPerPage;
+            if (shows.Count <= Constants.MaxShowsPerPage)
+            {
+                skip = 0;
+            }
+
+            return (shows.Skip(skip).Take(Constants.MaxShowsPerPage), shows, shows.Count);
         }
 
         /// <summary>
         /// Get favorites movies
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<IEnumerable<string>> GetFavoritesMovies()
+        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetFavoritesMovies(int page)
         {
             await GetHistoryAsync();
-            return User.MovieHistory.Where(a => a.Favorite).Select(a => a.ImdbId);
+            var movies = User.MovieHistory.Where(a => a.Favorite).Select(a => a.ImdbId).ToList();
+            var skip = (page - 1) * Constants.MaxMoviesPerPage;
+            if (movies.Count <= Constants.MaxMoviesPerPage)
+            {
+                skip = 0;
+            }
+
+            return (movies.Skip(skip).Take(Constants.MaxMoviesPerPage), movies, movies.Count);
         }
 
         /// <summary>
         /// Get favorites shows
         /// </summary>
+        /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<IEnumerable<string>> GetFavoritesShows()
+        public async Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)> GetFavoritesShows(int page)
         {
             await GetHistoryAsync();
-            return User.ShowHistory.Where(a => a.Favorite).Select(a => a.ImdbId);
+            var shows = User.ShowHistory.Where(a => a.Favorite).Select(a => a.ImdbId).ToList();
+            var skip = (page - 1) * Constants.MaxShowsPerPage;
+            if (shows.Count <= Constants.MaxShowsPerPage)
+            {
+                skip = 0;
+            }
+
+            return (shows.Skip(skip).Take(Constants.MaxShowsPerPage), shows, shows.Count);
         }
 
         /// <summary>

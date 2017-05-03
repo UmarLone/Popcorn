@@ -27,7 +27,8 @@ namespace Popcorn.UserControls.Home.Movie.Tabs
             if (totalHeight < 2d / 3d * e.ExtentHeight) return;
             var vm = DataContext as MovieTabsViewModel;
             if (vm == null) return;
-            if (vm is PopularMovieTabViewModel || vm is GreatestMovieTabViewModel || vm is RecentMovieTabViewModel)
+            if (vm is PopularMovieTabViewModel || vm is GreatestMovieTabViewModel || vm is RecentMovieTabViewModel ||
+                vm is FavoritesMovieTabViewModel || vm is SeenMovieTabViewModel)
             {
                 if (!vm.IsLoadingMovies)
                     await vm.LoadMoviesAsync().ConfigureAwait(false);
@@ -36,7 +37,7 @@ namespace Popcorn.UserControls.Home.Movie.Tabs
             {
                 var searchVm = vm as SearchMovieTabViewModel;
                 if (!searchVm.IsLoadingMovies)
-                    await searchVm.SearchMoviesAsync(searchVm.SearchFilter).ConfigureAwait(false);
+                    await searchVm.LoadMoviesAsync().ConfigureAwait(false);
             }
         }
     }

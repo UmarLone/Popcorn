@@ -112,21 +112,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show
             RegisterMessages();
 
             Search = new SearchShowViewModel();
-
-            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-            {
-                Tabs.Add(new PopularShowTabViewModel(_applicationService, showService, userService));
-                Tabs.Add(new GreatestShowTabViewModel(_applicationService, showService, userService));
-                Tabs.Add(new RecentShowTabViewModel(_applicationService, showService, userService));
-                Tabs.Add(new FavoritesShowTabViewModel(_applicationService, showService, userService));
-                SelectedTab = Tabs.First();
-                SelectedShowsIndexMenuTab = 0;
-                await GenreViewModel.LoadGenresAsync().ConfigureAwait(false);
-                await Tabs.ToList().ParallelForEachAsync(async tab =>
-                {
-                    await tab.LoadShowsAsync().ConfigureAwait(false);
-                }).ConfigureAwait(false);
-            });
+            Tabs.Add(new PopularShowTabViewModel(_applicationService, showService, userService));
+            Tabs.Add(new GreatestShowTabViewModel(_applicationService, showService, userService));
+            Tabs.Add(new RecentShowTabViewModel(_applicationService, showService, userService));
+            Tabs.Add(new FavoritesShowTabViewModel(_applicationService, showService, userService));
+            SelectedTab = Tabs.First();
+            SelectedShowsIndexMenuTab = 0;
         }
 
         /// <summary>
@@ -212,7 +203,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         }
 
         /// <summary>
-        /// Selected index for movies menu
+        /// Selected index for show menu
         /// </summary>
         public int SelectedShowsIndexMenuTab
         {
@@ -284,7 +275,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                 SelectedShowsIndexMenuTab = 3;
                 foreach (var searchTab in Tabs.OfType<SearchShowTabViewModel>())
                 {
-                    await searchTab.SearchShowsAsync(criteria);
+                    searchTab.SearchFilter = criteria;
+                    await searchTab.LoadShowsAsync(true);
                     if (SelectedTab != searchTab)
                         SelectedTab = searchTab;
 
@@ -293,9 +285,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show
 
                 Tabs.Add(new SearchShowTabViewModel(ApplicationService, _showService, _userService));
                 SelectedTab = Tabs.Last();
-                var searchMovieTab = SelectedTab as SearchShowTabViewModel;
-                if (searchMovieTab != null)
-                    await searchMovieTab.SearchShowsAsync(criteria);
+                var searchShowTab = SelectedTab as SearchShowTabViewModel;
+                if (searchShowTab != null)
+                {
+                    searchShowTab.SearchFilter = criteria;
+                    await searchShowTab.LoadShowsAsync(true);
+                }
             }
         }
     }

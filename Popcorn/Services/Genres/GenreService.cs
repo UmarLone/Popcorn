@@ -22,7 +22,7 @@ namespace Popcorn.Services.Genres
                     new GenreJson
                     {
                         EnglishName = "Action",
-                        Name = language == "fr" ? "Action" : "Action"
+                        Name = "Action"
                     },
                     new GenreJson
                     {
@@ -32,7 +32,7 @@ namespace Popcorn.Services.Genres
                     new GenreJson
                     {
                         EnglishName = "Animation",
-                        Name = language == "fr" ? "Animation" : "Animation"
+                        Name = "Animation"
                     },
                     new GenreJson
                     {
@@ -42,7 +42,7 @@ namespace Popcorn.Services.Genres
                     new GenreJson
                     {
                         EnglishName = "Crime",
-                        Name = language == "fr" ? "Crime" : "Crime"
+                        Name = "Crime"
                     },
                     new GenreJson
                     {
@@ -87,17 +87,17 @@ namespace Popcorn.Services.Genres
                     new GenreJson
                     {
                         EnglishName = "Romance",
-                        Name = language == "fr" ? "Romance" : "Romance"
+                        Name = "Romance"
                     },
                     new GenreJson
                     {
-                        EnglishName = "Sci-Fi",
-                        Name = language == "fr" ? "Sci-Fi" : "Sci-Fi"
+                        EnglishName = "Science-Fiction",
+                        Name = "Science-Fiction"
                     },
                     new GenreJson
                     {
                         EnglishName = "Thriller",
-                        Name = language == "fr" ? "Thriller" : "Thriller"
+                        Name = "Thriller"
                     },
                     new GenreJson
                     {
@@ -107,7 +107,7 @@ namespace Popcorn.Services.Genres
                     new GenreJson
                     {
                         EnglishName = "Western",
-                        Name = language == "fr" ? "Western" : "Western"
+                        Name = "Western"
                     },
                 }
             };

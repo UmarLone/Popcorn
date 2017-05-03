@@ -31,37 +31,38 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// The search filter
         /// </summary>
-        public string SearchFilter { get; private set; }
+        public string SearchFilter { get; set; }
 
         /// <summary>
         /// Search shows asynchronously
         /// </summary>
-        /// <param name="searchFilter">The parameter of the search</param>
-        public async Task SearchShowsAsync(string searchFilter)
+        public override async Task LoadShowsAsync(bool reset = false)
         {
-            var watch = Stopwatch.StartNew();
-            if (SearchFilter != searchFilter)
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingShows();
+            if (reset)
             {
-                // We start an other search
-                StopLoadingShows();
                 Shows.Clear();
                 Page = 0;
-                CurrentNumberOfShows = 0;
-                MaxNumberOfShows = 0;
-                IsLoadingShows = false;
             }
 
+            var watch = Stopwatch.StartNew();
             Page++;
-            if (Page > 1 && Shows.Count == MaxNumberOfShows) return;
+            if (Page > 1 && Shows.Count == MaxNumberOfShows)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
-                $"Loading shows search page {Page} with criteria: {searchFilter}");
+                $"Loading shows search page {Page} with criteria: {SearchFilter}");
             HasLoadingFailed = false;
             try
             {
-                SearchFilter = searchFilter;
                 IsLoadingShows = true;
                 var result =
-                    await ShowService.SearchShowsAsync(searchFilter,
+                    await ShowService.SearchShowsAsync(SearchFilter,
                             Page,
                             MaxNumberOfShows,
                             Genre,
@@ -83,7 +84,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             {
                 Page--;
                 Logger.Error(
-                    $"Error while loading shows search page {Page} with criteria {searchFilter}: {exception.Message}");
+                    $"Error while loading shows search page {Page} with criteria {SearchFilter}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -92,7 +93,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded shows search page {Page} with criteria {searchFilter} in {elapsedMs} milliseconds.");
+                    $"Loaded shows search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

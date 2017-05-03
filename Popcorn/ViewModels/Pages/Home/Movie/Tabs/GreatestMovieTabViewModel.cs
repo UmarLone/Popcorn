@@ -34,11 +34,25 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Load movies asynchronously
         /// </summary>
-        public override async Task LoadMoviesAsync()
+        public override async Task LoadMoviesAsync(bool reset = false)
         {
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingMovies();
+            if (reset)
+            {
+                Movies.Clear();
+                Page = 0;
+            }
+
             var watch = Stopwatch.StartNew();
             Page++;
-            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
                 $"Loading movies greatest page {Page}...");
             HasLoadingFailed = false;
@@ -51,17 +65,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                         Rating,
                         "download_count",
                         CancellationLoadingMovies.Token,
-                        Genre).ConfigureAwait(false);
-
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-                {
-                    Movies.AddRange(result.movies);
-                    IsLoadingMovies = false;
-                    IsMovieFound = Movies.Any();
-                    CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = result.nbMovies;
-                    await UserService.SyncMovieHistoryAsync(Movies).ConfigureAwait(false);
-                });
+                        Genre);
+                Movies.AddRange(result.movies);
+                IsLoadingMovies = false;
+                IsMovieFound = Movies.Any();
+                CurrentNumberOfMovies = Movies.Count;
+                MaxNumberOfMovies = result.nbMovies;
+                await UserService.SyncMovieHistoryAsync(Movies);
             }
             catch (Exception exception)
             {
@@ -77,6 +87,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
                     $"Loaded movies greatest page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

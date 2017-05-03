@@ -24,7 +24,8 @@ namespace Popcorn.UserControls.Home.Show.Tabs
             if (totalHeight < 2d / 3d * e.ExtentHeight) return;
             var vm = DataContext as ShowTabsViewModel;
             if (vm == null) return;
-            if (vm is PopularShowTabViewModel || vm is GreatestShowTabViewModel || vm is RecentShowTabViewModel)
+            if (vm is PopularShowTabViewModel || vm is GreatestShowTabViewModel || vm is RecentShowTabViewModel ||
+                vm is FavoritesShowTabViewModel)
             {
                 if (!vm.IsLoadingShows)
                     await vm.LoadShowsAsync().ConfigureAwait(false);
@@ -33,7 +34,7 @@ namespace Popcorn.UserControls.Home.Show.Tabs
             {
                 var searchVm = vm as SearchShowTabViewModel;
                 if (!searchVm.IsLoadingShows)
-                    await searchVm.SearchShowsAsync(searchVm.SearchFilter).ConfigureAwait(false);
+                    await searchVm.LoadShowsAsync().ConfigureAwait(false);
             }
         }
     }

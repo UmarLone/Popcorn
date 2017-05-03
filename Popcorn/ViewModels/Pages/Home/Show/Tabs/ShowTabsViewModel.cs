@@ -28,6 +28,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
+        /// Semaphore loading
+        /// </summary>
+        protected readonly SemaphoreSlim LoadingSemaphore = new SemaphoreSlim(1, 1);
+
+        /// <summary>
         /// The genre used to filter shows
         /// </summary>
         private GenreJson _genre;
@@ -205,7 +210,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// The genre used to filter shows
         /// </summary>
-        protected GenreJson Genre
+        public GenreJson Genre
         {
             get => _genre;
             private set { Set(() => Genre, ref _genre, value, true); }
@@ -219,7 +224,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Maximum shows number to load per page request
         /// </summary>
-        protected int MaxShowsPerPage { get; }
+        protected int MaxShowsPerPage { get; set; }
 
         /// <summary>
         /// Token to cancel show loading
@@ -229,7 +234,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Load shows asynchronously
         /// </summary>
-        public virtual Task LoadShowsAsync()
+        public virtual Task LoadShowsAsync(bool reset = false)
         {
             throw new NotImplementedException();
         }
@@ -273,16 +278,18 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {
-                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                await LoadShowsAsync().ConfigureAwait(false);
+                if (e.PropertyName != GetPropertyName(() => Genre) ||
+                    e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue) ||
+                    !(e.Sender is ShowTabsViewModel)) return;
+                await LoadShowsAsync(true).ConfigureAwait(false);
             });
 
             Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
             {
-                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                await LoadShowsAsync().ConfigureAwait(false);
+                if (e.PropertyName != GetPropertyName(() => Rating) ||
+                    e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue) ||
+                    !(e.Sender is ShowTabsViewModel)) return;
+                await LoadShowsAsync(true).ConfigureAwait(false);
             });
         }
 
@@ -309,7 +316,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             ReloadShows = new RelayCommand(async () =>
             {
                 ApplicationService.IsConnectionInError = false;
-                StopLoadingShows();
                 await LoadShowsAsync().ConfigureAwait(false);
             });
         }

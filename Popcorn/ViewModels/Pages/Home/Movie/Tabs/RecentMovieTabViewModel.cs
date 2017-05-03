@@ -34,11 +34,25 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Load movies asynchronously
         /// </summary>
-        public override async Task LoadMoviesAsync()
+        public override async Task LoadMoviesAsync(bool reset = false)
         {
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingMovies();
+            if (reset)
+            {
+                Movies.Clear();
+                Page = 0;
+            }
+
             var watch = Stopwatch.StartNew();
             Page++;
-            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
                 $"Loading movies recent page {Page}...");
             HasLoadingFailed = false;
@@ -47,22 +61,17 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 IsLoadingMovies = true;
                 var movies =
                     await MovieService.GetMoviesAsync(Page,
-                            MaxMoviesPerPage,
-                            Rating,
-                            "year",
-                            CancellationLoadingMovies.Token,
-                            Genre)
-                        .ConfigureAwait(false);
-
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-                {
-                    Movies.AddRange(movies.Item1);
-                    IsLoadingMovies = false;
-                    IsMovieFound = Movies.Any();
-                    CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = movies.Item2;
-                    await UserService.SyncMovieHistoryAsync(Movies).ConfigureAwait(false);
-                });
+                        MaxMoviesPerPage,
+                        Rating,
+                        "year",
+                        CancellationLoadingMovies.Token,
+                        Genre);
+                Movies.AddRange(movies.Item1);
+                IsLoadingMovies = false;
+                IsMovieFound = Movies.Any();
+                CurrentNumberOfMovies = Movies.Count;
+                MaxNumberOfMovies = movies.Item2;
+                await UserService.SyncMovieHistoryAsync(Movies);
             }
             catch (Exception exception)
             {
@@ -78,6 +87,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
                     $"Loaded movies recent page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

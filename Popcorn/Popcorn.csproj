@@ -200,6 +200,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TMDbLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TMDbLib.1.0.0\lib\net46\TMDbLib.dll</HintPath>
     </Reference>
@@ -222,6 +223,7 @@
     <Compile Include="AttachedProperties\RippleAssist.cs" />
     <Compile Include="AttachedProperties\TextParenthesis.cs" />
     <Compile Include="Behaviors\ScrollAnimationBehavior.cs" />
+    <Compile Include="Comparers\ShowComparer.cs" />
     <Compile Include="Comparers\MovieComparer.cs" />
     <Compile Include="Controls\RatingStar.xaml.cs">
       <DependentUpon>RatingStar.xaml</DependentUpon>
@@ -277,6 +279,7 @@
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
     <Compile Include="Exceptions\PopcornException.cs" />
     <Compile Include="Extensions\MessengerExtensions.cs" />
+    <Compile Include="Extensions\SortExtensions.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
     <Compile Include="Helpers\FindVisualChildHelper.cs" />

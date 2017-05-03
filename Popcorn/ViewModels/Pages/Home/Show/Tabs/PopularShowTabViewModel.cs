@@ -31,11 +31,25 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Load shows asynchronously
         /// </summary>
-        public override async Task LoadShowsAsync()
+        public override async Task LoadShowsAsync(bool reset = false)
         {
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingShows();
+            if (reset)
+            {
+                Shows.Clear();
+                Page = 0;
+            }
+
             var watch = Stopwatch.StartNew();
             Page++;
-            if (Page > 1 && Shows.Count == MaxNumberOfShows) return;
+            if (Page > 1 && Shows.Count == MaxNumberOfShows)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
                 $"Loading shows popular page {Page}...");
             HasLoadingFailed = false;
@@ -75,6 +89,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
                     $"Loaded shows popular page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

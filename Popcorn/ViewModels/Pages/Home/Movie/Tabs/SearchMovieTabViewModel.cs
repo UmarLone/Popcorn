@@ -34,59 +34,56 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// The search filter
         /// </summary>
-        public string SearchFilter { get; private set; }
+        public string SearchFilter { get; set; }
 
         /// <summary>
         /// Search movies asynchronously
         /// </summary>
-        /// <param name="searchFilter">The parameter of the search</param>
-        public async Task SearchMoviesAsync(string searchFilter)
+        public override async Task LoadMoviesAsync(bool reset = false)
         {
-            var watch = Stopwatch.StartNew();
-            if (SearchFilter != searchFilter)
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingMovies();
+            if (reset)
             {
-                // We start an other search
-                StopLoadingMovies();
                 Movies.Clear();
                 Page = 0;
-                CurrentNumberOfMovies = 0;
-                MaxNumberOfMovies = 0;
-                IsLoadingMovies = false;
             }
 
+            var watch = Stopwatch.StartNew();
             Page++;
-            if (Page > 1 && Movies.Count == MaxNumberOfMovies) return;
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
-                $"Loading movies search page {Page} with criteria: {searchFilter}");
+                $"Loading movies search page {Page} with criteria: {SearchFilter}");
             HasLoadingFailed = false;
             try
             {
-                SearchFilter = searchFilter;
                 IsLoadingMovies = true;
                 var result =
-                    await MovieService.SearchMoviesAsync(searchFilter,
-                            Page,
-                            MaxMoviesPerPage,
-                            Genre,
-                            Rating,
-                            CancellationLoadingMovies.Token)
-                        .ConfigureAwait(false);
+                    await MovieService.SearchMoviesAsync(SearchFilter,
+                        Page,
+                        MaxMoviesPerPage,
+                        Genre,
+                        Rating,
+                        CancellationLoadingMovies.Token);
 
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-                {
-                    Movies.AddRange(result.movies);
-                    IsLoadingMovies = false;
-                    IsMovieFound = Movies.Any();
-                    CurrentNumberOfMovies = Movies.Count;
-                    MaxNumberOfMovies = result.nbMovies;
-                    await UserService.SyncMovieHistoryAsync(Movies).ConfigureAwait(false);
-                });
+                Movies.AddRange(result.movies);
+                IsLoadingMovies = false;
+                IsMovieFound = Movies.Any();
+                CurrentNumberOfMovies = Movies.Count;
+                MaxNumberOfMovies = result.nbMovies;
+                await UserService.SyncMovieHistoryAsync(Movies);
             }
             catch (Exception exception)
             {
                 Page--;
                 Logger.Error(
-                    $"Error while loading movies search page {Page} with criteria {searchFilter}: {exception.Message}");
+                    $"Error while loading movies search page {Page} with criteria {SearchFilter}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -95,7 +92,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded movies search page {Page} with criteria {searchFilter} in {elapsedMs} milliseconds.");
+                    $"Loaded movies search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

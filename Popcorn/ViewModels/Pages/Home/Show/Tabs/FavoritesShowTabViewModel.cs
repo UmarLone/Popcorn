@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NuGet;
+using Popcorn.Comparers;
+using Popcorn.Extensions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
@@ -18,6 +20,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 {
     public class FavoritesShowTabViewModel : ShowTabsViewModel
     {
+        /// <summary>
+        /// Need sync movies
+        /// </summary>
+        private bool _needSync;
+
         /// <summary>
         /// Initializes a new instance of the FavoritesMovieTabViewModel class.
         /// </summary>
@@ -31,18 +38,40 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         {
             Messenger.Default.Register<ChangeFavoriteShowMessage>(
                 this,
-                async message =>
+                message =>
                 {
-                    await LoadShowsAsync();
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                    {
+                        var movies = await UserService.GetFavoritesShows(Page);
+                        MaxNumberOfShows = movies.nbShows;
+                        _needSync = true;
+                        await LoadShowsAsync();
+                    });
                 });
         }
 
         /// <summary>
         /// Load movies asynchronously
         /// </summary>
-        public override async Task LoadShowsAsync()
+        public override async Task LoadShowsAsync(bool reset = false)
         {
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingShows();
+            if (reset)
+            {
+                Shows.Clear();
+                Page = 0;
+            }
+
             var watch = Stopwatch.StartNew();
+            Page++;
+            if (Page > 1 && Shows.Count == MaxNumberOfShows)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
             Logger.Info(
                 $"Loading shows favorite page {Page}...");
             HasLoadingFailed = false;
@@ -50,33 +79,63 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             {
                 IsLoadingShows = true;
                 var imdbIds =
-                    await UserService.GetFavoritesShows().ConfigureAwait(false);
-                var shows = new List<ShowJson>();
-                await imdbIds.ParallelForEachAsync(async imdbId =>
+                    await UserService.GetFavoritesShows(Page);
+                if (!_needSync)
                 {
-                    var show = await ShowService.GetShowAsync(imdbId);
-                    if (show != null)
+                    var shows = new List<ShowJson>();
+                    await imdbIds.shows.ParallelForEachAsync(async imdbId =>
                     {
-                        show.IsFavorite = true;
-                        shows.Add(show);
-                    }
-                });
-
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                        var show = await ShowService.GetShowAsync(imdbId);
+                        if (show != null)
+                        {
+                            show.IsFavorite = true;
+                            shows.Add(show);
+                        }
+                    });
+                    var updatedShows = shows.OrderBy(a => a.Title)
+                        .Where(a => (Genre != null
+                                        ? a.Genres.Any(
+                                            genre => genre.ToLowerInvariant() ==
+                                                     Genre.EnglishName.ToLowerInvariant())
+                                        : a.Genres.TrueForAll(b => true)) && a.Rating.Percentage >= Rating * 10);
+                    Shows.AddRange(updatedShows.Except(Shows.ToList(), new ShowComparer()));
+                }
+                else
                 {
-                    Shows.Clear();
-                    Shows.AddRange(shows.Where(a => Genre != null
-                        ? a.Genres.Contains(Genre.EnglishName)
-                        : a.Genres.TrueForAll(b => true) && a.Rating.Percentage >= Rating * 10));
-                    IsLoadingShows = false;
-                    IsShowFound = Shows.Any();
-                    CurrentNumberOfShows = Shows.Count;
-                    MaxNumberOfShows = Shows.Count;
-                    await UserService.SyncShowHistoryAsync(Shows).ConfigureAwait(false);
-                });
+                    var showsToDelete = Shows.Select(a => a.ImdbId).Except(imdbIds.allShows);
+                    var showsToAdd = imdbIds.allShows.Except(Shows.Select(a => a.ImdbId));
+                    foreach (var movie in showsToDelete.ToList())
+                    {
+                        Shows.Remove(Shows.FirstOrDefault(a => a.ImdbId == movie));
+                    }
+
+                    await showsToAdd.ToList()
+                        .ParallelForEachAsync(async imdbId =>
+                        {
+                            var show = await ShowService.GetShowAsync(imdbId);
+                            if ((Genre != null
+                                    ? show.Genres.Any(
+                                        genre => genre.ToLowerInvariant() ==
+                                                 Genre.EnglishName.ToLowerInvariant())
+                                    : show.Genres.TrueForAll(b => true)) && show.Rating.Percentage >= Rating * 10)
+                            {
+                                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                                {
+                                    Shows.Add(show);
+                                });
+                            }
+                        });
+                }
+
+                IsLoadingShows = false;
+                IsShowFound = Shows.Any();
+                CurrentNumberOfShows = Shows.Count;
+                MaxNumberOfShows = imdbIds.nbShows;
+                await UserService.SyncShowHistoryAsync(Shows);
             }
             catch (Exception exception)
             {
+                Page--;
                 Logger.Error(
                     $"Error while loading shows favorite page {Page}: {exception.Message}");
                 HasLoadingFailed = true;
@@ -84,10 +143,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             }
             finally
             {
+                Shows.Sort((a, b) => String.Compare(a.Title, b.Title, StringComparison.Ordinal));
+                _needSync = false;
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
                     $"Loaded shows favorite page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
             }
         }
     }

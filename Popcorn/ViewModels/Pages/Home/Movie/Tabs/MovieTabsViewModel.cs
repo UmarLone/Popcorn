@@ -29,6 +29,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
+        /// Semaphore loading
+        /// </summary>
+        protected readonly SemaphoreSlim LoadingSemaphore = new SemaphoreSlim(1, 1);
+
+        /// <summary>
         /// The genre used to filter movies
         /// </summary>
         private static GenreJson _genre;
@@ -220,7 +225,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Maximum movies number to load per page request
         /// </summary>
-        protected int MaxMoviesPerPage { get; }
+        protected int MaxMoviesPerPage { get; set; }
 
         /// <summary>
         /// Token to cancel movie loading
@@ -230,7 +235,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Load movies asynchronously
         /// </summary>
-        public virtual Task LoadMoviesAsync()
+        public virtual Task LoadMoviesAsync(bool reset = false)
         {
             throw new NotImplementedException();
         }
@@ -278,16 +283,18 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
 
             Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
             {
-                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingMovies();
-                await LoadMoviesAsync().ConfigureAwait(false);
+                if (e.PropertyName != GetPropertyName(() => Genre) ||
+                    e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue) ||
+                    !(e.Sender is MovieTabsViewModel)) return;
+                await LoadMoviesAsync(true).ConfigureAwait(false);
             });
 
             Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
             {
-                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingMovies();
-                await LoadMoviesAsync().ConfigureAwait(false);
+                if (e.PropertyName != GetPropertyName(() => Rating) ||
+                    e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue) ||
+                    !(e.Sender is MovieTabsViewModel)) return;
+                await LoadMoviesAsync(true).ConfigureAwait(false);
             });
 
             Messenger.Default.Register<ChangeFavoriteMovieMessage>(
@@ -304,7 +311,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             ReloadMovies = new RelayCommand(async () =>
             {
                 ApplicationService.IsConnectionInError = false;
-                StopLoadingMovies();
                 await LoadMoviesAsync().ConfigureAwait(false);
             });
 
