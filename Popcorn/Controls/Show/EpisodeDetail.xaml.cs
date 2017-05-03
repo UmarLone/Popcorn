@@ -136,11 +136,10 @@ namespace Popcorn.Controls.Show
                 {
                     var languages = _subtitlesService.GetSubLanguages().ToList();
 
-                    int imdbId;
                     if (int.TryParse(new string(episode.ImdbId
                         .SkipWhile(x => !char.IsDigit(x))
                         .TakeWhile(char.IsDigit)
-                        .ToArray()), out imdbId))
+                        .ToArray()), out int imdbId))
                     {
                         var subtitles = _subtitlesService.SearchSubtitlesFromImdb(
                                 languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
@@ -191,9 +190,9 @@ namespace Popcorn.Controls.Show
         /// Implementation of <see cref="INotifyPropertyChanged"/>
         /// </summary>
         /// <param name="propertyName"></param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

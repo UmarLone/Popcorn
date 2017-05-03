@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Genres
 {
-    public class GenreViewModel : ViewModelBase
+    public class GenreViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Logger of the class
@@ -32,11 +33,6 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         private readonly IGenreService _genreService;
 
         /// <summary>
-        /// Used to cancel loading genres
-        /// </summary>
-        private CancellationTokenSource _cancellationLoadingGenres;
-
-        /// <summary>
         /// Movie genres
         /// </summary>
         private ObservableCollection<GenreJson> _genres = new ObservableCollection<GenreJson>();
@@ -47,6 +43,16 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         private GenreJson _selectedGenre = new GenreJson();
 
         /// <summary>
+        /// Disposed
+        /// </summary>
+        private bool _disposed;
+        
+        /// <summary>
+        /// Used to cancel loading genres
+        /// </summary>
+        private CancellationTokenSource CancellationLoadingGenres { get; set; }
+
+        /// <summary>
         /// Initialize a new instance of GenresMovieViewModel class
         /// </summary>
         /// <param name="userService">The user service</param>
@@ -55,7 +61,7 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         {
             _userService = userService;
             _genreService = genreService;
-            _cancellationLoadingGenres = new CancellationTokenSource();
+            CancellationLoadingGenres = new CancellationTokenSource();
             RegisterMessages();
         }
 
@@ -85,8 +91,8 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
             var language = await _userService.GetCurrentLanguageAsync();
             var genres =
                 new ObservableCollection<GenreJson>(
-                    await _genreService.GetGenresAsync(language.Culture, _cancellationLoadingGenres.Token));
-            if (_cancellationLoadingGenres.IsCancellationRequested)
+                    await _genreService.GetGenresAsync(language.Culture, CancellationLoadingGenres.Token));
+            if (CancellationLoadingGenres.IsCancellationRequested)
                 return;
 
             genres.Insert(0, new GenreJson
@@ -130,8 +136,34 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
             Logger.Debug(
                 "Stop loading genres.");
 
-            _cancellationLoadingGenres.Cancel(true);
-            _cancellationLoadingGenres = new CancellationTokenSource();
+            CancellationLoadingGenres.Cancel(true);
+            CancellationLoadingGenres = new CancellationTokenSource();
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CancellationLoadingGenres?.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }

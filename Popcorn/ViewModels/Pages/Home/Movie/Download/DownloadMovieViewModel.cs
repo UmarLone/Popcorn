@@ -22,7 +22,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
     /// <summary>
     /// Manage the download of a movie
     /// </summary>
-    public sealed class DownloadMovieViewModel : ViewModelBase
+    public class DownloadMovieViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Logger of the class
@@ -38,11 +38,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// The download service
         /// </summary>
         private readonly IDownloadService<MovieJson> _downloadService;
-
-        /// <summary>
-        /// Token to cancel the download
-        /// </summary>
-        private CancellationTokenSource _cancellationDownloadingMovie;
 
         /// <summary>
         /// Specify if a movie is downloading
@@ -75,6 +70,16 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private int _nbPeers;
 
         /// <summary>
+        /// Disposed
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Token to cancel the download
+        /// </summary>
+        private CancellationTokenSource CancellationDownloadingMovie { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the DownloadMovieViewModel class.
         /// </summary>
         /// <param name="subtitlesService">Instance of SubtitlesService</param>
@@ -83,7 +88,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         {
             _subtitlesService = subtitlesService;
             _downloadService = downloadService;
-            _cancellationDownloadingMovie = new CancellationTokenSource();
+            CancellationDownloadingMovie = new CancellationTokenSource();
             RegisterMessages();
             RegisterCommands();
         }
@@ -156,8 +161,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 $"Stop downloading the movie {Movie.Title}.");
 
             IsDownloadingMovie = false;
-            _cancellationDownloadingMovie.Cancel(true);
-            _cancellationDownloadingMovie = new CancellationTokenSource();
+            CancellationDownloadingMovie.Cancel(true);
+            CancellationDownloadingMovie = new CancellationTokenSource();
 
             if (!string.IsNullOrEmpty(Movie?.FilePath))
             {
@@ -241,7 +246,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                             await _downloadService.Download(Movie, TorrentType.File, MediaType.Movie, torrentPath,
                                 settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
                                 reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
-                                _cancellationDownloadingMovie);
+                                CancellationDownloadingMovie);
                         }
                         catch (Exception ex)
                         {
@@ -286,6 +291,32 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         private void ReportMovieDownloadProgress(double value)
         {
             MovieDownloadProgress = value;
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CancellationDownloadingMovie?.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }

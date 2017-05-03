@@ -8,7 +8,6 @@ using NLog;
 using Popcorn.Models.Movie;
 using RestSharp;
 using TMDbLib.Client;
-using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using System.Collections.Async;
 using Popcorn.Models.Genres;
@@ -249,10 +248,7 @@ namespace Popcorn.Services.Movies.Movie
         {
             await result.ParallelForEachAsync(async movie =>
             {
-                await Task.WhenAll(new List<Task>
-                {
-                    TranslateMovieAsync(movie)
-                });
+                await TranslateMovieAsync(movie);
             });
         }
 
@@ -373,17 +369,27 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="movie">The movie</param>
         /// <param name="ct">Used to cancel loading trailer</param>
         /// <returns>Video trailer</returns>
-        public async Task<ResultContainer<Video>> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct)
+        public async Task<string> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct)
         {
             var watch = Stopwatch.StartNew();
 
-            var trailers = new ResultContainer<Video>();
+            var uri = string.Empty;
             try
             {
-                await Task.Run(
-                    async () => trailers = (await TmdbClient.GetMovieAsync(movie.ImdbCode, MovieMethods.Videos))
-                        ?.Videos,
-                    ct);
+                var tmdbMovie = await TmdbClient.GetMovieAsync(movie.ImdbCode, MovieMethods.Videos);
+                var trailers = tmdbMovie?.Videos;
+                if (trailers != null && trailers.Results.Any())
+                {
+                    var restClient = new RestClient(Utils.Constants.PopcornApi);
+                    var request = new RestRequest("/{segment}/{key}", Method.GET);
+                    request.AddUrlSegment("segment", "trailer");
+                    request.AddUrlSegment("key", trailers.Results.FirstOrDefault().Key);
+                    var response = await restClient.ExecuteGetTaskAsync<TrailerResponse>(request, ct);
+                    if (response.ErrorException != null)
+                        throw response.ErrorException;
+
+                    uri = response.Data?.TrailerUrl ?? string.Empty;
+                }
             }
             catch (Exception exception) when (exception is TaskCanceledException)
             {
@@ -404,54 +410,7 @@ namespace Popcorn.Services.Movies.Movie
                     $"GetMovieTrailerAsync ({movie.ImdbCode}) in {elapsedMs} milliseconds.");
             }
 
-            return trailers;
-        }
-
-        /// <summary>
-        /// Get the video url of the trailer by its Youtube key
-        /// </summary>
-        /// <param name="key">Youtube trailer key</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Trailer url</returns>
-        public async Task<string> GetVideoTrailerUrlAsync(string key, CancellationToken ct)
-        {
-            var watch = Stopwatch.StartNew();
-
-            var wrapper = new TrailerResponse();
-
-            var restClient = new RestClient(Utils.Constants.PopcornApi);
-            var request = new RestRequest("/{segment}/{key}", Method.GET);
-            request.AddUrlSegment("segment", "trailer");
-            request.AddUrlSegment("key", key);
-
-            try
-            {
-                var response = await restClient.ExecuteGetTaskAsync<TrailerResponse>(request, ct);
-                if (response.ErrorException != null)
-                    throw response.ErrorException;
-
-                wrapper = response.Data;
-            }
-            catch (Exception exception) when (exception is TaskCanceledException)
-            {
-                Logger.Debug(
-                    "GetVideoTrailerUrlAsync cancelled.");
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(
-                    $"GetVideoTrailerUrlAsync: {exception.Message}");
-                throw;
-            }
-            finally
-            {
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-                Logger.Debug(
-                    $"GetVideoTrailerUrlAsync ({key}) in {elapsedMs} milliseconds.");
-            }
-
-            return wrapper?.TrailerUrl ?? string.Empty;
+            return uri;
         }
     }
 }

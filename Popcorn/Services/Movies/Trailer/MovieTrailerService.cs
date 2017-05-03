@@ -46,9 +46,7 @@ namespace Popcorn.Services.Movies.Trailer
             try
             {
                 var trailer = await _movieService.GetMovieTrailerAsync(movie, ct);
-                var trailerUrl = await _movieService.GetVideoTrailerUrlAsync(trailer.Results.FirstOrDefault()?.Key, ct);
-
-                if (string.IsNullOrEmpty(trailerUrl))
+                if (string.IsNullOrEmpty(trailer))
                 {
                     Logger.Error(
                         $"Failed loading movie's trailer: {movie.Title}");
@@ -64,7 +62,7 @@ namespace Popcorn.Services.Movies.Trailer
                 {
                     Logger.Debug(
                         $"Movie's trailer loaded: {movie.Title}");
-                    Messenger.Default.Send(new PlayTrailerMessage(trailerUrl, movie.Title, () =>
+                    Messenger.Default.Send(new PlayTrailerMessage(trailer, movie.Title, () =>
                         {
                             Messenger.Default.Send(new StopPlayingTrailerMessage());
                         },

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Popcorn.Models.Genres;
-using Popcorn.Models.Localization;
 using Popcorn.Models.Movie;
 using Popcorn.Models.User;
 using TMDbLib.Objects.General;
@@ -71,15 +70,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="movie">The movie</param>
         /// <param name="ct">Used to cancel loading trailer</param>
         /// <returns>Video trailer</returns>
-        Task<ResultContainer<Video>> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct);
-
-        /// <summary>
-        /// Get the video url of the trailer by its Youtube key
-        /// </summary>
-        /// <param name="key">Youtube trailer key</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Trailer url</returns>
-        Task<string> GetVideoTrailerUrlAsync(string key, CancellationToken ct);
+        Task<string> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct);
 
         /// <summary>
         /// Get movies similar async

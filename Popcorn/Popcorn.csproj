@@ -126,8 +126,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.5.2\lib\Net45\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\squirrel.windows.1.6.0\lib\Net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="ltnet, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -185,8 +184,7 @@
       <HintPath>..\packages\NLog.4.4.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.5.2\lib\Net45\NuGet.Squirrel.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\squirrel.windows.1.6.0\lib\Net45\NuGet.Squirrel.dll</HintPath>
     </Reference>
     <Reference Include="OSDBnet, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OSDBnet.0.4.0.0\lib\net40\OSDBnet.dll</HintPath>
@@ -200,9 +198,8 @@
       <HintPath>..\packages\Splat.2.0.0\lib\Net45\Splat.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Squirrel, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.5.2\lib\Net45\Squirrel.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Squirrel, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\squirrel.windows.1.6.0\lib\Net45\Squirrel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -755,12 +752,11 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(TargetDir)libvlc" md "$(TargetDir)libvlc"
-xcopy /s /y "$(SolutionDir)packages\Meta.Vlc.Lib.16.05.01\content\LibVlc\*.*" "$(TargetDir)libvlc"
-xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
-xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
-xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"
-xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(TargetDir)libvlc" xcopy /s /i "$(SolutionDir)packages\Meta.Vlc.Lib.16.05.01\content\LibVlc\*.*" "$(TargetDir)libvlc"
+if not exist "$(TargetDir)\concrt140.dll" xcopy /s /y "$(SolutionDir)\libs\concrt140.dll" "$(TargetDir)"
+if not exist "$(TargetDir)\msvcp140.dll" xcopy /s /y "$(SolutionDir)\libs\msvcp140.dll" "$(TargetDir)"
+if not exist "$(TargetDir)\libs\vccorlib140.dll" xcopy /s /y "$(SolutionDir)\libs\vccorlib140.dll" "$(TargetDir)"
+if not exist "$(TargetDir)\libs\vcruntime140.dll" xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
@@ -777,7 +773,7 @@ xcopy /s /y "$(SolutionDir)\libs\vcruntime140.dll" "$(TargetDir)"</PostBuildEven
       <Revision Include="$(Version.Split('.')[3])" />
     </ItemGroup>
     <Exec Command="$(SolutionDir)\.nuget\NuGet.exe pack $(SolutionDir)\Popcorn.nuspec -Version @(Major).@(Minor).@(Build) -Properties Configuration=Release -OutputDirectory $(OutDir) -BasePath $(OutDir)" />
-    <Exec Command="$(SolutionDir)\packages\squirrel.windows.1.5.2\tools\Squirrel.exe --releasify $(OutDir)Popcorn.@(Major).@(Minor).@(Build).nupkg -g $(SolutionDir)\Popcorn\progress.gif" />
+    <Exec Command="$(SolutionDir)\packages\squirrel.windows.1.6.0\tools\Squirrel.exe --releasify $(OutDir)Popcorn.@(Major).@(Minor).@(Build).nupkg -g $(SolutionDir)\Popcorn\progress.gif" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

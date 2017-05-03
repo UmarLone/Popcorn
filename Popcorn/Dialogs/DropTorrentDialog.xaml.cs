@@ -39,7 +39,7 @@ namespace Popcorn.Dialogs
     /// <summary>
     /// Logique d'interaction pour DropTorrentDialog.xaml
     /// </summary>
-    public partial class DropTorrentDialog : INotifyPropertyChanged
+    public partial class DropTorrentDialog : INotifyPropertyChanged, IDisposable
     {
         private readonly IDownloadService<MediaFile> _downloadService;
 
@@ -53,7 +53,9 @@ namespace Popcorn.Dialogs
 
         private int _nbSeeders;
 
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private bool _disposed;
+
+        private CancellationTokenSource CancellationDownloadingToken { get; set; }
 
         private ICommand _cancelCommand;
 
@@ -125,10 +127,11 @@ namespace Popcorn.Dialogs
         {
             InitializeComponent();
             _downloadService = new DownloadMediaService<MediaFile>();
+            CancellationDownloadingToken = new CancellationTokenSource();
             TorrentPath = settings.TorrentPath;
             CancelCommand = new RelayCommand(() =>
             {
-                _cts.Cancel(true);
+                CancellationDownloadingToken.Cancel(true);
             });
 
             Messenger.Default.Register<StopPlayMediaMessage>(this, e =>
@@ -167,7 +170,7 @@ namespace Popcorn.Dialogs
 
             await _downloadService.Download(media, torrentType, MediaType.Unkown, TorrentPath, uploadLimit,
                 downloadLimit, downloadProgress, downloadRateProgress, nbSeedsProgress, nbPeersProgress, buffered,
-                cancelled, _cts);
+                cancelled, CancellationDownloadingToken);
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -176,5 +179,31 @@ namespace Popcorn.Dialogs
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CancellationDownloadingToken?.Dispose();
+            }
+
+            _disposed = true;
+        }
     }
 }

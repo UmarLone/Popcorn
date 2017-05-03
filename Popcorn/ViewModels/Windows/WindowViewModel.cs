@@ -565,8 +565,7 @@ namespace Popcorn.ViewModels.Windows
         /// <param name="e">Event args</param>
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var ex = e.ExceptionObject as Exception;
-            if (ex != null)
+            if (e.ExceptionObject is Exception ex)
             {
                 Logger.Fatal(ex);
                 ManageException(

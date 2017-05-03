@@ -20,7 +20,6 @@ using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent.Movie;
-using Popcorn.ViewModels.Windows.Settings;
 using Popcorn.Services.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
@@ -28,7 +27,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
     /// <summary>
     /// Manage the movie
     /// </summary>
-    public sealed class MovieDetailsViewModel : ViewModelBase
+    public class MovieDetailsViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Logger of the class
@@ -39,16 +38,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// The service used to interact with movies
         /// </summary>
         private readonly IMovieService _movieService;
-
-        /// <summary>
-        /// Token to cancel movie loading
-        /// </summary>
-        private CancellationTokenSource _cancellationLoadingToken;
-
-        /// <summary>
-        /// Token to cancel trailer loading
-        /// </summary>
-        private CancellationTokenSource _cancellationLoadingTrailerToken;
 
         /// <summary>
         /// Manage the movie download
@@ -116,9 +105,24 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         private double _torrentHealth;
 
         /// <summary>
+        /// Disposed
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
         /// The selected torrent
         /// </summary>
         private TorrentJson _selectedTorrent;
+
+        /// <summary>
+        /// Token to cancel movie loading
+        /// </summary>
+        private CancellationTokenSource CancellationLoadingToken { get; set; }
+
+        /// <summary>
+        /// Token to cancel trailer loading
+        /// </summary>
+        private CancellationTokenSource CancellationLoadingTrailerToken { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the MovieDetailsViewModel class.
@@ -126,13 +130,14 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// <param name="movieService">Service used to interact with movies</param>
         /// <param name="movieTrailerService">The movie trailer service</param>
         /// <param name="subtitlesService">The subtitles service</param>
-        public MovieDetailsViewModel(IMovieService movieService, IMovieTrailerService movieTrailerService, ISubtitlesService subtitlesService)
+        public MovieDetailsViewModel(IMovieService movieService, IMovieTrailerService movieTrailerService,
+            ISubtitlesService subtitlesService)
         {
             _movieTrailerService = movieTrailerService;
             _movieService = movieService;
             _subtitlesService = subtitlesService;
-            _cancellationLoadingToken = new CancellationTokenSource();
-            _cancellationLoadingTrailerToken = new CancellationTokenSource();
+            CancellationLoadingToken = new CancellationTokenSource();
+            CancellationLoadingTrailerToken = new CancellationTokenSource();
             DownloadMovie = new DownloadMovieViewModel(subtitlesService, new DownloadMovieService<MovieJson>());
             RegisterMessages();
             RegisterCommands();
@@ -294,11 +299,10 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 {
                     var languages = _subtitlesService.GetSubLanguages().ToList();
 
-                    int imdbId;
                     if (int.TryParse(new string(movie.ImdbCode
                         .SkipWhile(x => !char.IsDigit(x))
                         .TakeWhile(char.IsDigit)
-                        .ToArray()), out imdbId))
+                        .ToArray()), out int imdbId))
                     {
                         var subtitles = _subtitlesService.SearchSubtitlesFromImdb(
                             languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
@@ -388,7 +392,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             {
                 IsPlayingTrailer = true;
                 IsTrailerLoading = true;
-                await _movieTrailerService.LoadTrailerAsync(Movie, _cancellationLoadingTrailerToken.Token);
+                await _movieTrailerService.LoadTrailerAsync(Movie, CancellationLoadingTrailerToken.Token);
                 IsTrailerLoading = false;
             });
 
@@ -416,7 +420,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 try
                 {
                     LoadingSimilar = true;
-                    SimilarMovies = new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie));
+                    SimilarMovies =
+                        new ObservableCollection<MovieJson>(await _movieService.GetMoviesSimilarAsync(Movie));
                     AnySimilar = SimilarMovies.Any();
                     LoadingSimilar = false;
                 }
@@ -503,8 +508,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 $"Stop loading movie: {Movie.Title}.");
 
             IsMovieLoading = false;
-            _cancellationLoadingToken.Cancel(true);
-            _cancellationLoadingToken = new CancellationTokenSource();
+            CancellationLoadingToken.Cancel(true);
+            CancellationLoadingToken = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -516,8 +521,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 $"Stop loading movie's trailer: {Movie.Title}.");
 
             IsTrailerLoading = false;
-            _cancellationLoadingTrailerToken.Cancel(true);
-            _cancellationLoadingTrailerToken = new CancellationTokenSource();
+            CancellationLoadingTrailerToken.Cancel(true);
+            CancellationLoadingTrailerToken = new CancellationTokenSource();
             StopPlayingTrailer();
         }
 
@@ -542,6 +547,36 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 
             IsDownloadingMovie = false;
             DownloadMovie.StopDownloadingMovie();
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CancellationLoadingToken?.Dispose();
+                CancellationLoadingTrailerToken?.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }

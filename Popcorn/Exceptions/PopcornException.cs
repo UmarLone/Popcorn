@@ -5,6 +5,7 @@ namespace Popcorn.Exceptions
     /// <summary>
     /// Popcorn exception
     /// </summary>
+    [Serializable]
     public class PopcornException : Exception
     {
         /// <summary>

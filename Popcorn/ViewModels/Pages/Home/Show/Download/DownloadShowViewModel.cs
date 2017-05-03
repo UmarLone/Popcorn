@@ -18,7 +18,7 @@ using Popcorn.Services.Download;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Download
 {
-    public class DownloadShowViewModel : ViewModelBase
+    public class DownloadShowViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Logger of the class
@@ -34,11 +34,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// The download service
         /// </summary>
         private readonly IDownloadService<EpisodeShowJson> _downloadService;
-
-        /// <summary>
-        /// Token to cancel the download
-        /// </summary>
-        private CancellationTokenSource _cancellationDownloadingEpisode;
 
         /// <summary>
         /// Specify if an episode is downloading
@@ -71,6 +66,16 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private int _nbPeers;
 
         /// <summary>
+        /// Disposed
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Token to cancel the download
+        /// </summary>
+        private CancellationTokenSource CancellationDownloadingEpisode { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="downloadService">The download service</param>
@@ -80,7 +85,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         {
             _downloadService = downloadService;
             _subtitlesService = subtitlesService;
-            _cancellationDownloadingEpisode = new CancellationTokenSource();
+            CancellationDownloadingEpisode = new CancellationTokenSource();
             RegisterCommands();
             RegisterMessages();
         }
@@ -153,8 +158,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                 $"Stop downloading the episode {Episode.Title}");
 
             IsDownloadingEpisode = false;
-            _cancellationDownloadingEpisode.Cancel(true);
-            _cancellationDownloadingEpisode = new CancellationTokenSource();
+            CancellationDownloadingEpisode.Cancel(true);
+            CancellationDownloadingEpisode = new CancellationTokenSource();
 
             if (!string.IsNullOrEmpty(Episode?.FilePath))
             {
@@ -236,7 +241,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                             await _downloadService.Download(message.Episode, TorrentType.Magnet, MediaType.Show,
                                 magnetUri, settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
                                 reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
-                                _cancellationDownloadingEpisode);
+                                CancellationDownloadingEpisode);
                         }
                         catch (Exception ex)
                         {
@@ -282,6 +287,32 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         private void ReportEpisodeDownloadProgress(double value)
         {
             EpisodeDownloadProgress = value;
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                CancellationDownloadingEpisode?.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }
