@@ -2,15 +2,12 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using NLog;
 using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Genres;
 using Popcorn.Services.Shows.Show;
 using Popcorn.Services.User;
 
@@ -19,22 +16,16 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
     public class RecentShowTabViewModel : ShowTabsViewModel
     {
         /// <summary>
-        /// Logger of the class
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        /// <summary>
         /// Initializes a new instance of the RecentShowTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="showService">Show service</param>
         /// <param name="userService">The user service</param>
-        public RecentShowTabViewModel(IApplicationService applicationService, IShowService showService, IUserService userService)
-            : base(applicationService, showService, userService)
+        public RecentShowTabViewModel(IApplicationService applicationService, IShowService showService,
+            IUserService userService)
+            : base(applicationService, showService, userService,
+                () => LocalizationProviderHelper.GetLocalizedValue<string>("RecentTitleTab"))
         {
-            RegisterMessages();
-            RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentTitleTab");
         }
 
         /// <summary>
@@ -43,21 +34,15 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         public override async Task LoadShowsAsync()
         {
             var watch = Stopwatch.StartNew();
-
             Page++;
-
             if (Page > 1 && Shows.Count == MaxNumberOfShows) return;
-
             Logger.Info(
-                $"Loading page {Page}...");
-
+                $"Loading shows recent page {Page}...");
             HasLoadingFailed = false;
-
             try
             {
                 IsLoadingShows = true;
-
-                var shows =
+                var result =
                     await ShowService.GetShowsAsync(Page,
                             MaxShowsPerPage,
                             Rating * 10,
@@ -66,20 +51,21 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                             Genre)
                         .ConfigureAwait(false);
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    Shows.AddRange(shows.Item1);
+                    Shows.AddRange(result.shows);
                     IsLoadingShows = false;
                     IsShowFound = Shows.Any();
                     CurrentNumberOfShows = Shows.Count;
-                    MaxNumberOfShows = shows.Item2;
+                    MaxNumberOfShows = result.nbShows;
+                    await UserService.SyncShowHistoryAsync(Shows).ConfigureAwait(false);
                 });
             }
             catch (Exception exception)
             {
                 Page--;
                 Logger.Error(
-                    $"Error while loading page {Page}: {exception.Message}");
+                    $"Error while loading shows recent page {Page}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -88,49 +74,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded page {Page} in {elapsedMs} milliseconds.");
+                    $"Loaded shows recent page {Page} in {elapsedMs} milliseconds.");
             }
-        }
-
-        /// <summary>
-        /// Register messages
-        /// </summary>
-        private void RegisterMessages()
-        {
-            Messenger.Default.Register<ChangeLanguageMessage>(
-                this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("RecentTitleTab"));
-
-            Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
-            {
-                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                Page = 0;
-                Shows.Clear();
-                await LoadShowsAsync();
-            });
-
-            Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
-            {
-                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                Page = 0;
-                Shows.Clear();
-                await LoadShowsAsync();
-            });
-        }
-
-        /// <summary>
-        /// Register commands
-        /// </summary>
-        private void RegisterCommands()
-        {
-            ReloadShows = new RelayCommand(async () =>
-            {
-                ApplicationService.IsConnectionInError = false;
-                StopLoadingShows();
-                await LoadShowsAsync();
-            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Async;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The genre used to filter movies
@@ -82,13 +83,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         private string _tabName;
 
         /// <summary>
+        /// Func which generates the tab name
+        /// </summary>
+        private readonly Func<string> _tabNameGenerator;
+
+        /// <summary>
         /// Initializes a new instance of the MovieTabsViewModel class.
         /// </summary>
         /// <param name="applicationService">The application state</param>
         /// <param name="movieService">Used to interact with movies</param>
         /// <param name="userService">Used to interact with movie history</param>
+        /// <param name="tabNameGenerator">Func which generates the tab name</param>
         protected MovieTabsViewModel(IApplicationService applicationService, IMovieService movieService,
-            IUserService userService)
+            IUserService userService, Func<string> tabNameGenerator)
         {
             ApplicationService = applicationService;
             MovieService = movieService;
@@ -97,6 +104,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             RegisterMessages();
             RegisterCommands();
 
+            _tabNameGenerator = tabNameGenerator;
+            TabName = tabNameGenerator.Invoke();
             MaxMoviesPerPage = Utils.Constants.MaxMoviesPerPage;
             CancellationLoadingMovies = new CancellationTokenSource();
         }
@@ -253,17 +262,35 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         {
             Messenger.Default.Register<ChangeLanguageMessage>(
                 this,
-                message =>
+                async message =>
                 {
-                    Parallel.ForEach(Movies, async movie =>
+                    await Movies.ParallelForEachAsync(async movie =>
                     {
-                        await MovieService.TranslateMovieAsync(movie);
-                    });
+                        await MovieService.TranslateMovieAsync(movie).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
                 });
+
+            Messenger.Default.Register<ChangeLanguageMessage>(
+                this,
+                language => TabName = _tabNameGenerator.Invoke());
+
+            Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
+                StopLoadingMovies();
+                await LoadMoviesAsync().ConfigureAwait(false);
+            });
+
+            Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
+                StopLoadingMovies();
+                await LoadMoviesAsync().ConfigureAwait(false);
+            });
 
             Messenger.Default.Register<ChangeFavoriteMovieMessage>(
                 this,
-                async message => await UserService.SyncMovieHistoryAsync(Movies));
+                async message => await UserService.SyncMovieHistoryAsync(Movies).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -272,10 +299,17 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         /// <returns></returns>
         private void RegisterCommands()
         {
+            ReloadMovies = new RelayCommand(async () =>
+            {
+                ApplicationService.IsConnectionInError = false;
+                StopLoadingMovies();
+                await LoadMoviesAsync().ConfigureAwait(false);
+            });
+
             SetFavoriteMovieCommand =
                 new RelayCommand<MovieJson>(async movie =>
                 {
-                    await UserService.SetMovieAsync(movie);
+                    await UserService.SetMovieAsync(movie).ConfigureAwait(false);
                     Messenger.Default.Send(new ChangeFavoriteMovieMessage());
                 });
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Popcorn.Models.Genres;
@@ -26,7 +25,7 @@ namespace Popcorn.Services.Shows.Show
         /// <param name="sortBy">The sort</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular shows and the number of shows found</returns>
-        Task<Tuple<IEnumerable<ShowJson>, int>> GetShowsAsync(int page,
+        Task<(IEnumerable<ShowJson> shows, int nbShows)> GetShowsAsync(int page,
             int limit,
             double ratingFilter,
             string sortBy,

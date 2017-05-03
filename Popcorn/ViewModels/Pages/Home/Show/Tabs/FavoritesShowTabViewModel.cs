@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using NLog;
 using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
-using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
 using Popcorn.Services.Shows.Show;
 using Popcorn.Services.User;
@@ -22,13 +19,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
     public class FavoritesShowTabViewModel : ShowTabsViewModel
     {
         /// <summary>
-        /// Logger of the class
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly IShowService _showService;
-
-        /// <summary>
         /// Initializes a new instance of the FavoritesMovieTabViewModel class.
         /// </summary>
         /// <param name="applicationService">Application state</param>
@@ -36,12 +26,15 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <param name="userService">User service</param>
         public FavoritesShowTabViewModel(IApplicationService applicationService, IShowService showService,
             IUserService userService)
-            : base(applicationService, showService, userService)
+            : base(applicationService, showService, userService,
+                () => LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab"))
         {
-            _showService = showService;
-            RegisterMessages();
-            RegisterCommands();
-            TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab");
+            Messenger.Default.Register<ChangeFavoriteShowMessage>(
+                this,
+                async message =>
+                {
+                    await LoadShowsAsync();
+                });
         }
 
         /// <summary>
@@ -50,22 +43,18 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         public override async Task LoadShowsAsync()
         {
             var watch = Stopwatch.StartNew();
-
             Logger.Info(
-                "Loading shows...");
-
+                $"Loading shows favorite page {Page}...");
             HasLoadingFailed = false;
-
             try
             {
                 IsLoadingShows = true;
-
                 var imdbIds =
-                    await UserService.GetFavoritesMovies().ConfigureAwait(false);
+                    await UserService.GetFavoritesShows().ConfigureAwait(false);
                 var shows = new List<ShowJson>();
                 await imdbIds.ParallelForEachAsync(async imdbId =>
                 {
-                    var show = await _showService.GetShowAsync(imdbId);
+                    var show = await ShowService.GetShowAsync(imdbId);
                     if (show != null)
                     {
                         show.IsFavorite = true;
@@ -73,7 +62,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                     }
                 });
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     Shows.Clear();
                     Shows.AddRange(shows.Where(a => Genre != null
@@ -83,12 +72,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                     IsShowFound = Shows.Any();
                     CurrentNumberOfShows = Shows.Count;
                     MaxNumberOfShows = Shows.Count;
+                    await UserService.SyncShowHistoryAsync(Shows).ConfigureAwait(false);
                 });
             }
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"Error while loading page {Page}: {exception.Message}");
+                    $"Error while loading shows favorite page {Page}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -97,53 +87,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded movies in {elapsedMs} milliseconds.");
+                    $"Loaded shows favorite page {Page} in {elapsedMs} milliseconds.");
             }
-        }
-
-        /// <summary>
-        /// Register messages
-        /// </summary>
-        private void RegisterMessages()
-        {
-            Messenger.Default.Register<ChangeLanguageMessage>(
-                this,
-                language => TabName = LocalizationProviderHelper.GetLocalizedValue<string>("FavoritesTitleTab"));
-
-            Messenger.Default.Register<ChangeFavoriteShowMessage>(
-                this,
-                async message =>
-                {
-                    StopLoadingShows();
-                    await LoadShowsAsync();
-                });
-
-            Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
-            {
-                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                await LoadShowsAsync();
-            });
-
-            Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
-            {
-                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
-                StopLoadingShows();
-                await LoadShowsAsync();
-            });
-        }
-
-        /// <summary>
-        /// Register commands
-        /// </summary>
-        private void RegisterCommands()
-        {
-            ReloadShows = new RelayCommand(async () =>
-            {
-                ApplicationService.IsConnectionInError = false;
-                StopLoadingShows();
-                await LoadShowsAsync();
-            });
         }
     }
 }

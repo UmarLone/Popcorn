@@ -114,7 +114,7 @@ namespace Popcorn.Services.User
                 await GetHistoryAsync();
                 foreach (var show in shows)
                 {
-                    var updatedShow = User.MovieHistory.FirstOrDefault(p => p.ImdbId == show.ImdbId);
+                    var updatedShow = User.ShowHistory.FirstOrDefault(p => p.ImdbId == show.ImdbId);
                     if (updatedShow == null) continue;
                     show.IsFavorite = updatedShow.Favorite;
                 }

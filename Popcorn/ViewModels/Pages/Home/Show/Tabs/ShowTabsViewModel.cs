@@ -25,7 +25,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The genre used to filter shows
@@ -83,13 +83,19 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         private string _tabName;
 
         /// <summary>
+        /// Func which generates the tab name
+        /// </summary>
+        private readonly Func<string> _tabNameGenerator;
+
+        /// <summary>
         /// Initializes a new instance of the ShowTabsViewModel class.
         /// </summary>
         /// <param name="applicationService">The application state</param>
         /// <param name="showService">Used to interact with shows</param>
         /// <param name="userService">THe user service</param>
+        /// <param name="tabNameGenerator">Func which generates the tab name</param>
         protected ShowTabsViewModel(IApplicationService applicationService, IShowService showService,
-            IUserService userService)
+            IUserService userService, Func<string> tabNameGenerator)
         {
             ApplicationService = applicationService;
             ShowService = showService;
@@ -98,6 +104,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             RegisterMessages();
             RegisterCommands();
 
+            _tabNameGenerator = tabNameGenerator;
+            TabName = tabNameGenerator.Invoke();
             MaxShowsPerPage = Utils.Constants.MaxShowsPerPage;
             CancellationLoadingShows = new CancellationTokenSource();
         }
@@ -105,14 +113,14 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <summary>
         /// Application state
         /// </summary>
-        public IApplicationService ApplicationService { get; set; }
+        public IApplicationService ApplicationService { get; }
 
         /// <summary>
         /// Tab's shows
         /// </summary>
         public ObservableCollection<ShowJson> Shows
         {
-            get { return _shows; }
+            get => _shows;
             set { Set(() => Shows, ref _shows, value); }
         }
 
@@ -121,7 +129,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public int CurrentNumberOfShows
         {
-            get { return _currentNumberOfShows; }
+            get => _currentNumberOfShows;
             set { Set(() => CurrentNumberOfShows, ref _currentNumberOfShows, value); }
         }
 
@@ -130,7 +138,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public int MaxNumberOfShows
         {
-            get { return _maxNumberOfShows; }
+            get => _maxNumberOfShows;
             set { Set(() => MaxNumberOfShows, ref _maxNumberOfShows, value); }
         }
 
@@ -139,7 +147,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public string TabName
         {
-            get { return _tabName; }
+            get => _tabName;
             set { Set(() => TabName, ref _tabName, value); }
         }
 
@@ -148,7 +156,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public bool IsLoadingShows
         {
-            get { return _isLoadingShows; }
+            get => _isLoadingShows;
             protected set { Set(() => IsLoadingShows, ref _isLoadingShows, value); }
         }
 
@@ -157,7 +165,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public bool IsShowFound
         {
-            get { return _isShowsFound; }
+            get => _isShowsFound;
             set { Set(() => IsShowFound, ref _isShowsFound, value); }
         }
 
@@ -166,7 +174,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public double Rating
         {
-            get { return _rating; }
+            get => _rating;
             set { Set(() => Rating, ref _rating, value, true); }
         }
 
@@ -190,7 +198,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         public bool HasLoadingFailed
         {
-            get { return _hasLoadingFailed; }
+            get => _hasLoadingFailed;
             set { Set(() => HasLoadingFailed, ref _hasLoadingFailed, value); }
         }
 
@@ -199,7 +207,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         protected GenreJson Genre
         {
-            get { return _genre; }
+            get => _genre;
             private set { Set(() => Genre, ref _genre, value, true); }
         }
 
@@ -252,7 +260,30 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         private void RegisterMessages()
         {
+            Messenger.Default.Register<ChangeFavoriteShowMessage>(
+                this,
+                async message =>
+                {
+                    await UserService.SyncShowHistoryAsync(Shows).ConfigureAwait(false);
+                });
 
+            Messenger.Default.Register<ChangeLanguageMessage>(
+                this,
+                language => TabName = _tabNameGenerator.Invoke());
+
+            Messenger.Default.Register<PropertyChangedMessage<GenreJson>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Genre) && Genre.Equals(e.NewValue)) return;
+                StopLoadingShows();
+                await LoadShowsAsync().ConfigureAwait(false);
+            });
+
+            Messenger.Default.Register<PropertyChangedMessage<double>>(this, async e =>
+            {
+                if (e.PropertyName != GetPropertyName(() => Rating) && Rating.Equals(e.NewValue)) return;
+                StopLoadingShows();
+                await LoadShowsAsync().ConfigureAwait(false);
+            });
         }
 
         /// <summary>
@@ -264,7 +295,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             SetFavoriteShowCommand =
                 new RelayCommand<ShowJson>(async show =>
                 {
-                    await UserService.SetShowAsync(show);
+                    await UserService.SetShowAsync(show).ConfigureAwait(false);
                     Messenger.Default.Send(new ChangeFavoriteShowMessage());
                 });
 
@@ -274,6 +305,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                                                                  "AllLabel")
                     ? null
                     : genre);
+
+            ReloadShows = new RelayCommand(async () =>
+            {
+                ApplicationService.IsConnectionInError = false;
+                StopLoadingShows();
+                await LoadShowsAsync().ConfigureAwait(false);
+            });
         }
     }
 }

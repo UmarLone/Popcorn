@@ -72,7 +72,7 @@ namespace Popcorn.Services.Shows.Show
         /// <param name="sortBy">The sort</param>
         /// <param name="ratingFilter">Used to filter by rating</param>
         /// <returns>Popular shows and the number of shows found</returns>
-        public async Task<Tuple<IEnumerable<ShowJson>, int>> GetShowsAsync(int page,
+        public async Task<(IEnumerable<ShowJson> shows, int nbShows)> GetShowsAsync(int page,
             int limit,
             double ratingFilter,
             string sortBy,
@@ -127,7 +127,7 @@ namespace Popcorn.Services.Shows.Show
 
             var shows = wrapper?.Shows ?? new List<ShowJson>();
             var nbShows = wrapper?.TotalShows ?? 0;
-            return new Tuple<IEnumerable<ShowJson>, int>(shows, nbShows);
+            return (shows, nbShows);
         }
 
         /// <summary>
