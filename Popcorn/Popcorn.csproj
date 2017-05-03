@@ -276,13 +276,17 @@
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
     <Compile Include="Exceptions\PopcornException.cs" />
+    <Compile Include="Extensions\MessengerExtensions.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
     <Compile Include="AttachedProperties\EnableDragHelper.cs" />
     <Compile Include="Helpers\FindVisualChildHelper.cs" />
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
+    <Compile Include="Messaging\Async\AsyncMessage.cs" />
+    <Compile Include="Messaging\Async\AsyncMessageReceiver.cs" />
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />
     <Compile Include="Messaging\ChangeFavoriteShowMessage.cs" />
     <Compile Include="Messaging\ChangeSeenMovieMessage.cs" />
+    <Compile Include="Messaging\CustomMovieSubtitleMessage.cs" />
     <Compile Include="Messaging\DropFileMessage.cs" />
     <Compile Include="Messaging\LoadShowMessage.cs" />
     <Compile Include="Messaging\DownloadShowEpisodeMessage.cs" />
@@ -325,7 +329,7 @@
     <Compile Include="Panels\ElasticWrapPanel.cs" />
     <Compile Include="Events\WindowStateChangedEventArgs.cs" />
     <Compile Include="Helpers\DownloadFileHelper.cs" />
-    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Helpers\LocalizationProviderHelper.cs" />
     <Compile Include="Messaging\ChangeLanguageMessage.cs" />
     <Compile Include="Messaging\ManageExceptionMessage.cs" />

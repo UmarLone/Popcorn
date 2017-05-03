@@ -330,4 +330,7 @@
   <data name="VeryGoodLabel" xml:space="preserve">
     <value>Excellent</value>
   </data>
+  <data name="CustomLabel" xml:space="preserve">
+    <value>Personnalisé</value>
+  </data>
 </root>

@@ -169,6 +169,14 @@ namespace Popcorn.Controls.Show
                                 }
                             });
 
+                            episode.AvailableSubtitles.Insert(1, new Subtitle
+                            {
+                                Sub = new OSDB.Subtitle
+                                {
+                                    LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel")
+                                }
+                            });
+
                             episode.SelectedSubtitle = episode.AvailableSubtitles.FirstOrDefault();
                             LoadingSubtitles = false;
                         });

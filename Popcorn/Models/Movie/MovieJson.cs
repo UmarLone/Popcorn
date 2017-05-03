@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
+using Popcorn.Extensions;
+using Popcorn.Messaging;
 using Popcorn.Models.Cast;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent.Movie;
@@ -336,7 +340,26 @@ namespace Popcorn.Models.Movie
         public Subtitle SelectedSubtitle
         {
             get => _selectedSubtitle;
-            set { Set(() => SelectedSubtitle, ref _selectedSubtitle, value); }
+            set
+            {
+                Set(() => SelectedSubtitle, ref _selectedSubtitle, value);
+                if (value != null && value.Sub.SubtitleId == "custom")
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                    {
+                        var message = new CustomMovieSubtitleMessage();
+                        await Messenger.Default.SendAsync(message);
+                        if (message.Error)
+                        {
+                            SelectedSubtitle = AvailableSubtitles.FirstOrDefault(a => a.Sub.SubtitleId == "none");
+                        }
+                        else
+                        {
+                            SelectedSubtitle.FilePath = message.FileName;
+                        }
+                    });
+                }
+            }
         }
 
         /// <summary>

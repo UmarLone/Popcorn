@@ -169,6 +169,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Custom.
+        /// </summary>
+        public static string CustomLabel {
+            get {
+                return ResourceManager.GetString("CustomLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Directors.
         /// </summary>
         public static string DirectorsLabel {

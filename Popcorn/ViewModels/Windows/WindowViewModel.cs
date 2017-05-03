@@ -413,6 +413,25 @@ namespace Popcorn.ViewModels.Windows
         /// </summary>
         private void ClearFolders()
         {
+            if (Directory.Exists(Constants.Subtitles))
+            {
+                foreach (
+                    var filePath in Directory.GetDirectories(Constants.Subtitles)
+                )
+                {
+                    try
+                    {
+                        Logger.Debug(
+                            $"Deleting directory: {filePath}");
+                        Directory.Delete(filePath, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error while deleting directory: {ex.Message}.");
+                    }
+                }
+            }
+
             if (Directory.Exists(Constants.MovieDownloads))
             {
                 foreach (
