@@ -333,4 +333,13 @@
   <data name="CustomLabel" xml:space="preserve">
     <value>Personnalisé</value>
   </data>
+  <data name="DownloadLabel" xml:space="preserve">
+    <value>Téléchargement</value>
+  </data>
+  <data name="UploadLabel" xml:space="preserve">
+    <value>Envoi</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>(kB/s)</value>
+  </data>
 </root>

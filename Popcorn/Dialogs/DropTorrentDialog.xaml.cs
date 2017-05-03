@@ -13,6 +13,7 @@ using Popcorn.Models.Media;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
+using Popcorn.Models.Bandwidth;
 
 namespace Popcorn.Dialogs
 {
@@ -153,9 +154,9 @@ namespace Popcorn.Dialogs
                 DownloadProgress = e;
             });
 
-            var downloadRateProgress = new Progress<double>(e =>
+            var downloadRateProgress = new Progress<BandwidthRate>(e =>
             {
-                DownloadRate = e;
+                DownloadRate = e.DownloadRate;
             });
 
             var nbSeedsProgress = new Progress<int>(e =>

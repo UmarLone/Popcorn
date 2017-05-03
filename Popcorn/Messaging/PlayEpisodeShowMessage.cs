@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
+using Popcorn.Models.Bandwidth;
 using Popcorn.Models.Episode;
 
 namespace Popcorn.Messaging
@@ -24,14 +21,21 @@ namespace Popcorn.Messaging
         public readonly Progress<double> BufferProgress;
 
         /// <summary>
+        /// The download rate
+        /// </summary>
+        public readonly Progress<BandwidthRate> BandwidthRate;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="episode">Episode</param>
         /// <param name="bufferProgress">The buffer progress</param>
-        public PlayShowEpisodeMessage(EpisodeShowJson episode, Progress<double> bufferProgress)
+        /// <param name="bandwidthRate">The bandwidth rate</param>
+        public PlayShowEpisodeMessage(EpisodeShowJson episode, Progress<double> bufferProgress, Progress<BandwidthRate> bandwidthRate)
         {
             Episode = episode;
             BufferProgress = bufferProgress;
+            BandwidthRate = bandwidthRate;
         }
     }
 }

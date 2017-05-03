@@ -220,6 +220,7 @@ namespace Popcorn.ViewModels.Windows
                             Messenger.Default.Send(new StopPlayingEpisodeMessage());
                         },
                         message.BufferProgress,
+                        message.BandwidthRate,
                         message.Episode.SelectedSubtitle?.FilePath);
 
                     ApplicationService.IsMediaPlaying = true;
@@ -238,7 +239,8 @@ namespace Popcorn.ViewModels.Windows
                     {
                         Messenger.Default.Send(new StopPlayMediaMessage());
                     },
-                    message.BufferProgress);
+                    message.BufferProgress,
+                    message.BandwidthRate);
 
                 ApplicationService.IsMediaPlaying = true;
                 IsShowFlyoutOpen = false;
@@ -260,6 +262,7 @@ namespace Popcorn.ViewModels.Windows
                         Messenger.Default.Send(new StopPlayingMovieMessage());
                     },
                     message.BufferProgress,
+                    message.BandwidthRate,
                     message.Movie.SelectedSubtitle?.FilePath);
 
                 ApplicationService.IsMediaPlaying = true;

@@ -16,6 +16,7 @@ using Popcorn.Utils;
 using Popcorn.ViewModels.Windows.Settings;
 using Popcorn.Services.Download;
 using GalaSoft.MvvmLight.Ioc;
+using Popcorn.Models.Bandwidth;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Download
 {
@@ -202,7 +203,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 NbPeers = 0;
                 NbSeeders = 0;
                 var reportDownloadProgress = new Progress<double>(ReportMovieDownloadProgress);
-                var reportDownloadRate = new Progress<double>(ReportMovieDownloadRate);
+                var reportDownloadRate = new Progress<BandwidthRate>(ReportMovieDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
 
@@ -282,7 +283,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// Report the download progress
         /// </summary>
         /// <param name="value">Download rate</param>
-        private void ReportMovieDownloadRate(double value) => MovieDownloadRate = value;
+        private void ReportMovieDownloadRate(BandwidthRate value) => MovieDownloadRate = value.DownloadRate;
 
         /// <summary>
         /// Report the download progress

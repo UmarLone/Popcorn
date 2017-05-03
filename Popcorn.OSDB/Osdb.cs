@@ -1,4 +1,5 @@
-﻿using CookComputing.XmlRpc;
+﻿using System.Globalization;
+using CookComputing.XmlRpc;
 using Popcorn.OSDB.Backend;
 
 namespace Popcorn.OSDB
@@ -34,8 +35,8 @@ namespace Popcorn.OSDB
 
         private string GetSystemLanguage()
         {
-            var currentCulture = System.Globalization.CultureInfo.CurrentUICulture;
-            return currentCulture.TwoLetterISOLanguageName.ToLower();
+            var currentCulture = CultureInfo.CurrentUICulture;
+            return currentCulture.TwoLetterISOLanguageName.ToLower(CultureInfo.InvariantCulture);
         }
     }
 }

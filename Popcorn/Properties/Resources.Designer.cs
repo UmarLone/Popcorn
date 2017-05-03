@@ -196,6 +196,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Download.
+        /// </summary>
+        public static string DownloadLabel {
+            get {
+                return ResourceManager.GetString("DownloadLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Download limit (kB/s).
         /// </summary>
         public static string DownloadLimitLabel {
@@ -619,6 +628,15 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à (kB/s).
+        /// </summary>
+        public static string Speed {
+            get {
+                return ResourceManager.GetString("Speed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Subtitles.
         /// </summary>
         public static string SubtitlesLabel {
@@ -660,6 +678,15 @@ namespace Popcorn.Properties {
         public static string UpdateReleasesInformationsLabel {
             get {
                 return ResourceManager.GetString("UpdateReleasesInformationsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Upload.
+        /// </summary>
+        public static string UploadLabel {
+            get {
+                return ResourceManager.GetString("UploadLabel", resourceCulture);
             }
         }
         

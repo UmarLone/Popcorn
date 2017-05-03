@@ -12,6 +12,7 @@ using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Exceptions;
 using Popcorn.Messaging;
+using Popcorn.Models.Bandwidth;
 
 namespace Popcorn.UserControls.Player
 {
@@ -128,6 +129,11 @@ namespace Popcorn.UserControls.Player
                 vm.BufferProgress.ProgressChanged += OnBufferProgressChanged;
             }
 
+            if (vm.BandwidthRate != null)
+            {
+                vm.BandwidthRate.ProgressChanged += OnBandwidthChanged;
+            }
+
             Player.VlcMediaPlayer.EndReached += MediaPlayerEndReached;
 
             if (!string.IsNullOrEmpty(vm.SubtitleFilePath))
@@ -144,13 +150,30 @@ namespace Popcorn.UserControls.Player
         }
 
         /// <summary>
+        /// When bandwidth rate has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBandwidthChanged(object sender, BandwidthRate e)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Download.Text = e.DownloadRate.ToString(CultureInfo.InvariantCulture);
+                Upload.Text = e.UploadRate.ToString(CultureInfo.InvariantCulture);
+            });
+        }
+
+        /// <summary>
         /// When buffer progress has changed, update buffer bar
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnBufferProgressChanged(object sender, double e)
         {
-            BufferProgress.Value = Math.Round(e);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                BufferProgress.Value = Math.Round(e);
+            });
         }
 
         /// <summary>
@@ -382,6 +405,7 @@ namespace Popcorn.UserControls.Player
                 };
 
                 PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
+                DownloadProgress.BeginAnimation(OpacityProperty, opacityAnimation);
             }
 
             InactiveMousePosition = Mouse.GetPosition(Container);
@@ -434,6 +458,7 @@ namespace Popcorn.UserControls.Player
             };
 
             PlayerStatusBar.BeginAnimation(OpacityProperty, opacityAnimation);
+            DownloadProgress.BeginAnimation(OpacityProperty, opacityAnimation);
             var window = System.Windows.Window.GetWindow(this);
             if (window != null)
             {
@@ -482,6 +507,11 @@ namespace Popcorn.UserControls.Player
             if (vm?.BufferProgress != null)
             {
                 vm.BufferProgress.ProgressChanged -= OnBufferProgressChanged;
+            }
+
+            if (vm?.BandwidthRate != null)
+            {
+                vm.BandwidthRate.ProgressChanged -= OnBandwidthChanged;
             }
 
             _disposed = true;

@@ -1,5 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Messaging;
+using Popcorn.Models.Bandwidth;
 
 namespace Popcorn.Messaging
 {
@@ -11,6 +12,11 @@ namespace Popcorn.Messaging
         public readonly Progress<double> BufferProgress;
 
         /// <summary>
+        /// The buffer progress
+        /// </summary>
+        public readonly Progress<BandwidthRate> BandwidthRate;
+
+        /// <summary>
         /// The media path
         /// </summary>
         public readonly string MediaPath;
@@ -20,10 +26,12 @@ namespace Popcorn.Messaging
         /// </summary>
         /// <param name="mediaPath">The media path</param>
         /// <param name="bufferProgress">The buffer progress</param>
-        public PlayMediaMessage(string mediaPath, Progress<double> bufferProgress)
+        /// <param name="bandwidthRate">The bandwidth rate</param>
+        public PlayMediaMessage(string mediaPath, Progress<double> bufferProgress, Progress<BandwidthRate> bandwidthRate)
         {
             MediaPath = mediaPath;
             BufferProgress = bufferProgress;
+            BandwidthRate = bandwidthRate;
         }
     }
 }

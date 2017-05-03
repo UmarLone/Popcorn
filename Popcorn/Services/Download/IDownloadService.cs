@@ -3,6 +3,7 @@ using Popcorn.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Popcorn.Models.Bandwidth;
 
 namespace Popcorn.Services.Download
 {
@@ -17,7 +18,7 @@ namespace Popcorn.Services.Download
         /// </summary>
         /// <returns><see cref="Task"/></returns>
         Task Download(T media, TorrentType torrentType, MediaType mediaType, string torrentPath, int uploadLimit, int downloadLimit, IProgress<double> downloadProgress,
-            IProgress<double> downloadRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, Action buffered, Action cancelled,
+            IProgress<BandwidthRate> bandwidthRate, IProgress<int> nbSeeds, IProgress<int> nbPeers, Action buffered, Action cancelled,
             CancellationTokenSource cts);
     }
 }

@@ -5,6 +5,7 @@
     xmlns:attachedProperties="clr-namespace:Popcorn.AttachedProperties"
     xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:wpf="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
@@ -35,6 +36,44 @@
             </x:Array>
         </Grid.Resources>
 
+        <StackPanel
+            x:Name="DownloadProgress"
+            Margin="20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top">
+            <StackPanel Opacity="0.8" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Foreground="White" Text="{lex:LocText DownloadLabel}" />
+                    <TextBlock
+                        Margin="2.5,0,0,0"
+                        Foreground="White"
+                        Text=":" />
+                    <TextBlock
+                        x:Name="Download"
+                        Margin="5,0,0,0"
+                        Foreground="White" />
+                    <TextBlock
+                        Margin="2.5,0,0,0"
+                        Foreground="White"
+                        Text="{lex:LocText Speed}" />
+                </StackPanel>
+                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                    <TextBlock Foreground="White" Text="{lex:LocText UploadLabel}" />
+                    <TextBlock
+                        Margin="2.5,0,0,0"
+                        Foreground="White"
+                        Text=":" />
+                    <TextBlock
+                        x:Name="Upload"
+                        Margin="5,0,0,0"
+                        Foreground="White" />
+                    <TextBlock
+                        Margin="2.5,0,0,0"
+                        Foreground="White"
+                        Text="{lex:LocText Speed}" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
         <wpf:VlcPlayer
             x:Name="Player"
             attachedProperties:EnableDragHelper.EnableDrag="True"

@@ -301,6 +301,7 @@
     <Compile Include="Models\Anime\AnimeResponse.cs" />
     <Compile Include="Models\ApplicationState\ApplicationService.cs" />
     <Compile Include="Models\ApplicationState\IApplicationService.cs" />
+    <Compile Include="Models\Bandwidth\BandwidthRate.cs" />
     <Compile Include="Models\Episode\EpisodeAnimeJson.cs" />
     <Compile Include="Models\Genres\Genre.cs" />
     <Compile Include="Models\Image\ImageAnimeJson.cs" />
