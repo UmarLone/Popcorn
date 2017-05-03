@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using Microsoft.Win32;
 using NLog;
 using Popcorn.Exceptions;
 using Popcorn.Helpers;
@@ -34,23 +33,24 @@ namespace Popcorn
         private Dispatcher _splashScreenDispatcher;
 
         /// <summary>
+        /// Watcher
+        /// </summary>
+        private static Stopwatch _watchStart;
+
+        /// <summary>
         /// Initializes a new instance of the App class.
         /// </summary>
         static App()
         {
             Logger.Info(
                 "Popcorn starting...");
-            var watchStart = Stopwatch.StartNew();
+            _watchStart = Stopwatch.StartNew();
 
             Directory.CreateDirectory(Utils.Constants.Logging);
 
             DispatcherHelper.Initialize();
 
             LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
-            watchStart.Stop();
-            var elapsedStartMs = watchStart.ElapsedMilliseconds;
-            Logger.Info(
-                $"Popcorn started in {elapsedStartMs} milliseconds.");
         }
 
         /// <summary>
@@ -144,6 +144,10 @@ namespace Popcorn
                 {
                     _splashScreenDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
                     mainWindow.Activate();
+                    _watchStart.Stop();
+                    var elapsedStartMs = _watchStart.ElapsedMilliseconds;
+                    Logger.Info(
+                        $"Popcorn started in {elapsedStartMs} milliseconds.");
                 });
 
             mainWindow.Show();
