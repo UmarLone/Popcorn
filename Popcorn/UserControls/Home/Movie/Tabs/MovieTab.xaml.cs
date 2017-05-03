@@ -30,13 +30,13 @@ namespace Popcorn.UserControls.Home.Movie.Tabs
             if (vm is PopularMovieTabViewModel || vm is GreatestMovieTabViewModel || vm is RecentMovieTabViewModel)
             {
                 if (!vm.IsLoadingMovies)
-                    await vm.LoadMoviesAsync();
+                    await vm.LoadMoviesAsync().ConfigureAwait(false);
             }
             else if (vm is SearchMovieTabViewModel)
             {
                 var searchVm = vm as SearchMovieTabViewModel;
                 if (!searchVm.IsLoadingMovies)
-                    await searchVm.SearchMoviesAsync(searchVm.SearchFilter);
+                    await searchVm.SearchMoviesAsync(searchVm.SearchFilter).ConfigureAwait(false);
             }
         }
     }

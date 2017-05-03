@@ -27,13 +27,13 @@ namespace Popcorn.UserControls.Home.Show.Tabs
             if (vm is PopularShowTabViewModel || vm is GreatestShowTabViewModel || vm is RecentShowTabViewModel)
             {
                 if (!vm.IsLoadingShows)
-                    await vm.LoadShowsAsync();
+                    await vm.LoadShowsAsync().ConfigureAwait(false);
             }
             else if (vm is SearchShowTabViewModel)
             {
                 var searchVm = vm as SearchShowTabViewModel;
                 if (!searchVm.IsLoadingShows)
-                    await searchVm.SearchShowsAsync(searchVm.SearchFilter);
+                    await searchVm.SearchShowsAsync(searchVm.SearchFilter).ConfigureAwait(false);
             }
         }
     }

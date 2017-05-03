@@ -282,7 +282,7 @@
     <Compile Include="AttachedProperties\MaximizeDoubleClickHelper.cs" />
     <Compile Include="Messaging\ChangeFavoriteMovieMessage.cs" />
     <Compile Include="Messaging\ChangeFavoriteShowMessage.cs" />
-    <Compile Include="Messaging\ChangeHasBeenSeenMovieMessage.cs" />
+    <Compile Include="Messaging\ChangeSeenMovieMessage.cs" />
     <Compile Include="Messaging\DropFileMessage.cs" />
     <Compile Include="Messaging\LoadShowMessage.cs" />
     <Compile Include="Messaging\DownloadShowEpisodeMessage.cs" />

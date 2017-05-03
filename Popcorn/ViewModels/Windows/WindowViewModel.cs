@@ -256,7 +256,7 @@ namespace Popcorn.ViewModels.Windows
                     async () =>
                     {
                         await _userService.SetMovieAsync(message.Movie);
-                        Messenger.Default.Send(new ChangeHasBeenSeenMovieMessage());
+                        Messenger.Default.Send(new ChangeSeenMovieMessage());
                         Messenger.Default.Send(new StopPlayingMovieMessage());
                     },
                     message.BufferProgress,
