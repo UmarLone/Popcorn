@@ -98,11 +98,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
                 Tabs.Add(new SeenMovieTabViewModel(ApplicationService, _movieService, _userService));
                 SelectedTab = Tabs.First();
                 SelectedMoviesIndexMenuTab = 0;
-                await GenreViewModel.LoadGenresAsync();
+                await GenreViewModel.LoadGenresAsync().ConfigureAwait(false);
                 await Tabs.ToList().ParallelForEachAsync(async tab =>
                 {
-                    await tab.LoadMoviesAsync();
-                });
+                    await tab.LoadMoviesAsync().ConfigureAwait(false);
+                }).ConfigureAwait(false);
             });
         }
 

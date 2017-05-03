@@ -121,11 +121,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                 Tabs.Add(new FavoritesShowTabViewModel(_applicationService, showService, userService));
                 SelectedTab = Tabs.First();
                 SelectedShowsIndexMenuTab = 0;
-                await GenreViewModel.LoadGenresAsync();
-                await Tabs.ParallelForEachAsync(async tab =>
+                await GenreViewModel.LoadGenresAsync().ConfigureAwait(false);
+                await Tabs.ToList().ParallelForEachAsync(async tab =>
                 {
-                    await tab.LoadShowsAsync();
-                });
+                    await tab.LoadShowsAsync().ConfigureAwait(false);
+                }).ConfigureAwait(false);
             });
         }
 

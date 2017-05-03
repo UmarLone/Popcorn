@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Async;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -264,7 +265,8 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 this,
                 async message =>
                 {
-                    await Movies.ParallelForEachAsync(async movie =>
+                    var movies = Movies.ToList();
+                    await movies.ParallelForEachAsync(async movie =>
                     {
                         await MovieService.TranslateMovieAsync(movie).ConfigureAwait(false);
                     }).ConfigureAwait(false);
