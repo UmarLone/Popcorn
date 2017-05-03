@@ -210,7 +210,7 @@ namespace Popcorn.ViewModels.Windows
             Messenger.Default.Register<PlayShowEpisodeMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath,
+                    MediaPlayer = new MediaPlayerViewModel(message.Episode.FilePath, MediaType.Show,
                         () =>
                         {
                             Messenger.Default.Send(new StopPlayingEpisodeMessage());
@@ -230,7 +230,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayMediaMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.MediaPath,
+                MediaPlayer = new MediaPlayerViewModel(message.MediaPath, MediaType.Unkown,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayMediaMessage());
@@ -250,7 +250,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayMovieMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath,
+                MediaPlayer = new MediaPlayerViewModel(message.Movie.FilePath, MediaType.Movie,
                     () =>
                     {
                         Messenger.Default.Send(new StopPlayingMovieMessage());
@@ -272,7 +272,7 @@ namespace Popcorn.ViewModels.Windows
 
             Messenger.Default.Register<PlayTrailerMessage>(this, message => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl,
+                MediaPlayer = new MediaPlayerViewModel(message.TrailerUrl, MediaType.Unkown,
                     message.TrailerStoppedAction, message.TrailerEndedAction);
                 ApplicationService.IsMediaPlaying = true;
                 IsMovieFlyoutOpen = false;

@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using NLog;
 using Popcorn.Models.Bandwidth;
+using Popcorn.Utils;
 
 namespace Popcorn.ViewModels.Pages.Player
 {
@@ -56,15 +57,21 @@ namespace Popcorn.ViewModels.Pages.Player
         public readonly Progress<BandwidthRate> BandwidthRate;
 
         /// <summary>
+        /// The media type
+        /// </summary>
+        public readonly MediaType MediaType;
+
+        /// <summary>
         /// Initializes a new instance of the MediaPlayerViewModel class.
         /// </summary>
         /// <param name="mediaPath">Media path</param>
+        /// <param name="type">Media type</param>
         /// <param name="mediaStoppedAction">Media action to execute when media has been stopped</param>
         /// <param name="mediaEndedAction">Media action to execute when media has ended</param>
         /// <param name="bufferProgress">The buffer progress</param>
         /// <param name="bandwidthRate">THe bandwidth rate</param>
         /// <param name="subtitleFilePath">Subtitle file path</param>
-        public MediaPlayerViewModel(string mediaPath, Action mediaStoppedAction,
+        public MediaPlayerViewModel(string mediaPath, MediaType type, Action mediaStoppedAction,
             Action mediaEndedAction, Progress<double> bufferProgress = null, Progress<BandwidthRate> bandwidthRate = null, string subtitleFilePath = null)
         {
             Logger.Info(
@@ -72,6 +79,7 @@ namespace Popcorn.ViewModels.Pages.Player
             RegisterCommands();
 
             MediaPath = mediaPath;
+            MediaType = type;
             _mediaStoppedAction = mediaStoppedAction;
             _mediaEndedAction = mediaEndedAction;
             SubtitleFilePath = subtitleFilePath;

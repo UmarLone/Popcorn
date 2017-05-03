@@ -35,7 +35,13 @@
                 <system:String>--no-sub-autodetect-file</system:String>
             </x:Array>
         </Grid.Resources>
-
+        <wpf:VlcPlayer
+            x:Name="Player"
+            attachedProperties:EnableDragHelper.EnableDrag="True"
+            attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
+            EndBehavior="Nothing"
+            LibVlcPath="libvlc"
+            VlcOption="{StaticResource VlcOptions}" />
         <StackPanel
             x:Name="DownloadProgress"
             Margin="20"
@@ -74,13 +80,6 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <wpf:VlcPlayer
-            x:Name="Player"
-            attachedProperties:EnableDragHelper.EnableDrag="True"
-            attachedProperties:MaximizeDoubleClickHelper.MaximizeDoubleClick="True"
-            EndBehavior="Nothing"
-            LibVlcPath="libvlc"
-            VlcOption="{StaticResource VlcOptions}" />
         <StatusBar x:Name="PlayerStatusBar" VerticalAlignment="Bottom">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>

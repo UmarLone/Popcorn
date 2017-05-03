@@ -13,6 +13,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Exceptions;
 using Popcorn.Messaging;
 using Popcorn.Models.Bandwidth;
+using Popcorn.Utils;
 
 namespace Popcorn.UserControls.Player
 {
@@ -57,7 +58,11 @@ namespace Popcorn.UserControls.Player
         /// <param name="sender">Sender object</param>
         /// <param name="e">DragStartedEventArgs</param>
         private void MediaSliderProgressDragStarted(object sender, DragStartedEventArgs e)
-            => UserIsDraggingMediaPlayerSlider = true;
+        {
+            UserIsDraggingMediaPlayerSlider = true;
+            MediaPlayerIsPlaying = false;
+            Player.Pause();
+        }
 
         /// <summary>
         /// Identifies the <see cref="Volume" /> dependency property.
@@ -72,7 +77,6 @@ namespace Popcorn.UserControls.Player
         public PlayerUserControl()
         {
             InitializeComponent();
-
             Loaded += OnLoaded;
         }
 
@@ -143,6 +147,11 @@ namespace Popcorn.UserControls.Player
             else
             {
                 Player.LoadMedia(vm.MediaPath);
+            }
+
+            if (vm.MediaType == MediaType.Unkown)
+            {
+                DownloadProgress.Visibility = Visibility.Collapsed;
             }
 
             Player.VlcMediaPlayer.EncounteredError += EncounteredError;
@@ -236,7 +245,7 @@ namespace Popcorn.UserControls.Player
         private void MediaPlayerEndReached(object sender, EventArgs e)
             => DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                if (!Player.Position.Equals(1)) return;
+                if (Player.Position < 0.99) return;
 
                 var vm = DataContext as MediaPlayerViewModel;
                 if (vm == null)
@@ -341,6 +350,8 @@ namespace Popcorn.UserControls.Player
         {
             UserIsDraggingMediaPlayerSlider = false;
             Player.Time = TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value);
+            Player.Resume();
+            MediaPlayerIsPlaying = true;
         }
 
         /// <summary>
@@ -355,12 +366,6 @@ namespace Popcorn.UserControls.Player
                     .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture) + " / " +
                 TimeSpan.FromMilliseconds(Player.Length.TotalMilliseconds)
                     .ToString(@"hh\:mm\:ss", CultureInfo.CurrentCulture);
-            if (Player.Time != TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value))
-            {
-                Player.Pause();
-                Player.Time = TimeSpan.FromMilliseconds(MediaPlayerSliderProgress.Value);
-                Player.Play();
-            }
         }
 
         /// <summary>
