@@ -14,7 +14,7 @@ namespace Popcorn.Services.Subtitles
         /// <returns>Languages</returns>
         public IEnumerable<Language> GetSubLanguages()
         {
-            using (var osdb = Osdb.Login("OSTestUserAgentTemp"))
+            using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
                 return osdb.GetSubLanguages();
             }
@@ -28,7 +28,7 @@ namespace Popcorn.Services.Subtitles
         /// <returns></returns>
         public IList<Subtitle> SearchSubtitlesFromImdb(string languages, string imdbId)
         {
-            using (var osdb = Osdb.Login("OSTestUserAgentTemp"))
+            using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
                 return osdb.SearchSubtitlesFromImdb(languages, imdbId);
             }
@@ -42,7 +42,7 @@ namespace Popcorn.Services.Subtitles
         /// <returns>Downloaded subtitle path</returns>
         public string DownloadSubtitleToPath(string path, Subtitle subtitle)
         {
-            using (var osdb = Osdb.Login("OSTestUserAgentTemp"))
+            using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
                 return osdb.DownloadSubtitleToPath(path, subtitle);
             }

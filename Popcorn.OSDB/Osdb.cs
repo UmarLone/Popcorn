@@ -3,11 +3,11 @@ using Popcorn.OSDB.Backend;
 
 namespace Popcorn.OSDB
 {
-    public static class Osdb
+    public class Osdb
     {
-        private static IOsdb _proxyInstance;
+        private IOsdb _proxyInstance;
 
-        private static IOsdb Proxy
+        private IOsdb Proxy
         {
             get
             {
@@ -19,20 +19,20 @@ namespace Popcorn.OSDB
             }
         }
 
-        public static IAnonymousClient Login(string userAgent)
+        public IAnonymousClient Login(string userAgent)
         {
             var systemLanguage = GetSystemLanguage();
             return Login(systemLanguage, userAgent);
         }
 
-        private static IAnonymousClient Login(string language, string userAgent)
+        private IAnonymousClient Login(string language, string userAgent)
         {
             var client = new AnonymousClient(Proxy);
             client.Login(string.Empty, string.Empty, language, userAgent);
             return client;
         }
 
-        private static string GetSystemLanguage()
+        private string GetSystemLanguage()
         {
             var currentCulture = System.Globalization.CultureInfo.CurrentUICulture;
             return currentCulture.TwoLetterISOLanguageName.ToLower();

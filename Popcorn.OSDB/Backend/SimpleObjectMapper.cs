@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using CookComputing.XmlRpc;
 
 namespace Popcorn.OSDB.Backend
 {
-    public static class SimpleObjectMapper
+    public class SimpleObjectMapper
     {
         public static T MapToObject<T>(XmlRpcStruct obj) where T : class
         {
@@ -19,21 +18,6 @@ namespace Popcorn.OSDB.Backend
                 {
                     member.SetValue(instance, obj[member.Name]);
                 }
-            }
-
-            return instance;
-        }
-
-        public static IDictionary<string, string> MapToDictionary(XmlRpcStruct obj)
-        {
-            if (obj == null)
-                return null;
-
-            IDictionary<string, string> instance = new Dictionary<string, string>();
-
-            foreach (string key in obj.Keys)
-            {
-                instance.Add(key, obj[key].ToString());
             }
 
             return instance;
