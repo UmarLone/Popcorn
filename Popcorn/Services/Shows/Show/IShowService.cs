@@ -10,6 +10,13 @@ namespace Popcorn.Services.Shows.Show
     public interface IShowService
     {
         /// <summary>
+        /// Get show by its Imdb code
+        /// </summary>
+        /// <param name="imdbCode">Show's Imdb code</param>
+        /// <returns>The show</returns>
+        Task<ShowJson> GetShowAsync(string imdbCode);
+
+        /// <summary>
         /// Get popular shows by page
         /// </summary>
         /// <param name="page">Page to return</param>

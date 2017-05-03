@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Movie;
 using Popcorn.Models.User;
-using TMDbLib.Objects.General;
 
 namespace Popcorn.Services.Movies.Movie
 {

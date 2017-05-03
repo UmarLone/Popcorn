@@ -104,12 +104,12 @@ namespace Popcorn.Services.Movies.Movie
             catch (Exception exception) when (exception is TaskCanceledException)
             {
                 Logger.Debug(
-                    "GetPopularMoviesAsync cancelled.");
+                    "GetMovieAsync cancelled.");
             }
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"GetPopularMoviesAsync: {exception.Message}");
+                    $"GetMovieAsync: {exception.Message}");
                 throw;
             }
             finally
@@ -212,12 +212,12 @@ namespace Popcorn.Services.Movies.Movie
             catch (Exception exception) when (exception is TaskCanceledException)
             {
                 Logger.Debug(
-                    "GetPopularMoviesAsync cancelled.");
+                    "GetMoviesAsync cancelled.");
             }
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"GetPopularMoviesAsync: {exception.Message}");
+                    $"GetMoviesAsync: {exception.Message}");
                 throw;
             }
             finally
@@ -225,7 +225,7 @@ namespace Popcorn.Services.Movies.Movie
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Debug(
-                    $"GetPopularMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
+                    $"GetMoviesAsync ({page}, {limit}) in {elapsedMs} milliseconds.");
             }
 
             var result = wrapper?.Movies ?? new List<MovieJson>();

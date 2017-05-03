@@ -252,7 +252,6 @@
                                         VerticalAlignment="Center"
                                         Opacity="0.0"
                                         RatingValue="{Binding Rating}" />
-
                                     <ToggleButton
                                         x:Name="Like"
                                         Grid.Row="2"

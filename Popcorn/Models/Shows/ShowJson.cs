@@ -14,6 +14,8 @@ namespace Popcorn.Models.Shows
 {
     public class ShowJson : ObservableObject
     {
+        private bool _isFavorite;
+
         private string _imdbId;
 
         private string _tvdbId;
@@ -183,6 +185,15 @@ namespace Popcorn.Models.Shows
         {
             get => _similars;
             set => Set(ref _similars, value);
+        }
+
+        /// <summary>
+        /// Indicate if movie is favorite
+        /// </summary>
+        public bool IsFavorite
+        {
+            get => _isFavorite;
+            set { Set(() => IsFavorite, ref _isFavorite, value); }
         }
     }
 }

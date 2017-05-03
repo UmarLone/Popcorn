@@ -12,6 +12,7 @@ using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
 using Popcorn.Services.Shows.Show;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 {
@@ -27,8 +28,9 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         /// <param name="applicationService">Application state</param>
         /// <param name="showService">Show service</param>
-        public SearchShowTabViewModel(IApplicationService applicationService, IShowService showService)
-            : base(applicationService, showService)
+        /// <param name="userService">The user service</param>
+        public SearchShowTabViewModel(IApplicationService applicationService, IShowService showService, IUserService userService)
+            : base(applicationService, showService, userService)
         {
             RegisterMessages();
             RegisterCommands();

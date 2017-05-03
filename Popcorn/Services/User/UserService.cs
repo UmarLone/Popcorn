@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Messaging;
-using Popcorn.Models.Episode;
 using Popcorn.Models.Localization;
 using Popcorn.Models.Movie;
+using Popcorn.Models.Shows;
 using Popcorn.Models.User;
 using Popcorn.Services.Movies.Movie;
 using RestSharp;
@@ -104,7 +104,7 @@ namespace Popcorn.Services.User
         /// Set if shows have been seen or set as favorite
         /// </summary>
         /// <param name="shows">All shows to compute</param>
-        public async Task SyncShowHistoryAsync(IEnumerable<EpisodeShowJson> shows)
+        public async Task SyncShowHistoryAsync(IEnumerable<ShowJson> shows)
         {
             if (shows == null) throw new ArgumentNullException(nameof(shows));
             var watch = Stopwatch.StartNew();
@@ -117,7 +117,6 @@ namespace Popcorn.Services.User
                     var updatedShow = User.MovieHistory.FirstOrDefault(p => p.ImdbId == show.ImdbId);
                     if (updatedShow == null) continue;
                     show.IsFavorite = updatedShow.Favorite;
-                    show.HasBeenSeen = updatedShow.Seen;
                 }
             }
             catch (Exception exception)
@@ -181,7 +180,7 @@ namespace Popcorn.Services.User
         /// Set the show
         /// </summary>
         /// <param name="show">Show</param>
-        public async Task SetShowAsync(EpisodeShowJson show)
+        public async Task SetShowAsync(ShowJson show)
         {
             if (show == null) throw new ArgumentNullException(nameof(show));
             var watch = Stopwatch.StartNew();
@@ -195,12 +194,10 @@ namespace Popcorn.Services.User
                     {
                         ImdbId = show.ImdbId,
                         Favorite = show.IsFavorite,
-                        Seen = show.HasBeenSeen
                     });
                 }
                 else
                 {
-                    showToUpdate.Seen = show.HasBeenSeen;
                     showToUpdate.Favorite = show.IsFavorite;
                 }
 

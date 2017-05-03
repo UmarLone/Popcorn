@@ -56,6 +56,8 @@ Popcorn.GifLoader/Bin
 Popcorn.GifLoader/Obj
 Popcorn.Utils/Bin
 Popcorn.Utils/Obj
+Popcorn.OSDB/Bin
+Popcorn.OSDB/Obj
 
 # User files
 *.suo

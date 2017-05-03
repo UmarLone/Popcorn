@@ -66,8 +66,11 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 await imdbIds.ParallelForEachAsync(async imdbId =>
                 {
                     var movie = await _movieService.GetMovieAsync(imdbId);
-                    movie.IsFavorite = true;
-                    movies.Add(movie);
+                    if (movie != null)
+                    {
+                        movie.IsFavorite = true;
+                        movies.Add(movie);
+                    }
                 });
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>

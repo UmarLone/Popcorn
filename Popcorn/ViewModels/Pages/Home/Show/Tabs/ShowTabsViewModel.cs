@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using NLog;
 using Popcorn.Helpers;
+using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Models.Genres;
 using Popcorn.Models.Shows;
 using Popcorn.Services.Shows.Show;
+using Popcorn.Services.User;
 
 namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
 {
@@ -33,6 +36,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// The rating used to filter shows
         /// </summary>
         private double _rating;
+
+        /// <summary>
+        /// Services used to interact with movie history
+        /// </summary>
+        protected readonly IUserService UserService;
 
         /// <summary>
         /// Services used to interact with shows
@@ -79,10 +87,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// </summary>
         /// <param name="applicationService">The application state</param>
         /// <param name="showService">Used to interact with shows</param>
-        protected ShowTabsViewModel(IApplicationService applicationService, IShowService showService)
+        /// <param name="userService">THe user service</param>
+        protected ShowTabsViewModel(IApplicationService applicationService, IShowService showService,
+            IUserService userService)
         {
             ApplicationService = applicationService;
             ShowService = showService;
+            UserService = userService;
 
             RegisterMessages();
             RegisterCommands();
@@ -250,6 +261,13 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         /// <returns></returns>
         private void RegisterCommands()
         {
+            SetFavoriteShowCommand =
+                new RelayCommand<ShowJson>(async show =>
+                {
+                    await UserService.SetShowAsync(show);
+                    Messenger.Default.Send(new ChangeFavoriteShowMessage());
+                });
+
             ChangeShowGenreCommand =
                 new RelayCommand<GenreJson>(genre => Genre = genre.Name ==
                                                              LocalizationProviderHelper.GetLocalizedValue<string>(

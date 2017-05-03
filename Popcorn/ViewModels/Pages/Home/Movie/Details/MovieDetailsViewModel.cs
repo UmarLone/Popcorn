@@ -13,7 +13,6 @@ using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Movie;
-using Popcorn.Models.Subtitles;
 using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
@@ -21,6 +20,7 @@ using Popcorn.ViewModels.Pages.Home.Movie.Download;
 using System.Collections.Generic;
 using Popcorn.Models.Torrent.Movie;
 using Popcorn.Services.Download;
+using Subtitle = Popcorn.Models.Subtitles.Subtitle;
 
 namespace Popcorn.ViewModels.Pages.Home.Movie.Details
 {
@@ -324,7 +324,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                                                         : a)));
                             movie.AvailableSubtitles.Insert(0, new Subtitle
                             {
-                                Sub = new OSDBnet.Subtitle
+                                Sub = new OSDB.Subtitle
                                 {
                                     LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel")
                                 }

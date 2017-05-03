@@ -10,6 +10,7 @@
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:panels="clr-namespace:Popcorn.Panels"
+    xmlns:tabs="clr-namespace:Popcorn.UserControls.Home.Show.Tabs"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
@@ -21,6 +22,7 @@
                 <Setter Property="TitleFontSize" Value="14" />
             </Style>
 
+            <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
@@ -114,6 +116,16 @@
                                                             From="0.0"
                                                             To="1.0"
                                                             Duration="0:0:01" />
+                                                        <DoubleAnimation
+                                                            AccelerationRatio="0.05"
+                                                            AutoReverse="False"
+                                                            DecelerationRatio="0.95"
+                                                            FillBehavior="HoldEnd"
+                                                            Storyboard.TargetName="Like"
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0.0"
+                                                            To="1.0"
+                                                            Duration="0:0:01" />
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger.Actions>
@@ -143,6 +155,14 @@
                                                             AutoReverse="False"
                                                             DecelerationRatio="0.95"
                                                             Storyboard.TargetName="Rating"
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0.0"
+                                                            To="0.0" />
+                                                        <DoubleAnimation
+                                                            AccelerationRatio="0.05"
+                                                            AutoReverse="False"
+                                                            DecelerationRatio="0.95"
+                                                            Storyboard.TargetName="Like"
                                                             Storyboard.TargetProperty="Opacity"
                                                             From="0.0"
                                                             To="0.0" />
@@ -192,10 +212,49 @@
                                         Grid.Row="2"
                                         Grid.Column="1"
                                         Width="60"
-                                        HorizontalAlignment="Center"
+                                        HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
                                         Opacity="0.0"
                                         RatingValue="{Binding Rating.Percentage, Converter={StaticResource RatingPercentageToNormalizedRatingConverter}}" />
+                                    <ToggleButton
+                                        x:Name="Like"
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Width="50"
+                                        Height="50"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.SetFavoriteShowCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tabs:ShowTab}}}"
+                                        CommandParameter="{Binding}"
+                                        IsChecked="{Binding IsFavorite}"
+                                        Opacity="0.0"
+                                        Style="{DynamicResource MetroCircleToggleButtonStyle}">
+                                        <Rectangle
+                                            Width="20"
+                                            Height="20"
+                                            Fill="White">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill">
+                                                    <VisualBrush.Visual>
+                                                        <Canvas
+                                                            x:Name="appbar_heart"
+                                                            Width="76"
+                                                            Height="76"
+                                                            Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                                                            <Path
+                                                                Canvas.Left="21.2717"
+                                                                Canvas.Top="25.733"
+                                                                Width="33.4542"
+                                                                Height="28.4779"
+                                                                Data="F1 M 52.2716,27.8072C 48.9356,24.164 42.0671,25.7204 38.0992,31.3618C 33.0737,25.3024 27.0713,24.164 23.7257,27.8072C 14.4142,37.9485 34.3451,52.5246 37.9599,54.1634L 38.0438,54.2109L 38.0438,54.1634C 41.6554,52.5246 61.5832,37.9485 52.2716,27.8072 Z "
+                                                                Fill="Red"
+                                                                Stretch="Fill" />
+                                                        </Canvas>
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                    </ToggleButton>
                                 </Grid>
                             </controls1:Tile>
                             <TextBlock

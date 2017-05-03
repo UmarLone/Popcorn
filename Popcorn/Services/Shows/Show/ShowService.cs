@@ -18,6 +18,51 @@ namespace Popcorn.Services.Shows.Show
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
+        /// Get show by its Imdb code
+        /// </summary>
+        /// <param name="imdbCode">Show's Imdb code</param>
+        /// <returns>The show</returns>
+        public async Task<ShowJson> GetShowAsync(string imdbCode)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var restClient = new RestClient(Utils.Constants.PopcornApi);
+            var request = new RestRequest("/{segment}/{show}", Method.GET);
+            request.AddUrlSegment("segment", "shows");
+            request.AddUrlSegment("show", imdbCode);
+            var show = new ShowJson();
+
+            try
+            {
+                var response = await restClient.ExecuteGetTaskAsync<ShowJson>(request);
+                if (response.ErrorException != null)
+                    throw response.ErrorException;
+
+                show = response.Data;
+            }
+            catch (Exception exception) when (exception is TaskCanceledException)
+            {
+                Logger.Debug(
+                    "GetShowAsync cancelled.");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(
+                    $"GetShowAsync: {exception.Message}");
+                throw;
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Debug(
+                    $"GetShowAsync ({imdbCode}) in {elapsedMs} milliseconds.");
+            }
+
+            return show;
+        }
+
+        /// <summary>
         /// Get popular shows by page
         /// </summary>
         /// <param name="page">Page to return</param>

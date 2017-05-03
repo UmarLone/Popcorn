@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Popcorn.Models.Episode;
 using Popcorn.Models.Movie;
+using Popcorn.Models.Shows;
 using Popcorn.Models.User;
 
 namespace Popcorn.Services.User
@@ -35,7 +36,7 @@ namespace Popcorn.Services.User
         /// Set if movies have been seen or set as favorite
         /// </summary>
         /// <param name="movies">All movies to compute</param>
-        Task SyncShowHistoryAsync(IEnumerable<EpisodeShowJson> movies);
+        Task SyncShowHistoryAsync(IEnumerable<ShowJson> movies);
 
         /// <summary>
         /// Set the movie
@@ -47,7 +48,7 @@ namespace Popcorn.Services.User
         /// Set the show
         /// </summary>
         /// <param name="show">Show</param>
-        Task SetShowAsync(EpisodeShowJson show);
+        Task SetShowAsync(ShowJson show);
 
         /// <summary>
         /// Get seen movies

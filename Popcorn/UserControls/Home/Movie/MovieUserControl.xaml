@@ -23,15 +23,22 @@
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
 
-            <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
+            <Style
+                x:Key="ListBoxItemContainerStyle"
+                BasedOn="{StaticResource MetroListBoxItem}"
+                TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Background" Value="#11171c" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
             </Style>
+
             <Style
                 x:Key="ListBoxButtons"
                 BasedOn="{StaticResource MetroListBox}"
                 TargetType="{x:Type ListBox}">
                 <Setter Property="Background" Value="#11171c" />
                 <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemContainerStyle}" />
             </Style>
 
             <Style x:Key="FlatButton" TargetType="{x:Type RadioButton}">

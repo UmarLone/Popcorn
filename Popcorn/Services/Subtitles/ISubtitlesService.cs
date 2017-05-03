@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OSDBnet;
+using Popcorn.OSDB;
 
 namespace Popcorn.Services.Subtitles
 {
@@ -12,7 +12,7 @@ namespace Popcorn.Services.Subtitles
         /// Get subtitles languages
         /// </summary>
         /// <returns>Languages</returns>
-        IEnumerable<OSDBnet.Language> GetSubLanguages();
+        IEnumerable<Language> GetSubLanguages();
 
         /// <summary>
         /// Search subtitles by imdb code and languages

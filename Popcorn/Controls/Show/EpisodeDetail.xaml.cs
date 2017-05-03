@@ -163,7 +163,7 @@ namespace Popcorn.Controls.Show
                                                         : a)));
                             episode.AvailableSubtitles.Insert(0, new Subtitle
                             {
-                                Sub = new OSDBnet.Subtitle
+                                Sub = new OSDB.Subtitle
                                 {
                                     LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel")
                                 }

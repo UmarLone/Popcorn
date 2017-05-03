@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:movie="clr-namespace:Popcorn.Controls.Movie"
     xmlns:search="clr-namespace:Popcorn.UserControls.Home.Search"
     xmlns:show="clr-namespace:Popcorn.Controls.Show"
     xmlns:tabs="clr-namespace:Popcorn.UserControls.Home.Show.Tabs"
@@ -19,19 +18,27 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
+            <converters:RatioConverter x:Key="RatioConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
             <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
 
-            <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
+            <Style
+                x:Key="ListBoxItemContainerStyle"
+                BasedOn="{StaticResource MetroListBoxItem}"
+                TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Background" Value="#11171c" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
             </Style>
+
             <Style
                 x:Key="ListBoxButtons"
                 BasedOn="{StaticResource MetroListBox}"
                 TargetType="{x:Type ListBox}">
                 <Setter Property="Background" Value="#11171c" />
                 <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemContainerStyle}" />
             </Style>
 
             <Style x:Key="FlatButton" TargetType="{x:Type RadioButton}">
@@ -239,13 +246,11 @@
                                 Grid.Column="1"
                                 FontSize="14"
                                 Foreground="#637D8C"
-                                Text="{lex:LocText CollectionsLabel}"
-                                Visibility="Collapsed" />
+                                Text="{lex:LocText CollectionsLabel}" />
                             <ListBox
                                 Grid.Row="7"
                                 Grid.Column="1"
-                                Style="{StaticResource ListBoxButtons}"
-                                Visibility="Collapsed">
+                                Style="{StaticResource ListBoxButtons}">
                                 <ListBoxItem>
                                     <RadioButton
                                         Height="40"
@@ -268,32 +273,6 @@
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
                                                 Text="{lex:LocText FavoritesTitleTab}" />
-                                        </StackPanel>
-                                    </RadioButton>
-                                </ListBoxItem>
-                                <ListBoxItem>
-                                    <RadioButton
-                                        Height="40"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Left"
-                                        VerticalContentAlignment="Center"
-                                        Command="{Binding SelectSeenTab}"
-                                        GroupName="Shows"
-                                        IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Path=IsSelected}"
-                                        Style="{StaticResource FlatButton}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Rectangle
-                                                Width="20"
-                                                Height="12"
-                                                Fill="White">
-                                                <Rectangle.OpacityMask>
-                                                    <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_eye}" />
-                                                </Rectangle.OpacityMask>
-                                            </Rectangle>
-                                            <TextBlock
-                                                Margin="10,0,0,0"
-                                                FontSize="16"
-                                                Text="{lex:LocText SeenTitleTab}" />
                                         </StackPanel>
                                     </RadioButton>
                                 </ListBoxItem>
@@ -413,6 +392,9 @@
                             <tabs:ShowTab Margin="20,0,0,0" />
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type tabs2:SearchShowTabViewModel}">
+                            <tabs:ShowTab Margin="20,0,0,0" />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type tabs2:FavoritesShowTabViewModel}">
                             <tabs:ShowTab Margin="20,0,0,0" />
                         </DataTemplate>
                     </controls:MetroAnimatedSingleRowTabControl.Resources>

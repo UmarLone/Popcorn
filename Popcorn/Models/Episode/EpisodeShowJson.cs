@@ -17,10 +17,6 @@ namespace Popcorn.Models.Episode
 
         private string _imdbId;
 
-        private bool _isFavorite;
-
-        private bool _hasBeenSeen;
-
         private ObservableCollection<Subtitle> _availableSubtitles =
             new ObservableCollection<Subtitle>();
 
@@ -56,24 +52,6 @@ namespace Popcorn.Models.Episode
         {
             get => _imdbId;
             set => Set(ref _imdbId, value);
-        }
-
-        /// <summary>
-        /// Indicate if movie is favorite
-        /// </summary>
-        public bool IsFavorite
-        {
-            get => _isFavorite;
-            set { Set(() => IsFavorite, ref _isFavorite, value); }
-        }
-
-        /// <summary>
-        /// Indicate if movie has been seen by the user
-        /// </summary>
-        public bool HasBeenSeen
-        {
-            get => _hasBeenSeen;
-            set { Set(() => HasBeenSeen, ref _hasBeenSeen, value); }
         }
 
         /// <summary>

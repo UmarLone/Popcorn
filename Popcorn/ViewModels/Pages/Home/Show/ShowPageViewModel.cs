@@ -1,5 +1,4 @@
 ﻿using System.Collections.Async;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +23,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// Used to interact with shows
         /// </summary>
         private readonly IShowService _showService;
+
+        /// <summary>
+        /// The user service
+        /// </summary>
+        private readonly IUserService _userService;
 
         /// <summary>
         /// <see cref="Caption"/>
@@ -59,11 +63,6 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// Command used to select the search shows tab
         /// </summary>
         public RelayCommand SelectSearchTab { get; private set; }
-
-        /// <summary>
-        /// Command used to select the seen shows tab
-        /// </summary>
-        public RelayCommand SelectSeenTab { get; private set; }
 
         /// <summary>
         /// Command used to select the favorites shows tab
@@ -106,6 +105,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
             IUserService userService, IGenreService genreService)
         {
             _showService = showService;
+            _userService = userService;
             _applicationService = applicationService;
             GenreViewModel = new GenreViewModel(userService, genreService);
             RegisterCommands();
@@ -115,9 +115,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show
 
             DispatcherHelper.CheckBeginInvokeOnUI(async () =>
             {
-                Tabs.Add(new PopularShowTabViewModel(_applicationService, showService));
-                Tabs.Add(new GreatestShowTabViewModel(_applicationService, showService));
-                Tabs.Add(new RecentShowTabViewModel(_applicationService, showService));
+                Tabs.Add(new PopularShowTabViewModel(_applicationService, showService, userService));
+                Tabs.Add(new GreatestShowTabViewModel(_applicationService, showService, userService));
+                Tabs.Add(new RecentShowTabViewModel(_applicationService, showService, userService));
+                Tabs.Add(new FavoritesShowTabViewModel(_applicationService, showService, userService));
                 SelectedTab = Tabs.First();
                 SelectedShowsIndexMenuTab = 0;
                 await GenreViewModel.LoadGenresAsync();
@@ -185,18 +186,10 @@ namespace Popcorn.ViewModels.Pages.Home.Show
 
             SelectFavoritesTab = new RelayCommand(() =>
             {
-                //if (SelectedTab is FavoritesMovieTabViewModel)
-                //    return;
-                //foreach (var favoritesTab in Tabs.OfType<FavoritesMovieTabViewModel>())
-                //    SelectedTab = favoritesTab;
-            });
-
-            SelectSeenTab = new RelayCommand(() =>
-            {
-                //if (SelectedTab is SeenMovieTabViewModel)
-                //    return;
-                //foreach (var seenTab in Tabs.OfType<SeenMovieTabViewModel>())
-                //    SelectedTab = seenTab;
+                if (SelectedTab is FavoritesShowTabViewModel)
+                    return;
+                foreach (var favoritesTab in Tabs.OfType<FavoritesShowTabViewModel>())
+                    SelectedTab = favoritesTab;
             });
         }
 
@@ -298,7 +291,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                     return;
                 }
 
-                Tabs.Add(new SearchShowTabViewModel(ApplicationService, _showService));
+                Tabs.Add(new SearchShowTabViewModel(ApplicationService, _showService, _userService));
                 SelectedTab = Tabs.Last();
                 var searchMovieTab = SelectedTab as SearchShowTabViewModel;
                 if (searchMovieTab != null)
