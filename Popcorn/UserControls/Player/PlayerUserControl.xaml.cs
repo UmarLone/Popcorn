@@ -496,8 +496,11 @@ namespace Popcorn.UserControls.Player
             Player.VlcMediaPlayer.EncounteredError -= EncounteredError;
             Player.VlcMediaPlayer.EndReached -= MediaPlayerEndReached;
             MediaPlayerIsPlaying = false;
-            Player.Stop();
-            Player.Dispose();
+            Task.Run(() =>
+            {
+                Player.Stop();
+                Player.Dispose();
+            });
 
             var window = System.Windows.Window.GetWindow(this);
             if (window != null)

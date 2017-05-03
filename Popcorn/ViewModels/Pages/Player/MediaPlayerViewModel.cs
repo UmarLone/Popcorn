@@ -95,8 +95,8 @@ namespace Popcorn.ViewModels.Pages.Player
         /// </summary>
         public void MediaEnded()
         {
-            OnStoppedPlayingMedia(new EventArgs());
             _mediaEndedAction?.Invoke();
+            OnStoppedPlayingMedia(new EventArgs());
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace Popcorn.ViewModels.Pages.Player
                 StopPlayingMediaCommand =
                     new RelayCommand(() =>
                     {
-                        OnStoppedPlayingMedia(new EventArgs());
                         _mediaStoppedAction?.Invoke();
+                        OnStoppedPlayingMedia(new EventArgs());
                     });
 
         /// <summary>
