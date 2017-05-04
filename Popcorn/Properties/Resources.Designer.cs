@@ -115,11 +115,29 @@ namespace Popcorn.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cache size (in MB).
+        /// </summary>
+        public static string CacheSizeLabel {
+            get {
+                return ResourceManager.GetString("CacheSizeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
         public static string CancelButton {
             get {
                 return ResourceManager.GetString("CancelButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Clear.
+        /// </summary>
+        public static string ClearButton {
+            get {
+                return ResourceManager.GetString("ClearButton", resourceCulture);
             }
         }
         

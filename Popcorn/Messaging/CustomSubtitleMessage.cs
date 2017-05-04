@@ -2,7 +2,7 @@
 
 namespace Popcorn.Messaging
 {
-    public class CustomMovieSubtitleMessage : MessageBase
+    public class CustomSubtitleMessage : MessageBase
     {
         public string FileName { get; set; }
 

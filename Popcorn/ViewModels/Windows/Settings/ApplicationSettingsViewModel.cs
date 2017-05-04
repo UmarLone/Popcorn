@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Threading;
+using Popcorn.Helpers;
 using Popcorn.Models.Localization;
 using Popcorn.Services.User;
+using Popcorn.Utils;
 
 namespace Popcorn.ViewModels.Windows.Settings
 {
@@ -38,12 +41,18 @@ namespace Popcorn.ViewModels.Windows.Settings
         private string _version;
 
         /// <summary>
+        /// Cache size
+        /// </summary>
+        private string _cacheSize;
+
+        /// <summary>
         /// Initializes a new instance of the ApplicationSettingsViewModel class.
         /// </summary>
         public ApplicationSettingsViewModel(IUserService userService)
         {
             _userService = userService;
-            Version = Utils.Constants.AppVersion;
+            Version = Constants.AppVersion;
+            RefreshCacheSize();
             RegisterCommands();
 
             DispatcherHelper.CheckBeginInvokeOnUI(async () =>
@@ -79,6 +88,15 @@ namespace Popcorn.ViewModels.Windows.Settings
         }
 
         /// <summary>
+        /// Cache size
+        /// </summary>
+        public string CacheSize
+        {
+            get => _cacheSize;
+            set { Set(() => CacheSize, ref _cacheSize, value); }
+        }
+
+        /// <summary>
         /// The upload limit
         /// </summary>
         public int UploadLimit
@@ -109,6 +127,16 @@ namespace Popcorn.ViewModels.Windows.Settings
         public RelayCommand InitializeAsyncCommand { get; private set; }
 
         /// <summary>
+        /// Clear the cache
+        /// </summary>
+        public RelayCommand ClearCacheCommand { get; private set; }
+
+        /// <summary>
+        /// Update size cache
+        /// </summary>
+        public RelayCommand UpdateCacheSizeCommand { get; private set; }
+
+        /// <summary>
         /// Load asynchronously the languages of the application
         /// </summary>
         private async Task InitializeAsync()
@@ -121,6 +149,25 @@ namespace Popcorn.ViewModels.Windows.Settings
         /// Register commands
         /// </summary>
         private void RegisterCommands()
-            => InitializeAsyncCommand = new RelayCommand(async () => await InitializeAsync());
+        {
+            InitializeAsyncCommand = new RelayCommand(async () => await InitializeAsync());
+            UpdateCacheSizeCommand = new RelayCommand(RefreshCacheSize);
+            ClearCacheCommand = new RelayCommand(() =>
+            {
+                FileHelper.DeleteFolder(Constants.Assets);
+                RefreshCacheSize();
+            });
+        }
+
+        /// <summary>
+        /// Refresh cache size
+        /// </summary>
+        private void RefreshCacheSize()
+        {
+            var cache = FileHelper.GetDirectorySize(Constants.Assets);
+            CacheSize =
+                (cache / 1024 / 1024)
+                .ToString(CultureInfo.InvariantCulture);
+        }
     }
 }

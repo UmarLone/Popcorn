@@ -343,15 +343,15 @@ namespace Popcorn.Models.Movie
             set
             {
                 Set(() => SelectedSubtitle, ref _selectedSubtitle, value);
-                if (value != null && value.Sub.SubtitleId == "custom")
+                if (SelectedSubtitle != null && SelectedSubtitle.Sub.SubtitleId == "custom")
                 {
                     DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                     {
-                        var message = new CustomMovieSubtitleMessage();
+                        var message = new CustomSubtitleMessage();
                         await Messenger.Default.SendAsync(message);
-                        if (message.Error)
+                        if (message.Error || string.IsNullOrEmpty(message.FileName))
                         {
-                            SelectedSubtitle = AvailableSubtitles.FirstOrDefault(a => a.Sub.SubtitleId == "none");
+                            SelectedSubtitle.FilePath = string.Empty;
                         }
                         else
                         {

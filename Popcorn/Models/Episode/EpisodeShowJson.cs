@@ -1,5 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
+using Popcorn.Extensions;
+using Popcorn.Messaging;
 using Popcorn.Models.Subtitles;
 using Popcorn.Models.Torrent.Show;
 using RestSharp.Deserializers;
@@ -9,7 +14,7 @@ namespace Popcorn.Models.Episode
 {
     public class EpisodeShowJson : ObservableObject, IMediaFile
     {
-        private bool _watchInFullHqQuality;
+        private bool _watchHdQuality;
 
         private string _title;
 
@@ -36,16 +41,51 @@ namespace Popcorn.Models.Episode
 
         private int? _tvdbId;
 
-        public bool WatchInFullHdQuality
+        private bool _hdAvailable;
+
+        private TorrentShowJson _selectedTorrent;
+
+        public bool WatchHdQuality
         {
-            get => _watchInFullHqQuality;
-            set => Set(ref _watchInFullHqQuality, value);
+            get => _watchHdQuality;
+            set
+            {
+                Set(ref _watchHdQuality, value);
+                if (value && (Torrents.Torrent_720p?.Url != null ||
+                              Torrents.Torrent_1080p?.Url != null))
+                {
+                    SelectedTorrent = !string.IsNullOrEmpty(Torrents.Torrent_1080p?.Url)
+                        ? Torrents.Torrent_1080p
+                        : Torrents.Torrent_720p;
+                }
+                else
+                {
+                    SelectedTorrent = !string.IsNullOrEmpty(Torrents.Torrent_480p?.Url)
+                        ? Torrents.Torrent_480p
+                        : Torrents.Torrent_0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicate if full HQ quality is available
+        /// </summary>
+        public bool HdAvailable
+        {
+            get => _hdAvailable;
+            set { Set(() => HdAvailable, ref _hdAvailable, value); }
         }
 
         public string FilePath
         {
             get => _filePath;
             set => Set(ref _filePath, value);
+        }
+        
+        public TorrentShowJson SelectedTorrent
+        {
+            get => _selectedTorrent;
+            set => Set(ref _selectedTorrent, value);
         }
 
         public string ImdbId
@@ -69,7 +109,26 @@ namespace Popcorn.Models.Episode
         public Subtitle SelectedSubtitle
         {
             get => _selectedSubtitle;
-            set { Set(() => SelectedSubtitle, ref _selectedSubtitle, value); }
+            set
+            {
+                Set(() => SelectedSubtitle, ref _selectedSubtitle, value);
+                if (SelectedSubtitle != null && SelectedSubtitle.Sub.SubtitleId == "custom")
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                    {
+                        var message = new CustomSubtitleMessage();
+                        await Messenger.Default.SendAsync(message);
+                        if (message.Error || string.IsNullOrEmpty(message.FileName))
+                        {
+                            SelectedSubtitle.FilePath = string.Empty;
+                        }
+                        else
+                        {
+                            SelectedSubtitle.FilePath = message.FileName;
+                        }
+                    });
+                }
+            }
         }
 
         [DeserializeAs(Name = "torrents")]

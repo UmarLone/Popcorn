@@ -13,10 +13,14 @@
     lex:LocalizeDictionary.DesignCulture="en"
     lex:ResxLocalizationProvider.DefaultAssembly="Popcorn"
     lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+    Background="Transparent"
     DataContext="{Binding ApplicationSettings, Source={StaticResource Locator}}"
     mc:Ignorable="d">
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="GotFocus">
+            <command:EventToCommand Command="{Binding Mode=OneWay, Path=UpdateCacheSizeCommand}" PassEventArgsToCommand="False" />
+        </i:EventTrigger>
         <i:EventTrigger EventName="Loaded">
             <command:EventToCommand Command="{Binding Mode=OneWay, Path=InitializeAsyncCommand}" PassEventArgsToCommand="False" />
         </i:EventTrigger>
@@ -28,6 +32,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -59,7 +64,10 @@
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelCol" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{lex:LocText DownloadLimitLabel}" />
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="{lex:LocText DownloadLimitLabel}" />
             <controls:NumericUpDown
                 Grid.Column="1"
                 HorizontalAlignment="Right"
@@ -78,7 +86,10 @@
                 <ColumnDefinition Width="Auto" SharedSizeGroup="LabelCol" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{lex:LocText UploadLimitLabel}" />
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="{lex:LocText UploadLimitLabel}" />
             <controls:NumericUpDown
                 Grid.Column="1"
                 HorizontalAlignment="Right"
@@ -88,7 +99,37 @@
                 Minimum="0"
                 Value="{Binding UploadLimit}" />
         </Grid>
-        <Grid Grid.Row="3" Grid.Column="1">
+        <Grid
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelCol" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="{lex:LocText CacheSizeLabel}" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding CacheSize}" />
+                <Button
+                    Width="100"
+                    Height="30"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Command="{Binding ClearCacheCommand}"
+                    Content="{lex:LocText ClearButton}" />
+            </StackPanel>
+
+        </Grid>
+        <Grid Grid.Row="4" Grid.Column="1">
             <TextBlock
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"

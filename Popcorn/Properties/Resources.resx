@@ -342,4 +342,10 @@
   <data name="Speed" xml:space="preserve">
     <value>(kB/s)</value>
   </data>
+  <data name="CacheSizeLabel" xml:space="preserve">
+    <value>Cache size (in MB)</value>
+  </data>
+  <data name="ClearButton" xml:space="preserve">
+    <value>Clear</value>
+  </data>
 </root>

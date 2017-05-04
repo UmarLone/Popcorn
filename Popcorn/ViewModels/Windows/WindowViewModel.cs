@@ -12,8 +12,10 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using NLog;
 using Popcorn.Dialogs;
+using Popcorn.Extensions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
@@ -33,12 +35,22 @@ namespace Popcorn.ViewModels.Windows
     /// <summary>
     /// Window applcation's viewmodel
     /// </summary>
-    public class WindowViewModel : ViewModelBase
+    public class WindowViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Disposed
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Holds the async message relative to <see cref="CustomSubtitleMessage"/>
+        /// </summary>
+        private IDisposable _customSubtitleMessage;
 
         /// <summary>
         /// Used to define the dialog context
@@ -333,6 +345,30 @@ namespace Popcorn.ViewModels.Windows
                 });
 
             Messenger.Default.Register<UnhandledExceptionMessage>(this, message => ManageException(message.Exception));
+
+            _customSubtitleMessage = Messenger.Default.RegisterAsyncMessage<CustomSubtitleMessage>(
+                async message =>
+                {
+                    var fileDialog = new OpenFileDialog
+                    {
+                        Title = "Open Sub File",
+                        Filter = "SUB files (*.sub,*srt,*sbv)|*.sub;*.srt;*.sbv",
+                        InitialDirectory = @"C:\"
+                    };
+
+                    if (fileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            message.FileName = fileDialog.FileName;
+                            await Task.FromResult(message.FileName);
+                        }
+                        catch (Exception)
+                        {
+                            message.Error = true;
+                        }
+                    }
+                });
         }
 
         /// <summary>
@@ -418,80 +454,22 @@ namespace Popcorn.ViewModels.Windows
         {
             if (Directory.Exists(Constants.Subtitles))
             {
-                foreach (
-                    var filePath in Directory.GetDirectories(Constants.Subtitles)
-                )
-                {
-                    try
-                    {
-                        Logger.Debug(
-                            $"Deleting directory: {filePath}");
-                        Directory.Delete(filePath, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error while deleting directory: {ex.Message}.");
-                    }
-                }
+                FileHelper.DeleteFolder(Constants.Subtitles);
             }
 
             if (Directory.Exists(Constants.MovieDownloads))
             {
-                foreach (
-                    var filePath in Directory.GetDirectories(Constants.MovieDownloads)
-                )
-                {
-                    try
-                    {
-                        Logger.Debug(
-                            $"Deleting directory: {filePath}");
-                        Directory.Delete(filePath, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error while deleting directory: {ex.Message}.");
-                    }
-                }
+                FileHelper.DeleteFolder(Constants.MovieDownloads);
             }
 
             if (Directory.Exists(Constants.ShowDownloads))
             {
-                foreach (
-                    var filePath in Directory.GetFiles(Constants.ShowDownloads, "*.*",
-                        SearchOption.AllDirectories)
-                )
-                {
-                    try
-                    {
-                        Logger.Debug(
-                            $"Deleting file: {filePath}");
-                        File.Delete(filePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error while deleting file: {ex.Message}.");
-                    }
-                }
+                FileHelper.DeleteFolder(Constants.ShowDownloads);
             }
 
             if (Directory.Exists(Constants.MovieTorrentDownloads))
             {
-                foreach (
-                    var filePath in Directory.GetFiles(Constants.MovieTorrentDownloads, "*.*",
-                        SearchOption.AllDirectories)
-                )
-                {
-                    try
-                    {
-                        Logger.Debug(
-                            $"Deleting file: {filePath}");
-                        File.Delete(filePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error while deleting file: {ex.Message}.");
-                    }
-                }
+                FileHelper.DeleteFolder(Constants.MovieTorrentDownloads);
             }
         }
 
@@ -623,6 +601,32 @@ namespace Popcorn.ViewModels.Windows
                 _isManagingException = false;
                 await _dialogCoordinator.HideMetroDialogAsync(this, exceptionDialog);
             });
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                _customSubtitleMessage?.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }

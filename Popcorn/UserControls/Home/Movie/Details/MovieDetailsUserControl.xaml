@@ -388,7 +388,7 @@
                                         DisplayMemberPath="Sub.LanguageName"
                                         ItemsSource="{Binding Movie.AvailableSubtitles}"
                                         SelectedIndex="0"
-                                        SelectedItem="{Binding Movie.SelectedSubtitle}">
+                                        SelectedItem="{Binding Movie.SelectedSubtitle, UpdateSourceTrigger=PropertyChanged}">
                                         <controls:SplitButton.Icon>
                                             <iconPacks:PackIconMaterial Margin="6" Kind="Translate" />
                                         </controls:SplitButton.Icon>

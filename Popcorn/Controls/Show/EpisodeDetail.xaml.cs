@@ -6,12 +6,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
+using Popcorn.Converters;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.Episode;
@@ -45,6 +48,8 @@ namespace Popcorn.Controls.Show
         /// </summary>
         private bool _loadingSubtitles;
 
+        private double _torrentHealth;
+
         /// <summary>
         /// Selected episode
         /// </summary>
@@ -67,10 +72,87 @@ namespace Popcorn.Controls.Show
             var date = dtDateTime.AddSeconds(episode.FirstAired).ToLocalTime();
             detail.Duration.Text = $"Released {date.ToShortDateString()}";
             detail.Synopsis.Text = episode.Overview;
+            episode.HdAvailable = episode.Torrents.Torrent_720p?.Url != null ||
+                                  episode.Torrents.Torrent_1080p?.Url != null;
+            ComputeTorrentHealth(episode, detail);
+            detail.Peers.Text = episode.SelectedTorrent.Peers.ToString();
+            detail.Seeders.Text = episode.SelectedTorrent.Seeds.ToString();
+            var brushConverter = new ValueToBrushConverter();
+            var healthConverter = new TorrentHealthToLabelConverter();
+            detail.Health.Foreground = (Brush) brushConverter.Convert(detail.TorrentHealth, typeof(TextBlock), "0|10",
+                CultureInfo.CurrentCulture);
+            detail.Health.Text = (string) healthConverter.Convert(detail.TorrentHealth, typeof(TextBlock), "0|10",
+                CultureInfo.CurrentCulture);
             Task.Run(async () =>
             {
                 await detail.LoadSubtitles(episode);
             });
+        }
+
+        /// <summary>
+        /// Torrent health, from 0 to 10
+        /// </summary>
+        public double TorrentHealth
+        {
+            get => _torrentHealth;
+            set
+            {
+                _torrentHealth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Compute torrent health
+        /// </summary>
+        private static void ComputeTorrentHealth(EpisodeShowJson episode, EpisodeDetail detail)
+        {
+            episode.WatchHdQuality = episode.HdAvailable;
+            var torrent = episode.SelectedTorrent;
+            if (torrent != null && torrent.Seeds < 4)
+            {
+                detail.TorrentHealth = 0;
+            }
+            else if (torrent != null && torrent.Seeds < 6)
+            {
+                detail.TorrentHealth = 1;
+            }
+            else if (torrent != null && torrent.Seeds < 8)
+            {
+                detail.TorrentHealth = 2;
+            }
+            else if (torrent != null && torrent.Seeds < 10)
+            {
+                detail.TorrentHealth = 3;
+            }
+            else if (torrent != null && torrent.Seeds < 12)
+            {
+                detail.TorrentHealth = 4;
+            }
+            else if (torrent != null && torrent.Seeds < 14)
+            {
+                detail.TorrentHealth = 5;
+            }
+            else if (torrent != null && torrent.Seeds < 16)
+            {
+                detail.TorrentHealth = 6;
+            }
+            else if (torrent != null && torrent.Seeds < 18)
+            {
+                detail.TorrentHealth = 7;
+            }
+            else if (torrent != null && torrent.Seeds < 20)
+            {
+                detail.TorrentHealth = 8;
+            }
+            else if (torrent != null && torrent.Seeds < 22)
+            {
+                detail.TorrentHealth = 9;
+            }
+            else if (torrent != null && torrent.Seeds >= 22)
+            {
+                detail.TorrentHealth = 10;
+            }
         }
 
         /// <summary>
@@ -163,7 +245,8 @@ namespace Popcorn.Controls.Show
                         {
                             Sub = new OSDB.Subtitle
                             {
-                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel")
+                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"),
+                                SubtitleId = "none"
                             }
                         });
 
@@ -171,7 +254,8 @@ namespace Popcorn.Controls.Show
                         {
                             Sub = new OSDB.Subtitle
                             {
-                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel")
+                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel"),
+                                SubtitleId = "custom"
                             }
                         });
 

@@ -17,8 +17,6 @@ using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
-using Microsoft.Win32;
-using Popcorn.Extensions;
 using Popcorn.Models.Torrent.Movie;
 using Popcorn.Services.Download;
 using Subtitle = Popcorn.Models.Subtitles.Subtitle;
@@ -34,11 +32,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// Logger of the class
         /// </summary>
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        /// Holds the async message relative to <see cref="CustomMovieSubtitleMessage"/>
-        /// </summary>
-        private IDisposable _customMovieSubtitleMessage;
 
         /// <summary>
         /// The service used to interact with movies
@@ -385,30 +378,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 if (e.PropertyName != GetPropertyName(() => Movie.WatchInFullHdQuality)) return;
                 ComputeTorrentHealth();
             });
-
-            _customMovieSubtitleMessage = Messenger.Default.RegisterAsyncMessage<CustomMovieSubtitleMessage>(
-                async message =>
-                {
-                    var fileDialog = new OpenFileDialog
-                    {
-                        Title = "Open Sub File",
-                        Filter = "SUB files (*.sub,*srt,*sbv)|*.sub;*.srt;*.sbv",
-                        InitialDirectory = @"C:\"
-                    };
-
-                    if (fileDialog.ShowDialog() == true)
-                    {
-                        try
-                        {
-                            message.FileName = fileDialog.FileName;
-                            await Task.FromResult(message.FileName);
-                        }
-                        catch (Exception)
-                        {
-                            message.Error = true;
-                        }
-                    }
-                });
         }
 
         /// <summary>
@@ -578,10 +547,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             IsDownloadingMovie = false;
             DownloadMovie.StopDownloadingMovie();
         }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
+        
         /// <summary>
         /// Dispose
         /// </summary>
@@ -604,7 +570,6 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             {
                 CancellationLoadingToken?.Dispose();
                 CancellationLoadingTrailerToken?.Dispose();
-                _customMovieSubtitleMessage?.Dispose();
             }
 
             _disposed = true;

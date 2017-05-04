@@ -221,22 +221,11 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                 {
                     try
                     {
-                        string magnetUri;
-                        if (Episode.WatchInFullHdQuality && (Episode.Torrents.Torrent_720p?.Url != null ||
-                                                             Episode.Torrents.Torrent_1080p?.Url != null))
-                        {
-                            magnetUri = Episode.Torrents.Torrent_720p?.Url ?? Episode.Torrents.Torrent_1080p.Url;
-                        }
-                        else
-                        {
-                            magnetUri = Episode.Torrents.Torrent_480p?.Url ?? Episode.Torrents.Torrent_0.Url;
-                        }
-
                         Task.Run(async () =>
                         {
                             var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
                             await _downloadService.Download(message.Episode, TorrentType.Magnet, MediaType.Show,
-                                magnetUri, settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
+                                Episode.SelectedTorrent.Url, settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
                                 reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
                                 CancellationDownloadingEpisode).ConfigureAwait(false);
                         }).ConfigureAwait(false);

@@ -10,12 +10,17 @@ namespace Popcorn.Utils
         /// <summary>
         /// App version
         /// </summary>
-        public const string AppVersion = "1.15.0";
+        public const string AppVersion = "1.16.0";
 
         /// <summary>
         /// Endpoint to API
         /// </summary>
         public const string PopcornApi = "https://popcornapi.azurewebsites.net/api";
+
+        /// <summary>
+        /// Application Insights key
+        /// </summary>
+        public const string AiKey = "647b7610-bfc7-4b78-962d-822f7e59eda3";
 
         /// <summary>
         /// Client ID for TMDb

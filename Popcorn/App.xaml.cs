@@ -7,9 +7,12 @@ using System.Windows;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using Microsoft.ApplicationInsights.NLogTarget;
 using NLog;
+using NLog.Config;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
+using Popcorn.Utils;
 using Popcorn.Utils.Exceptions;
 using Popcorn.Windows;
 using WPFLocalizeExtension.Engine;
@@ -24,7 +27,7 @@ namespace Popcorn
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Splash screen dispatcher
@@ -34,7 +37,7 @@ namespace Popcorn
         /// <summary>
         /// Watcher
         /// </summary>
-        private static Stopwatch _watchStart;
+        private static Stopwatch WatchStart { get; }
 
         /// <summary>
         /// Initializes a new instance of the App class.
@@ -43,12 +46,15 @@ namespace Popcorn
         {
             Logger.Info(
                 "Popcorn starting...");
-            _watchStart = Stopwatch.StartNew();
-
-            Directory.CreateDirectory(Utils.Constants.Logging);
-
+            WatchStart = Stopwatch.StartNew();
+            Directory.CreateDirectory(Constants.Logging);
+            var config = new LoggingConfiguration();
+            var target =
+                new ApplicationInsightsTarget {InstrumentationKey = Constants.AiKey};
+            var rule = new LoggingRule("*", LogLevel.Trace, target);
+            config.LoggingRules.Add(rule);
+            LogManager.Configuration = config;
             DispatcherHelper.Initialize();
-
             LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
         }
 
@@ -143,8 +149,8 @@ namespace Popcorn
                 {
                     _splashScreenDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
                     mainWindow.Activate();
-                    _watchStart.Stop();
-                    var elapsedStartMs = _watchStart.ElapsedMilliseconds;
+                    WatchStart.Stop();
+                    var elapsedStartMs = WatchStart.ElapsedMilliseconds;
                     Logger.Info(
                         $"Popcorn started in {elapsedStartMs} milliseconds.");
                 });
