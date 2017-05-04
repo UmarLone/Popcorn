@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Popcorn.Exceptions
+namespace Popcorn.Utils.Exceptions
 {
     /// <summary>
     /// Popcorn exception

@@ -85,7 +85,7 @@ namespace Popcorn.Controls
                     isKeyHandled = true;
                 }
 
-                if (newVerticalPos != thisScroller.TargetVerticalOffset)
+                if (!newVerticalPos.Equals(thisScroller.TargetVerticalOffset))
                 {
                     thisScroller.TargetVerticalOffset = newVerticalPos;
                 }
@@ -105,7 +105,7 @@ namespace Popcorn.Controls
                     isKeyHandled = true;
                 }
 
-                if (newHorizontalPos != thisScroller.TargetHorizontalOffset)
+                if (!newHorizontalPos.Equals(thisScroller.TargetHorizontalOffset))
                 {
                     thisScroller.TargetHorizontalOffset = newHorizontalPos;
                 }
@@ -163,28 +163,28 @@ namespace Popcorn.Controls
 
         void VScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            AnimatedScrollViewer thisScroller = this;
-            double oldTargetVOffset = (double) e.OldValue;
-            double newTargetVOffset = (double) e.NewValue;
+            var thisScroller = this;
+            var oldTargetVOffset = e.OldValue;
+            var newTargetVOffset = e.NewValue;
 
-            if (newTargetVOffset != thisScroller.TargetVerticalOffset)
+            if (!newTargetVOffset.Equals(thisScroller.TargetVerticalOffset))
             {
-                double deltaVOffset = Math.Round((newTargetVOffset - oldTargetVOffset), 3);
+                var deltaVOffset = Math.Round((newTargetVOffset - oldTargetVOffset), 3);
 
-                if (deltaVOffset == 1)
+                if (deltaVOffset.Equals(1d))
                 {
                     thisScroller.TargetVerticalOffset = oldTargetVOffset + thisScroller.ViewportHeight;
 
                 }
-                else if (deltaVOffset == -1)
+                else if (deltaVOffset.Equals(-1d))
                 {
                     thisScroller.TargetVerticalOffset = oldTargetVOffset - thisScroller.ViewportHeight;
                 }
-                else if (deltaVOffset == 0.1)
+                else if (deltaVOffset.Equals(0.1d))
                 {
                     thisScroller.TargetVerticalOffset = oldTargetVOffset + 16.0;
                 }
-                else if (deltaVOffset == -0.1)
+                else if (deltaVOffset.Equals(-0.1d))
                 {
                     thisScroller.TargetVerticalOffset = oldTargetVOffset - 16.0;
                 }
@@ -197,30 +197,30 @@ namespace Popcorn.Controls
 
         void HScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            AnimatedScrollViewer thisScroller = this;
+            var thisScroller = this;
 
-            double oldTargetHOffset = (double) e.OldValue;
-            double newTargetHOffset = (double) e.NewValue;
+            var oldTargetHOffset = e.OldValue;
+            var newTargetHOffset = e.NewValue;
 
-            if (newTargetHOffset != thisScroller.TargetHorizontalOffset)
+            if (!newTargetHOffset.Equals(thisScroller.TargetHorizontalOffset))
             {
 
-                double deltaVOffset = Math.Round((newTargetHOffset - oldTargetHOffset), 3);
+                var deltaVOffset = Math.Round((newTargetHOffset - oldTargetHOffset), 3);
 
-                if (deltaVOffset == 1)
+                if (deltaVOffset.Equals(1d))
                 {
                     thisScroller.TargetHorizontalOffset = oldTargetHOffset + thisScroller.ViewportWidth;
 
                 }
-                else if (deltaVOffset == -1)
+                else if (deltaVOffset.Equals(-1d))
                 {
                     thisScroller.TargetHorizontalOffset = oldTargetHOffset - thisScroller.ViewportWidth;
                 }
-                else if (deltaVOffset == 0.1)
+                else if (deltaVOffset.Equals(0.1d))
                 {
                     thisScroller.TargetHorizontalOffset = oldTargetHOffset + 16.0;
                 }
-                else if (deltaVOffset == -0.1)
+                else if (deltaVOffset.Equals(-0.1d))
                 {
                     thisScroller.TargetHorizontalOffset = oldTargetHOffset - 16.0;
                 }

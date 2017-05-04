@@ -212,7 +212,7 @@ namespace Popcorn.ImageLoader
             if (!string.IsNullOrWhiteSpace(source))
             {
                 Stream imageStream = null;
-                SourceType sourceType = SourceType.ExternalResource;
+                var sourceType = SourceType.ExternalResource;
 
                 image.Dispatcher.Invoke(new ThreadStart(delegate
                 {
@@ -223,7 +223,7 @@ namespace Popcorn.ImageLoader
                 {
                     if (loadTask.Stream == null)
                     {
-                        ILoader loader = LoaderFactory.CreateLoader(sourceType);
+                        var loader = LoaderFactory.CreateLoader(sourceType);
                         imageStream = await loader.Load(source);
                         loadTask.Stream = imageStream;
                     }
@@ -237,6 +237,7 @@ namespace Popcorn.ImageLoader
                 }
                 catch (Exception)
                 {
+                    // TODO
                 }
 
                 if (imageStream != null)
@@ -284,6 +285,7 @@ namespace Popcorn.ImageLoader
                     }
                     catch (Exception)
                     {
+                        // TODO
                     }
                 }
 

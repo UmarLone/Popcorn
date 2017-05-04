@@ -54,7 +54,7 @@ namespace Popcorn.GifLoader
                 typeof(ImageBehavior),
                 new UIPropertyMetadata(
                     null,
-                    AnimatedSourceChanged));
+                    async (s, e) => await AnimatedSourceChanged(s, e)));
 
         /// <summary>
         /// Gets the value of the <c>RepeatBehavior</c> attached property for the specified object.
@@ -87,7 +87,7 @@ namespace Popcorn.GifLoader
                 typeof(ImageBehavior),
                 new UIPropertyMetadata(
                     default(RepeatBehavior),
-                    RepeatBehaviorChanged));
+                    async (s, e) => await RepeatBehaviorChanged(s, e)));
 
         /// <summary>
         /// Gets the value of the <c>AnimateInDesignMode</c> attached property for the specified object.
@@ -120,7 +120,7 @@ namespace Popcorn.GifLoader
                 new FrameworkPropertyMetadata(
                     false,
                     FrameworkPropertyMetadataOptions.Inherits,
-                    AnimateInDesignModeChanged));
+                    async (s, e) => await AnimateInDesignModeChanged(s, e)));
 
         /// <summary>
         /// Gets the value of the <c>AutoStart</c> attached property for the specified object.
@@ -271,7 +271,7 @@ namespace Popcorn.GifLoader
 
         #endregion
 
-        private static async void AnimatedSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async Task AnimatedSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)
@@ -321,7 +321,7 @@ namespace Popcorn.GifLoader
                 controller.Dispose();
         }
 
-        private static async void RepeatBehaviorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async Task RepeatBehaviorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)
@@ -337,7 +337,7 @@ namespace Popcorn.GifLoader
             }
         }
 
-        private static async void AnimateInDesignModeChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async Task AnimateInDesignModeChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)

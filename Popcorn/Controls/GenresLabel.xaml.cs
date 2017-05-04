@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 
@@ -75,7 +76,7 @@ namespace Popcorn.Controls
         {
             if (string.IsNullOrEmpty(input))
                 throw new ArgumentException("Input is empty");
-            return input.First().ToString().ToUpper() + input.Substring(1);
+            return input.First().ToString().ToUpper(CultureInfo.InvariantCulture) + input.Substring(1);
         }
     }
 }

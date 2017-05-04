@@ -7,10 +7,10 @@ using lt;
 using NLog;
 using System.IO;
 using GalaSoft.MvvmLight.Messaging;
-using Popcorn.Exceptions;
 using Popcorn.Messaging;
 using Popcorn.Models.Bandwidth;
 using Popcorn.Models.Media;
+using Popcorn.Utils.Exceptions;
 
 namespace Popcorn.Services.Download
 {

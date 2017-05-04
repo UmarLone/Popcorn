@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -9,9 +8,9 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
-using Popcorn.Exceptions;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
+using Popcorn.Utils.Exceptions;
 using Popcorn.Windows;
 using WPFLocalizeExtension.Engine;
 

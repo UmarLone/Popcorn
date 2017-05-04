@@ -21,11 +21,11 @@ namespace Popcorn.Behaviors
 
         #region VerticalOffset Property
 
-        public static DependencyProperty VerticalOffsetProperty =
-            DependencyProperty.RegisterAttached("VerticalOffset",
-                typeof(double),
-                typeof(ScrollAnimationBehavior),
-                new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
+        public static DependencyProperty VerticalOffsetProperty { get; } = DependencyProperty.RegisterAttached(
+            "VerticalOffset",
+            typeof(double),
+            typeof(ScrollAnimationBehavior),
+            new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
 
         public static void SetVerticalOffset(FrameworkElement target, double value)
         {
@@ -41,11 +41,11 @@ namespace Popcorn.Behaviors
 
         #region TimeDuration Property
 
-        public static DependencyProperty TimeDurationProperty =
-            DependencyProperty.RegisterAttached("TimeDuration",
-                typeof(TimeSpan),
-                typeof(ScrollAnimationBehavior),
-                new PropertyMetadata(new TimeSpan(0, 0, 0, 0, 0)));
+        public static DependencyProperty TimeDurationProperty { get; } = DependencyProperty.RegisterAttached(
+            "TimeDuration",
+            typeof(TimeSpan),
+            typeof(ScrollAnimationBehavior),
+            new PropertyMetadata(new TimeSpan(0, 0, 0, 0, 0)));
 
         public static void SetTimeDuration(FrameworkElement target, TimeSpan value)
         {
@@ -61,11 +61,11 @@ namespace Popcorn.Behaviors
 
         #region PointsToScroll Property
 
-        public static DependencyProperty PointsToScrollProperty =
-            DependencyProperty.RegisterAttached("PointsToScroll",
-                typeof(double),
-                typeof(ScrollAnimationBehavior),
-                new PropertyMetadata(0.0));
+        public static DependencyProperty PointsToScrollProperty { get; } = DependencyProperty.RegisterAttached(
+            "PointsToScroll",
+            typeof(double),
+            typeof(ScrollAnimationBehavior),
+            new PropertyMetadata(0.0));
 
         public static void SetPointsToScroll(FrameworkElement target, double value)
         {
@@ -95,11 +95,10 @@ namespace Popcorn.Behaviors
 
         #region IsEnabled Property
 
-        public static DependencyProperty IsEnabledProperty =
-            DependencyProperty.RegisterAttached("IsEnabled",
-                typeof(bool),
-                typeof(ScrollAnimationBehavior),
-                new UIPropertyMetadata(false, OnIsEnabledChanged));
+        public static DependencyProperty IsEnabledProperty { get; } = DependencyProperty.RegisterAttached("IsEnabled",
+            typeof(bool),
+            typeof(ScrollAnimationBehavior),
+            new UIPropertyMetadata(false, OnIsEnabledChanged));
 
         public static void SetIsEnabled(FrameworkElement target, bool value)
         {
@@ -308,7 +307,7 @@ namespace Popcorn.Behaviors
                 isKeyHandled = true;
             }
 
-            if (newVerticalPos != GetVerticalOffset(scroller))
+            if (!newVerticalPos.Equals(GetVerticalOffset(scroller)))
             {
                 AnimateScroll(scroller, newVerticalPos);
             }

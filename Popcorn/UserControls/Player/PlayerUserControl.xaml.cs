@@ -10,10 +10,10 @@ using GalaSoft.MvvmLight.Threading;
 using Popcorn.ViewModels.Pages.Player;
 using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
-using Popcorn.Exceptions;
 using Popcorn.Messaging;
 using Popcorn.Models.Bandwidth;
 using Popcorn.Utils;
+using Popcorn.Utils.Exceptions;
 
 namespace Popcorn.UserControls.Player
 {

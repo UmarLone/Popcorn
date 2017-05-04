@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Exceptions\PopcornException.cs" />
     <Compile Include="Extensions\HttpContentExtensions.cs" />
     <Compile Include="FastDirectoryEnumerator.cs" />
     <Compile Include="MediaType.cs" />

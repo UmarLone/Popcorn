@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Popcorn.Utils.Exceptions;
 
 namespace Popcorn.ImageLoader.ImageLoaders
 {
@@ -16,7 +13,7 @@ namespace Popcorn.ImageLoader.ImageLoaders
                 case SourceType.ExternalResource:
                     return new ExternalLoader();
                 default:
-                    throw new ApplicationException("Unexpected exception");
+                    throw new PopcornException("Unexpected exception");
             }
         }
     }

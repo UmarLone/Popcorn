@@ -276,7 +276,6 @@
     </Compile>
     <Compile Include="Controls\AnimatedScrollViewer.cs" />
     <Compile Include="Events\SelectedSeasonChangedEventArgs.cs" />
-    <Compile Include="Exceptions\PopcornException.cs" />
     <Compile Include="Extensions\MessengerExtensions.cs" />
     <Compile Include="Extensions\SortExtensions.cs" />
     <Compile Include="Helpers\AsyncSynchronizationContext.cs" />
