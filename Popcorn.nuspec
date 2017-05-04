@@ -382,5 +382,7 @@
         <file src="Popcorn.GifLoader.dll" target="lib\net45\Popcorn.GifLoader.dll" />
         <file src="Popcorn.Utils.dll" target="lib\net45\Popcorn.Utils.dll" />
         <file src="Assets\SplashScreen.gif" target="lib\net45\Assets\SplashScreen.gif" />
+        <file src="Microsoft.ApplicationInsights.dll" target="lib\net45\Microsoft.ApplicationInsights.dll" />
+        <file src="Microsoft.ApplicationInsights.NLogTarget.dll" target="lib\net45\Microsoft.ApplicationInsights.NLogTarget.dll" />
     </files>
 </package>
