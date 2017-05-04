@@ -33,35 +33,55 @@ namespace Popcorn.Services.User
         /// </summary>
         private readonly IMovieService _movieService;
 
+        /// <summary>
+        /// User Id (Machine Guid)
+        /// </summary>
         private readonly string _userId;
 
+        /// <summary>
+        /// User
+        /// </summary>
         private UserJson User { get; set; }
 
+        private IRestClient RestClient { get; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="movieService"><see cref="IMovieService"/></param>
+        /// <param name="userId">User Id (Machine Guid)</param>
         public UserService(IMovieService movieService, string userId)
         {
             _movieService = movieService;
             _userId = userId;
+            RestClient = new RestClient(Constants.PopcornApi);
         }
 
+        /// <summary>
+        /// Refresh user history
+        /// </summary>
+        /// <returns></returns>
         private async Task GetHistoryAsync()
         {
-            var restClient = new RestClient(Utils.Constants.PopcornApi);
             var request = new RestRequest("/{segment}/{userId}", Method.GET);
             request.AddUrlSegment("segment", "user");
             request.AddUrlSegment("userId", _userId);
-            var response = await restClient.ExecuteTaskAsync<UserJson>(request);
+            var response = await RestClient.ExecuteTaskAsync<UserJson>(request);
             if (response.ErrorException != null)
                 throw response.ErrorException;
             User = response.Data;
         }
 
+        /// <summary>
+        /// Update user history
+        /// </summary>
+        /// <returns></returns>
         private async Task UpdateHistoryAsync()
         {
-            var restClient = new RestClient(Utils.Constants.PopcornApi);
             var request = new RestRequest("/{segment}", Method.POST);
             request.AddUrlSegment("segment", "user");
             request.AddJsonBody(User);
-            var response = await restClient.ExecuteTaskAsync<UserJson>(request);
+            var response = await RestClient.ExecuteTaskAsync<UserJson>(request);
             if (response.ErrorException != null)
                 throw response.ErrorException;
             User = response.Data;
@@ -73,9 +93,7 @@ namespace Popcorn.Services.User
         /// <param name="movies">All movies to compute</param>
         public async Task SyncMovieHistoryAsync(IEnumerable<MovieJson> movies)
         {
-            if (movies == null) throw new ArgumentNullException(nameof(movies));
             var watch = Stopwatch.StartNew();
-
             try
             {
                 await GetHistoryAsync();
@@ -107,9 +125,7 @@ namespace Popcorn.Services.User
         /// <param name="shows">All shows to compute</param>
         public async Task SyncShowHistoryAsync(IEnumerable<ShowJson> shows)
         {
-            if (shows == null) throw new ArgumentNullException(nameof(shows));
             var watch = Stopwatch.StartNew();
-
             try
             {
                 await GetHistoryAsync();
@@ -140,9 +156,7 @@ namespace Popcorn.Services.User
         /// <param name="movie">Movie</param>
         public async Task SetMovieAsync(MovieJson movie)
         {
-            if (movie == null) throw new ArgumentNullException(nameof(movie));
             var watch = Stopwatch.StartNew();
-
             try
             {
                 var movieToUpdate = User.MovieHistory.FirstOrDefault(a => a.ImdbId == movie.ImdbCode);
@@ -166,14 +180,14 @@ namespace Popcorn.Services.User
             catch (Exception exception)
             {
                 Logger.Error(
-                    $"SetFavoriteMovieAsync: {exception.Message}");
+                    $"SetMovieAsync: {exception.Message}");
             }
             finally
             {
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Debug(
-                    $"SetFavoriteMovieAsync ({movie.ImdbCode}) in {elapsedMs} milliseconds.");
+                    $"SetMovieAsync ({movie.ImdbCode}) in {elapsedMs} milliseconds.");
             }
         }
 
@@ -183,9 +197,7 @@ namespace Popcorn.Services.User
         /// <param name="show">Show</param>
         public async Task SetShowAsync(ShowJson show)
         {
-            if (show == null) throw new ArgumentNullException(nameof(show));
             var watch = Stopwatch.StartNew();
-
             try
             {
                 var showToUpdate = User.ShowHistory.FirstOrDefault(a => a.ImdbId == show.ImdbId);
@@ -223,7 +235,8 @@ namespace Popcorn.Services.User
         /// </summary>
         /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetSeenMovies(int page)
+        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)>
+            GetSeenMovies(int page)
         {
             await GetHistoryAsync();
             var movies = User.MovieHistory.Where(a => a.Seen).Select(a => a.ImdbId).ToList();
@@ -259,7 +272,8 @@ namespace Popcorn.Services.User
         /// </summary>
         /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)> GetFavoritesMovies(int page)
+        public async Task<(IEnumerable<string> movies, IEnumerable<string> allMovies, int nbMovies)>
+            GetFavoritesMovies(int page)
         {
             await GetHistoryAsync();
             var movies = User.MovieHistory.Where(a => a.Favorite).Select(a => a.ImdbId).ToList();
@@ -277,7 +291,8 @@ namespace Popcorn.Services.User
         /// </summary>
         /// <param name="page">Pagination</param>
         /// <returns>List of ImdbId</returns>
-        public async Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)> GetFavoritesShows(int page)
+        public async Task<(IEnumerable<string> shows, IEnumerable<string> allShows, int nbShows)>
+            GetFavoritesShows(int page)
         {
             await GetHistoryAsync();
             var shows = User.ShowHistory.Where(a => a.Favorite).Select(a => a.ImdbId).ToList();
@@ -341,10 +356,11 @@ namespace Popcorn.Services.User
         public ICollection<LanguageJson> GetAvailableLanguages()
         {
             var watch = Stopwatch.StartNew();
-
-            ICollection<LanguageJson> availableLanguages = new List<LanguageJson>();
-            availableLanguages.Add(new EnglishLanguage());
-            availableLanguages.Add(new FrenchLanguage());
+            ICollection<LanguageJson> availableLanguages = new List<LanguageJson>
+            {
+                new EnglishLanguage(),
+                new FrenchLanguage()
+            };
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Logger.Debug(
@@ -360,7 +376,6 @@ namespace Popcorn.Services.User
         public async Task<LanguageJson> GetCurrentLanguageAsync()
         {
             LanguageJson currentLanguage = null;
-
             var watch = Stopwatch.StartNew();
             await GetHistoryAsync();
             var language = User.Language;
@@ -398,7 +413,6 @@ namespace Popcorn.Services.User
             await GetHistoryAsync();
             User.Language.Culture = language.Culture;
             await UpdateHistoryAsync();
-
             ChangeLanguage(User.Language);
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
@@ -412,7 +426,6 @@ namespace Popcorn.Services.User
         /// <param name="language"></param>
         private void ChangeLanguage(LanguageJson language)
         {
-            if (language == null) throw new ArgumentNullException(nameof(language));
             _movieService.ChangeTmdbLanguage(language);
             LocalizeDictionary.Instance.Culture = new CultureInfo(language.Culture);
             Messenger.Default.Send(new ChangeLanguageMessage());

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using CookComputing.XmlRpc;
 using Popcorn.OSDB.Backend;
+using Popcorn.Utils.Extensions;
 
 namespace Popcorn.OSDB
 {
@@ -26,45 +29,56 @@ namespace Popcorn.OSDB
             _token = response.token;
         }
 
-        public IList<Subtitle> SearchSubtitlesFromImdb(string languages, string imdbId)
+        public Task<IList<Subtitle>> SearchSubtitlesFromImdb(string languages, string imdbId)
         {
             if (string.IsNullOrEmpty(imdbId))
             {
                 throw new ArgumentNullException(nameof(imdbId));
             }
+
             var request = new SearchSubtitlesRequest
             {
                 sublanguageid = languages,
                 imdbid = imdbId
             };
+
             return SearchSubtitlesInternal(request);
         }
 
-        private IList<Subtitle> SearchSubtitlesInternal(SearchSubtitlesRequest request)
+        private Task<IList<Subtitle>> SearchSubtitlesInternal(SearchSubtitlesRequest request)
         {
-            var response = _proxy.SearchSubtitles(_token, new[] {request});
-            VerifyResponseCode(response);
-
-            var subtitles = new List<Subtitle>();
-
-            var subtitlesInfo = response.data as object[];
-            if (null != subtitlesInfo)
+            var tcs = new TaskCompletionSource<IList<Subtitle>>();
+            try
             {
-                foreach (var infoObject in subtitlesInfo)
+                var response = _proxy.SearchSubtitles(_token, new[] {request});
+                VerifyResponseCode(response);
+
+                var subtitles = new List<Subtitle>();
+                var subtitlesInfo = response.data as object[];
+                if (null != subtitlesInfo)
                 {
-                    var subInfo = SimpleObjectMapper.MapToObject<SearchSubtitlesInfo>((XmlRpcStruct) infoObject);
-                    subtitles.Add(BuildSubtitleObject(subInfo));
+                    foreach (var infoObject in subtitlesInfo)
+                    {
+                        var subInfo = SimpleObjectMapper.MapToObject<SearchSubtitlesInfo>((XmlRpcStruct) infoObject);
+                        subtitles.Add(BuildSubtitleObject(subInfo));
+                    }
                 }
+                tcs.TrySetResult(subtitles);
             }
-            return subtitles;
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+
+            return tcs.Task;
         }
 
-        public string DownloadSubtitleToPath(string path, Subtitle subtitle)
+        public Task<string> DownloadSubtitleToPath(string path, Subtitle subtitle)
         {
             return DownloadSubtitleToPath(path, subtitle, null);
         }
 
-        private string DownloadSubtitleToPath(string path, Subtitle subtitle, string newSubtitleName)
+        private async Task<string> DownloadSubtitleToPath(string path, Subtitle subtitle, string newSubtitleName)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -79,14 +93,21 @@ namespace Popcorn.OSDB
                 throw new ArgumentException("path should point to a valid location");
             }
 
-            string destinationfile = Path.Combine(path,
+            var destinationfile = Path.Combine(path,
                 (string.IsNullOrEmpty(newSubtitleName)) ? subtitle.SubtitleFileName : newSubtitleName);
-            string tempZipName = Path.GetTempFileName();
+            var tempZipName = Path.GetTempFileName();
             try
             {
-                using (var webClient = new WebClient())
+                using (var client = new HttpClient())
                 {
-                    webClient.DownloadFile(subtitle.SubTitleDownloadLink, tempZipName);
+                    using (var response = await client.GetAsync(subtitle.SubTitleDownloadLink))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        using (var content = response.Content)
+                        {
+                            await content.ReadAsFileAsync(tempZipName, false);
+                        }
+                    }
                 }
 
                 UnZipSubtitleFileToFile(tempZipName, destinationfile);
@@ -100,23 +121,30 @@ namespace Popcorn.OSDB
             return destinationfile;
         }
 
-        public IEnumerable<Language> GetSubLanguages()
+        public Task<IEnumerable<Language>> GetSubLanguages()
         {
             //get system language
             return GetSubLanguages("en");
         }
 
-        private IEnumerable<Language> GetSubLanguages(string language)
+        private Task<IEnumerable<Language>> GetSubLanguages(string language)
         {
-            var response = _proxy.GetSubLanguages(language);
-            VerifyResponseCode(response);
-
-            IList<Language> languages = new List<Language>();
-            foreach (var languageInfo in response.data)
+            var tcs = new TaskCompletionSource<IEnumerable<Language>>();
+            try
             {
-                languages.Add(BuildLanguageObject(languageInfo));
+                var response = _proxy.GetSubLanguages(language);
+                VerifyResponseCode(response);
+
+                IList<Language> languages = response.data.Select(languageInfo => BuildLanguageObject(languageInfo))
+                    .ToList();
+                tcs.TrySetResult(languages);
             }
-            return languages;
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+
+            return tcs.Task;
         }
 
         public void Dispose()

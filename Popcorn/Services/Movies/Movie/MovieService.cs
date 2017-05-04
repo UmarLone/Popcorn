@@ -91,11 +91,11 @@ namespace Popcorn.Services.Movies.Movie
             var request = new RestRequest("/{segment}/{movie}", Method.GET);
             request.AddUrlSegment("segment", "movies");
             request.AddUrlSegment("movie", imdbCode);
-            MovieJson movie = new MovieJson();
+            var movie = new MovieJson();
 
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<MovieJson>(request);
+                var response = await restClient.ExecuteTaskAsync<MovieJson>(request);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -131,9 +131,7 @@ namespace Popcorn.Services.Movies.Movie
         public async Task<List<MovieJson>> GetMoviesSimilarAsync(MovieJson movie)
         {
             var watch = Stopwatch.StartNew();
-
             var movies = new List<MovieJson>();
-
             try
             {
                 if (movie.Similars != null && movie.Similars.Any())
@@ -183,9 +181,7 @@ namespace Popcorn.Services.Movies.Movie
             GenreJson genre = null)
         {
             var watch = Stopwatch.StartNew();
-
             var wrapper = new MovieResponse();
-
             if (limit < 1 || limit > 50)
                 limit = Utils.Constants.MaxMoviesPerPage;
 
@@ -200,10 +196,9 @@ namespace Popcorn.Services.Movies.Movie
             if (genre != null) request.AddParameter("genre", genre.EnglishName);
             request.AddParameter("minimum_rating", ratingFilter);
             request.AddParameter("sort_by", sortBy);
-
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
+                var response = await restClient.ExecuteTaskAsync<MovieResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -235,7 +230,6 @@ namespace Popcorn.Services.Movies.Movie
             });
 
             var nbResult = wrapper?.TotalMovies ?? 0;
-
             return (result, nbResult);
         }
 
@@ -270,9 +264,7 @@ namespace Popcorn.Services.Movies.Movie
             CancellationToken ct)
         {
             var watch = Stopwatch.StartNew();
-
             var wrapper = new MovieResponse();
-
             if (limit < 1 || limit > 50)
                 limit = Utils.Constants.MaxMoviesPerPage;
 
@@ -290,7 +282,7 @@ namespace Popcorn.Services.Movies.Movie
 
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<MovieResponse>(request, ct);
+                var response = await restClient.ExecuteTaskAsync<MovieResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -321,7 +313,6 @@ namespace Popcorn.Services.Movies.Movie
                 await ProcessTranslations(result);
             });
             var nbResult = wrapper?.TotalMovies ?? 0;
-
             return (result, nbResult);
         }
 
@@ -333,9 +324,7 @@ namespace Popcorn.Services.Movies.Movie
         public async Task TranslateMovieAsync(MovieJson movieToTranslate)
         {
             if (!_mustRefreshLanguage) return;
-
             var watch = Stopwatch.StartNew();
-
             try
             {
                 var movie = await TmdbClient.GetMovieAsync(movieToTranslate.ImdbCode,
@@ -372,7 +361,6 @@ namespace Popcorn.Services.Movies.Movie
         public async Task<string> GetMovieTrailerAsync(MovieJson movie, CancellationToken ct)
         {
             var watch = Stopwatch.StartNew();
-
             var uri = string.Empty;
             try
             {
@@ -384,7 +372,7 @@ namespace Popcorn.Services.Movies.Movie
                     var request = new RestRequest("/{segment}/{key}", Method.GET);
                     request.AddUrlSegment("segment", "trailer");
                     request.AddUrlSegment("key", trailers.Results.FirstOrDefault().Key);
-                    var response = await restClient.ExecuteGetTaskAsync<TrailerResponse>(request, ct);
+                    var response = await restClient.ExecuteTaskAsync<TrailerResponse>(request, ct);
                     if (response.ErrorException != null)
                         throw response.ErrorException;
 

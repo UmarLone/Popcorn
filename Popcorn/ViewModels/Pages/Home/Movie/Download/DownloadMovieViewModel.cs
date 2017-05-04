@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
@@ -194,7 +193,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
         /// </summary>
         private void RegisterMessages() => Messenger.Default.Register<DownloadMovieMessage>(
             this,
-            message =>
+            async message =>
             {
                 IsDownloadingMovie = true;
                 Movie = message.Movie;
@@ -206,57 +205,53 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Download
                 var reportDownloadRate = new Progress<BandwidthRate>(ReportMovieDownloadRate);
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
+                try
+                {
+                    if (message.Movie.SelectedSubtitle != null &&
+                        message.Movie.SelectedSubtitle.Sub.LanguageName !=
+                        LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
+                    {
+                        var path = Path.Combine(Constants.Subtitles + message.Movie.ImdbCode);
+                        Directory.CreateDirectory(path);
+                        var subtitlePath = await
+                            _subtitlesService.DownloadSubtitleToPath(path,
+                                message.Movie.SelectedSubtitle.Sub);
 
-                Task.Run(async () =>
+                        message.Movie.SelectedSubtitle.FilePath = subtitlePath;
+                    }
+                }
+                finally
                 {
                     try
                     {
-                        if (message.Movie.SelectedSubtitle != null &&
-                            message.Movie.SelectedSubtitle.Sub.LanguageName !=
-                            LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
+                        var torrentUrl = Movie.WatchInFullHdQuality
+                            ? Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
+                            : Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
+
+                        var result =
+                            await
+                                DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
+                                    Constants.MovieTorrentDownloads + Movie.ImdbCode + ".torrent");
+                        var torrentPath = string.Empty;
+                        if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
+                            torrentPath = result.Item2;
+
+                        Task.Run(async () =>
                         {
-                            var path = Path.Combine(Constants.Subtitles + message.Movie.ImdbCode);
-                            Directory.CreateDirectory(path);
-                            var subtitlePath =
-                                _subtitlesService.DownloadSubtitleToPath(path,
-                                    message.Movie.SelectedSubtitle.Sub);
-
-                            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                            {
-                                message.Movie.SelectedSubtitle.FilePath = subtitlePath;
-                            });
-                        }
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            var torrentUrl = Movie.WatchInFullHdQuality
-                                ? Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "1080p")?.Url
-                                : Movie.Torrents?.FirstOrDefault(torrent => torrent.Quality == "720p")?.Url;
-
-                            var result =
-                                await
-                                    DownloadFileHelper.DownloadFileTaskAsync(torrentUrl,
-                                        Constants.MovieTorrentDownloads + Movie.ImdbCode + ".torrent");
-                            var torrentPath = string.Empty;
-                            if (result.Item3 == null && !string.IsNullOrEmpty(result.Item2))
-                                torrentPath = result.Item2;
-
                             var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
                             await _downloadService.Download(Movie, TorrentType.File, MediaType.Movie, torrentPath,
                                 settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
                                 reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
-                                CancellationDownloadingMovie);
-                        }
-                        catch (Exception ex)
-                        {
-                            // An error occured.
-                            Messenger.Default.Send(new ManageExceptionMessage(ex));
-                            Messenger.Default.Send(new StopPlayingMovieMessage());
-                        }
+                                CancellationDownloadingMovie).ConfigureAwait(false);
+                        }).ConfigureAwait(false);
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        // An error occured.
+                        Messenger.Default.Send(new ManageExceptionMessage(ex));
+                        Messenger.Default.Send(new StopPlayingMovieMessage());
+                    }
+                }
             });
 
         /// <summary>

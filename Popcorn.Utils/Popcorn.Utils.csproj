@@ -41,10 +41,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions\HttpContentExtensions.cs" />
     <Compile Include="FastDirectoryEnumerator.cs" />
     <Compile Include="MediaType.cs" />
     <Compile Include="NativeMethods.cs" />

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using NLog;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
@@ -190,7 +189,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// </summary>
         private void RegisterMessages() => Messenger.Default.Register<DownloadShowEpisodeMessage>(
             this,
-            message =>
+            async message =>
             {
                 IsDownloadingEpisode = true;
                 Episode = message.Episode;
@@ -203,55 +202,52 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
                 var reportNbPeers = new Progress<int>(ReportNbPeers);
                 var reportNbSeeders = new Progress<int>(ReportNbSeeders);
 
-                Task.Run(async () =>
+                try
+                {
+                    if (message.Episode.SelectedSubtitle != null &&
+                        message.Episode.SelectedSubtitle.Sub.LanguageName !=
+                        LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
+                    {
+                        var path = Path.Combine(Constants.Subtitles + message.Episode.ImdbId);
+                        Directory.CreateDirectory(path);
+                        var subtitlePath =
+                            await _subtitlesService.DownloadSubtitleToPath(path,
+                                message.Episode.SelectedSubtitle.Sub);
+
+                        message.Episode.SelectedSubtitle.FilePath = subtitlePath;
+                    }
+                }
+                finally
                 {
                     try
                     {
-                        if (message.Episode.SelectedSubtitle != null &&
-                            message.Episode.SelectedSubtitle.Sub.LanguageName !=
-                            LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"))
+                        string magnetUri;
+                        if (Episode.WatchInFullHdQuality && (Episode.Torrents.Torrent_720p?.Url != null ||
+                                                             Episode.Torrents.Torrent_1080p?.Url != null))
                         {
-                            var path = Path.Combine(Constants.Subtitles + message.Episode.ImdbId);
-                            Directory.CreateDirectory(path);
-                            var subtitlePath =
-                                _subtitlesService.DownloadSubtitleToPath(path,
-                                    message.Episode.SelectedSubtitle.Sub);
-
-                            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                            {
-                                message.Episode.SelectedSubtitle.FilePath = subtitlePath;
-                            });
+                            magnetUri = Episode.Torrents.Torrent_720p?.Url ?? Episode.Torrents.Torrent_1080p.Url;
                         }
-                    }
-                    finally
-                    {
-                        try
+                        else
                         {
-                            string magnetUri;
-                            if (Episode.WatchInFullHdQuality && (Episode.Torrents.Torrent_720p?.Url != null ||
-                                                                 Episode.Torrents.Torrent_1080p?.Url != null))
-                            {
-                                magnetUri = Episode.Torrents.Torrent_720p?.Url ?? Episode.Torrents.Torrent_1080p.Url;
-                            }
-                            else
-                            {
-                                magnetUri = Episode.Torrents.Torrent_480p?.Url ?? Episode.Torrents.Torrent_0.Url;
-                            }
+                            magnetUri = Episode.Torrents.Torrent_480p?.Url ?? Episode.Torrents.Torrent_0.Url;
+                        }
 
+                        Task.Run(async () =>
+                        {
                             var settings = SimpleIoc.Default.GetInstance<ApplicationSettingsViewModel>();
                             await _downloadService.Download(message.Episode, TorrentType.Magnet, MediaType.Show,
                                 magnetUri, settings.UploadLimit, settings.DownloadLimit, reportDownloadProgress,
                                 reportDownloadRate, reportNbSeeders, reportNbPeers, () => { }, () => { },
-                                CancellationDownloadingEpisode);
-                        }
-                        catch (Exception ex)
-                        {
-                            // An error occured.
-                            Messenger.Default.Send(new ManageExceptionMessage(ex));
-                            Messenger.Default.Send(new StopPlayingEpisodeMessage());
-                        }
+                                CancellationDownloadingEpisode).ConfigureAwait(false);
+                        }).ConfigureAwait(false);
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        // An error occured.
+                        Messenger.Default.Send(new ManageExceptionMessage(ex));
+                        Messenger.Default.Send(new StopPlayingEpisodeMessage());
+                    }
+                }
             });
 
         /// <summary>

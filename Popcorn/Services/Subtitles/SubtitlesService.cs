@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Popcorn.OSDB;
 
 namespace Popcorn.Services.Subtitles
@@ -12,11 +13,11 @@ namespace Popcorn.Services.Subtitles
         /// Get subtitles languages
         /// </summary>
         /// <returns>Languages</returns>
-        public IEnumerable<Language> GetSubLanguages()
+        public async Task<IEnumerable<Language>> GetSubLanguages()
         {
             using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
-                return osdb.GetSubLanguages();
+                return await osdb.GetSubLanguages();
             }
         }
 
@@ -25,12 +26,12 @@ namespace Popcorn.Services.Subtitles
         /// </summary>
         /// <param name="languages">Languages</param>
         /// <param name="imdbId">Imdb code</param>
-        /// <returns></returns>
-        public IList<Subtitle> SearchSubtitlesFromImdb(string languages, string imdbId)
+        /// <returns>Subtitles</returns>
+        public async Task<IList<Subtitle>> SearchSubtitlesFromImdb(string languages, string imdbId)
         {
             using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
-                return osdb.SearchSubtitlesFromImdb(languages, imdbId);
+                return await osdb.SearchSubtitlesFromImdb(languages, imdbId);
             }
         }
 
@@ -40,11 +41,11 @@ namespace Popcorn.Services.Subtitles
         /// <param name="path">Path to download</param>
         /// <param name="subtitle">Subtitle to download</param>
         /// <returns>Downloaded subtitle path</returns>
-        public string DownloadSubtitleToPath(string path, Subtitle subtitle)
+        public async Task<string> DownloadSubtitleToPath(string path, Subtitle subtitle)
         {
             using (var osdb = new Osdb().Login("OSTestUserAgentTemp"))
             {
-                return osdb.DownloadSubtitleToPath(path, subtitle);
+                return await osdb.DownloadSubtitleToPath(path, subtitle);
             }
         }
     }

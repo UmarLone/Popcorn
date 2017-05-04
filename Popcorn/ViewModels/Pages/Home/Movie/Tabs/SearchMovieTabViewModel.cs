@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
@@ -59,7 +58,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             }
 
             Logger.Info(
-                $"Loading movies search page {Page} with criteria: {SearchFilter}");
+                $"Loading search page {Page} with criteria: {SearchFilter}");
             HasLoadingFailed = false;
             try
             {
@@ -83,7 +82,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
             {
                 Page--;
                 Logger.Error(
-                    $"Error while loading movies search page {Page} with criteria {SearchFilter}: {exception.Message}");
+                    $"Error while loading search page {Page} with criteria {SearchFilter}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -92,7 +91,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded movies search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
+                    $"Loaded search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
                 LoadingSemaphore.Release();
             }
         }

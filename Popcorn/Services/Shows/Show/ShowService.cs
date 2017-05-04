@@ -25,16 +25,14 @@ namespace Popcorn.Services.Shows.Show
         public async Task<ShowJson> GetShowAsync(string imdbCode)
         {
             var watch = Stopwatch.StartNew();
-
             var restClient = new RestClient(Utils.Constants.PopcornApi);
             var request = new RestRequest("/{segment}/{show}", Method.GET);
             request.AddUrlSegment("segment", "shows");
             request.AddUrlSegment("show", imdbCode);
             var show = new ShowJson();
-
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<ShowJson>(request);
+                var response = await restClient.ExecuteTaskAsync<ShowJson>(request);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -80,9 +78,7 @@ namespace Popcorn.Services.Shows.Show
             GenreJson genre = null)
         {
             var watch = Stopwatch.StartNew();
-
             var wrapper = new ShowResponse();
-
             if (limit < 1 || limit > 50)
                 limit = Utils.Constants.MaxShowsPerPage;
 
@@ -97,10 +93,9 @@ namespace Popcorn.Services.Shows.Show
             if (genre != null) request.AddParameter("genre", genre.EnglishName);
             request.AddParameter("minimum_rating", ratingFilter);
             request.AddParameter("sort_by", sortBy);
-
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<ShowResponse>(request, ct);
+                var response = await restClient.ExecuteTaskAsync<ShowResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -148,9 +143,7 @@ namespace Popcorn.Services.Shows.Show
             CancellationToken ct)
         {
             var watch = Stopwatch.StartNew();
-
             var wrapper = new ShowResponse();
-
             if (limit < 1 || limit > 50)
                 limit = Utils.Constants.MaxShowsPerPage;
 
@@ -165,10 +158,9 @@ namespace Popcorn.Services.Shows.Show
             if (genre != null) request.AddParameter("genre", genre.EnglishName);
             request.AddParameter("minimum_rating", ratingFilter);
             request.AddParameter("query_term", criteria);
-
             try
             {
-                var response = await restClient.ExecuteGetTaskAsync<ShowResponse>(request, ct);
+                var response = await restClient.ExecuteTaskAsync<ShowResponse>(request, ct);
                 if (response.ErrorException != null)
                     throw response.ErrorException;
 
@@ -195,7 +187,6 @@ namespace Popcorn.Services.Shows.Show
 
             var result = wrapper?.Shows ?? new List<ShowJson>();
             var nbResult = wrapper?.TotalShows ?? 0;
-
             return (result, nbResult);
         }
     }

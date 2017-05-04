@@ -67,7 +67,7 @@ namespace Popcorn.Controls.Show
             var date = dtDateTime.AddSeconds(episode.FirstAired).ToLocalTime();
             detail.Duration.Text = $"Released {date.ToShortDateString()}";
             detail.Synopsis.Text = episode.Overview;
-            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            Task.Run(async () =>
             {
                 await detail.LoadSubtitles(episode);
             });
@@ -130,68 +130,62 @@ namespace Popcorn.Controls.Show
             Logger.Debug(
                 $"Load subtitles for episode: {episode.Title}");
             LoadingSubtitles = true;
-            await Task.Run(() =>
+            try
             {
-                try
+                var languages = (await _subtitlesService.GetSubLanguages()).ToList();
+                if (int.TryParse(new string(episode.ImdbId
+                    .SkipWhile(x => !char.IsDigit(x))
+                    .TakeWhile(char.IsDigit)
+                    .ToArray()), out int imdbId))
                 {
-                    var languages = _subtitlesService.GetSubLanguages().ToList();
-
-                    if (int.TryParse(new string(episode.ImdbId
-                        .SkipWhile(x => !char.IsDigit(x))
-                        .TakeWhile(char.IsDigit)
-                        .ToArray()), out int imdbId))
+                    var subtitles = (await _subtitlesService.SearchSubtitlesFromImdb(
+                            languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
+                            imdbId.ToString()))
+                        .Where(a => a.MovieName.ToLowerInvariant().Contains(episode.Title.ToLowerInvariant()));
+                    episode.AvailableSubtitles =
+                        new ObservableCollection<Subtitle>(subtitles.OrderBy(a => a.LanguageName)
+                            .Select(sub => new Subtitle
+                            {
+                                Sub = sub
+                            })
+                            .GroupBy(x => x.Sub.LanguageName,
+                                (k, g) =>
+                                    g.Aggregate(
+                                        (a, x) =>
+                                            (Convert.ToDouble(x.Sub.Rating, CultureInfo.InvariantCulture) >=
+                                             Convert.ToDouble(a.Sub.Rating, CultureInfo.InvariantCulture))
+                                                ? x
+                                                : a)));
+                    episode.AvailableSubtitles.Insert(0, new Subtitle
                     {
-                        var subtitles = _subtitlesService.SearchSubtitlesFromImdb(
-                                languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
-                                imdbId.ToString())
-                            .Where(a => a.MovieName.ToLowerInvariant().Contains(episode.Title.ToLowerInvariant()));
-                        DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                        Sub = new OSDB.Subtitle
                         {
-                            episode.AvailableSubtitles =
-                                new ObservableCollection<Subtitle>(subtitles.OrderBy(a => a.LanguageName)
-                                    .Select(sub => new Subtitle
-                                    {
-                                        Sub = sub
-                                    })
-                                    .GroupBy(x => x.Sub.LanguageName,
-                                        (k, g) =>
-                                            g.Aggregate(
-                                                (a, x) =>
-                                                    (Convert.ToDouble(x.Sub.Rating, CultureInfo.InvariantCulture) >=
-                                                     Convert.ToDouble(a.Sub.Rating, CultureInfo.InvariantCulture))
-                                                        ? x
-                                                        : a)));
-                            episode.AvailableSubtitles.Insert(0, new Subtitle
-                            {
-                                Sub = new OSDB.Subtitle
-                                {
-                                    LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel")
-                                }
-                            });
+                            LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel")
+                        }
+                    });
 
-                            episode.AvailableSubtitles.Insert(1, new Subtitle
-                            {
-                                Sub = new OSDB.Subtitle
-                                {
-                                    LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel")
-                                }
-                            });
+                    episode.AvailableSubtitles.Insert(1, new Subtitle
+                    {
+                        Sub = new OSDB.Subtitle
+                        {
+                            LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel")
+                        }
+                    });
 
-                            episode.SelectedSubtitle = episode.AvailableSubtitles.FirstOrDefault();
-                            LoadingSubtitles = false;
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(
-                        $"Failed loading subtitles for : {episode.Title}. {ex.Message}");
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
-                        LoadingSubtitles = false;
+                        episode.SelectedSubtitle = episode.AvailableSubtitles.FirstOrDefault();
                     });
+
+                    LoadingSubtitles = false;
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(
+                    $"Failed loading subtitles for : {episode.Title}. {ex.Message}");
+                LoadingSubtitles = false;
+            }
         }
 
         /// <summary>

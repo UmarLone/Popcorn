@@ -3,8 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -270,7 +271,7 @@ namespace Popcorn.GifLoader
 
         #endregion
 
-        private static void AnimatedSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async void AnimatedSourceChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)
@@ -295,16 +296,16 @@ namespace Popcorn.GifLoader
                 imageControl.Loaded += ImageControlLoaded;
                 imageControl.Unloaded += ImageControlUnloaded;
                 if (imageControl.IsLoaded)
-                    InitAnimationOrImage(imageControl);
+                    await InitAnimationOrImage(imageControl);
             }
         }
 
-        private static void ImageControlLoaded(object sender, RoutedEventArgs e)
+        private static async void ImageControlLoaded(object sender, RoutedEventArgs e)
         {
             Image imageControl = sender as Image;
             if (imageControl == null)
                 return;
-            InitAnimationOrImage(imageControl);
+            await InitAnimationOrImage(imageControl);
         }
 
         static void ImageControlUnloaded(object sender, RoutedEventArgs e)
@@ -320,7 +321,7 @@ namespace Popcorn.GifLoader
                 controller.Dispose();
         }
 
-        private static void RepeatBehaviorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async void RepeatBehaviorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)
@@ -332,11 +333,11 @@ namespace Popcorn.GifLoader
                 if (!Equals(e.OldValue, e.NewValue))
                     AnimationCache.DecrementReferenceCount(source, (RepeatBehavior) e.OldValue);
                 if (imageControl.IsLoaded)
-                    InitAnimationOrImage(imageControl);
+                    await InitAnimationOrImage(imageControl);
             }
         }
 
-        private static void AnimateInDesignModeChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static async void AnimateInDesignModeChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             Image imageControl = o as Image;
             if (imageControl == null)
@@ -348,13 +349,13 @@ namespace Popcorn.GifLoader
             if (source != null && imageControl.IsLoaded)
             {
                 if (newValue)
-                    InitAnimationOrImage(imageControl);
+                    await InitAnimationOrImage(imageControl);
                 else
                     imageControl.BeginAnimation(Image.SourceProperty, null);
             }
         }
 
-        private static void InitAnimationOrImage(Image imageControl)
+        private static async Task InitAnimationOrImage(Image imageControl)
         {
             var controller = GetAnimationController(imageControl);
             if (controller != null)
@@ -377,17 +378,17 @@ namespace Popcorn.GifLoader
                 if (source.IsDownloading)
                 {
                     EventHandler handler = null;
-                    handler = (sender, args) =>
+                    handler = async (sender, args) =>
                     {
                         source.DownloadCompleted -= handler;
-                        InitAnimationOrImage(imageControl);
+                        await InitAnimationOrImage(imageControl);
                     };
                     source.DownloadCompleted += handler;
                     imageControl.Source = source;
                     return;
                 }
 
-                var animation = GetAnimation(imageControl, source);
+                var animation = await GetAnimation(imageControl, source);
                 if (animation != null)
                 {
                     if (animation.KeyFrames.Count > 0)
@@ -415,13 +416,14 @@ namespace Popcorn.GifLoader
             }
         }
 
-        private static ObjectAnimationUsingKeyFrames GetAnimation(Image imageControl, BitmapSource source)
+        private static async Task<ObjectAnimationUsingKeyFrames> GetAnimation(Image imageControl, BitmapSource source)
         {
             var animation = AnimationCache.GetAnimation(source, GetRepeatBehavior(imageControl));
             if (animation != null)
                 return animation;
-            GifFile gifMetadata;
-            var decoder = GetDecoder(source, out gifMetadata) as GifBitmapDecoder;
+            var result = await GetDecoder(source);
+            var decoder = result.decoder as GifBitmapDecoder;
+            var gifMetadata = result.gifFile;
             if (decoder != null && decoder.Frames.Count > 1)
             {
                 var fullSize = GetFullSize(decoder, gifMetadata);
@@ -524,9 +526,9 @@ namespace Popcorn.GifLoader
             return false;
         }
 
-        private static BitmapDecoder GetDecoder(BitmapSource image, out GifFile gifFile)
+        private static async Task<(BitmapDecoder decoder, GifFile gifFile)> GetDecoder(BitmapSource image)
         {
-            gifFile = null;
+            GifFile gif = null;
             BitmapDecoder decoder = null;
             Stream stream = null;
             Uri uri = null;
@@ -575,11 +577,11 @@ namespace Popcorn.GifLoader
                 if (stream != null)
                 {
                     stream.Position = 0;
-                    gifFile = GifFile.ReadGifFile(stream, true);
+                    gif = GifFile.ReadGifFile(stream, true);
                 }
                 else if (uri != null)
                 {
-                    gifFile = DecodeGifFile(uri);
+                    gif = await DecodeGifFile(uri);
                 }
                 else
                 {
@@ -592,7 +594,7 @@ namespace Popcorn.GifLoader
                 throw new InvalidOperationException(
                     "Can't get a decoder from the source. AnimatedSource should be either a BitmapImage or a BitmapFrame.");
             }
-            return decoder;
+            return (decoder, gif);
         }
 
         private static bool CanReadNativeMetadata(BitmapDecoder decoder)
@@ -608,7 +610,7 @@ namespace Popcorn.GifLoader
             }
         }
 
-        private static GifFile DecodeGifFile(Uri uri)
+        private static async Task<GifFile> DecodeGifFile(Uri uri)
         {
             Stream stream = null;
             if (uri.Scheme == PackUriHelper.UriSchemePack)
@@ -624,8 +626,10 @@ namespace Popcorn.GifLoader
             }
             else
             {
-                WebClient wc = new WebClient();
-                stream = wc.OpenRead(uri);
+                using (var wc = new HttpClient())
+                {
+                    stream = await wc.GetStreamAsync(uri);
+                }
             }
             if (stream != null)
             {

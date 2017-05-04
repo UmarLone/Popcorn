@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using NLog;
+using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
@@ -232,11 +236,73 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
         protected CancellationTokenSource CancellationLoadingShows { get; private set; }
 
         /// <summary>
+        /// Sort by
+        /// </summary>
+        protected string SortBy { get; set; }
+
+        /// <summary>
         /// Load shows asynchronously
         /// </summary>
-        public virtual Task LoadShowsAsync(bool reset = false)
+        public virtual async Task LoadShowsAsync(bool reset = false)
         {
-            throw new NotImplementedException();
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingShows();
+            if (reset)
+            {
+                Shows.Clear();
+                Page = 0;
+            }
+
+            var watch = Stopwatch.StartNew();
+            Page++;
+            if (Page > 1 && Shows.Count == MaxNumberOfShows)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
+            Logger.Info(
+                $"Loading page {Page}...");
+            HasLoadingFailed = false;
+            try
+            {
+                IsLoadingShows = true;
+                var result =
+                    await ShowService.GetShowsAsync(Page,
+                            MaxShowsPerPage,
+                            Rating * 10,
+                            SortBy,
+                            CancellationLoadingShows.Token,
+                            Genre)
+                        .ConfigureAwait(false);
+
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                {
+                    Shows.AddRange(result.shows);
+                    IsLoadingShows = false;
+                    IsShowFound = Shows.Any();
+                    CurrentNumberOfShows = Shows.Count;
+                    MaxNumberOfShows = result.nbShows;
+                    await UserService.SyncShowHistoryAsync(Shows).ConfigureAwait(false);
+                });
+            }
+            catch (Exception exception)
+            {
+                Page--;
+                Logger.Error(
+                    $"Error while loading page {Page}: {exception.Message}");
+                HasLoadingFailed = true;
+                Messenger.Default.Send(new ManageExceptionMessage(exception));
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Info(
+                    $"Loaded page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
+            }
         }
 
         /// <summary>

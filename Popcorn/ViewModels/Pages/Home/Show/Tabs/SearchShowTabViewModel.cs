@@ -56,7 +56,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             }
 
             Logger.Info(
-                $"Loading shows search page {Page} with criteria: {SearchFilter}");
+                $"Loading search page {Page} with criteria: {SearchFilter}");
             HasLoadingFailed = false;
             try
             {
@@ -84,7 +84,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
             {
                 Page--;
                 Logger.Error(
-                    $"Error while loading shows search page {Page} with criteria {SearchFilter}: {exception.Message}");
+                    $"Error while loading search page {Page} with criteria {SearchFilter}: {exception.Message}");
                 HasLoadingFailed = true;
                 Messenger.Default.Send(new ManageExceptionMessage(exception));
             }
@@ -93,7 +93,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 Logger.Info(
-                    $"Loaded shows search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
+                    $"Loaded search page {Page} with criteria {SearchFilter} in {elapsedMs} milliseconds.");
                 LoadingSemaphore.Release();
             }
         }

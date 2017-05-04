@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Async;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using NLog;
+using NuGet;
 using Popcorn.Helpers;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
@@ -233,11 +235,68 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Tabs
         protected CancellationTokenSource CancellationLoadingMovies { get; private set; }
 
         /// <summary>
+        /// Sort by
+        /// </summary>
+        protected string SortBy { get; set; }
+
+        /// <summary>
         /// Load movies asynchronously
         /// </summary>
-        public virtual Task LoadMoviesAsync(bool reset = false)
+        public virtual async Task LoadMoviesAsync(bool reset = false)
         {
-            throw new NotImplementedException();
+            await LoadingSemaphore.WaitAsync();
+            StopLoadingMovies();
+            if (reset)
+            {
+                Movies.Clear();
+                Page = 0;
+            }
+
+            var watch = Stopwatch.StartNew();
+            Page++;
+            if (Page > 1 && Movies.Count == MaxNumberOfMovies)
+            {
+                Page--;
+                LoadingSemaphore.Release();
+                return;
+            }
+
+            Logger.Info(
+                $"Loading page {Page}...");
+            HasLoadingFailed = false;
+            try
+            {
+                IsLoadingMovies = true;
+                var result =
+                    await MovieService.GetMoviesAsync(Page,
+                        MaxMoviesPerPage,
+                        Rating,
+                        SortBy,
+                        CancellationLoadingMovies.Token,
+                        Genre);
+                Movies.AddRange(result.movies);
+                IsLoadingMovies = false;
+                IsMovieFound = Movies.Any();
+                CurrentNumberOfMovies = Movies.Count;
+                MaxNumberOfMovies = result.nbMovies;
+                await UserService.SyncMovieHistoryAsync(Movies);
+            }
+            catch (Exception exception)
+            {
+                Page--;
+                Logger.Error(
+                    $"Error while loading page {Page}: {exception.Message}");
+                HasLoadingFailed = true;
+                Messenger.Default.Send(new ManageExceptionMessage(exception));
+            }
+            finally
+            {
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Logger.Info(
+                    $"Loaded page {Page} in {elapsedMs} milliseconds.");
+                LoadingSemaphore.Release();
+            }
         }
 
         /// <summary>
