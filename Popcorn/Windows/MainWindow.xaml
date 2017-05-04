@@ -112,6 +112,7 @@
                 Header="{lex:LocText SettingsMenuTitle}"
                 IsModal="True"
                 IsOpen="{Binding IsSettingsFlyoutOpen}"
+                Opacity="0.9"
                 Position="Right"
                 Theme="Dark">
                 <settings:WindowSettingsUserControl />
