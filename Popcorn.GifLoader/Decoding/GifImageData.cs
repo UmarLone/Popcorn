@@ -4,8 +4,8 @@ namespace Popcorn.GifLoader.Decoding
 {
     internal class GifImageData
     {
-        public byte LzwMinimumCodeSize { get; set; }
-        public byte[] CompressedData { get; set; }
+        private byte LzwMinimumCodeSize { get; set; }
+        private byte[] CompressedData { get; set; }
 
         private GifImageData()
         {

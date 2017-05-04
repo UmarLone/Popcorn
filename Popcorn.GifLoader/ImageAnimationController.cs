@@ -11,11 +11,11 @@ namespace Popcorn.GifLoader
     /// </summary>
     public class ImageAnimationController : IDisposable
     {
-        private static readonly DependencyPropertyDescriptor _sourceDescriptor;
+        private static readonly DependencyPropertyDescriptor SourceDescriptor;
 
         static ImageAnimationController()
         {
-            _sourceDescriptor = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
+            SourceDescriptor = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
         }
 
         private readonly Image _image;
@@ -30,7 +30,7 @@ namespace Popcorn.GifLoader
             _animation.Completed += AnimationCompleted;
             _clock = _animation.CreateClock();
             _clockController = _clock.Controller;
-            _sourceDescriptor.AddValueChanged(image, ImageSourceChanged);
+            SourceDescriptor.AddValueChanged(image, ImageSourceChanged);
 
             // ReSharper disable once PossibleNullReferenceException
             _clockController.Pause();
@@ -128,7 +128,7 @@ namespace Popcorn.GifLoader
         private void OnCurrentFrameChanged()
         {
             EventHandler handler = CurrentFrameChanged;
-            if (handler != null) handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Popcorn.GifLoader
             {
                 _image.BeginAnimation(Image.SourceProperty, null);
                 _animation.Completed -= AnimationCompleted;
-                _sourceDescriptor.RemoveValueChanged(_image, ImageSourceChanged);
+                SourceDescriptor.RemoveValueChanged(_image, ImageSourceChanged);
                 _image.Source = null;
             }
         }

@@ -4,18 +4,15 @@ namespace Popcorn.GifLoader.Decoding
 {
     internal class GifHeader : GifBlock
     {
-        public string Signature { get; private set; }
-        public string Version { get; private set; }
+        private string Signature { get; set; }
+        private string Version { get; set; }
         public GifLogicalScreenDescriptor LogicalScreenDescriptor { get; private set; }
 
         private GifHeader()
         {
         }
 
-        internal override GifBlockKind Kind
-        {
-            get { return GifBlockKind.Other; }
-        }
+        internal override GifBlockKind Kind => GifBlockKind.Other;
 
         internal static GifHeader ReadHeader(Stream stream)
         {

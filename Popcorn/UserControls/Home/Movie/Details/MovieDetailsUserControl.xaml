@@ -30,7 +30,6 @@
             </Style>
 
             <converters:ValueToBrushConverter x:Key="ValueToBrushConverter" />
-            <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:MultiBooleanToBoolConverter x:Key="MultiBooleanToBoolConverter" />
             <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -152,7 +151,7 @@
             <Image
                 Grid.Row="0"
                 Grid.RowSpan="3"
-                attachedProperties:ImageAsyncHelper.SourceUri="{Binding Movie.BackdropImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                attachedProperties:ImageAsyncHelper.ImagePath="{Binding Movie.BackdropImage, IsAsync=True}"
                 Opacity="0.3"
                 RenderOptions.BitmapScalingMode="Fant"
                 Stretch="UniformToFill" />
@@ -192,7 +191,7 @@
                     Grid.Column="1"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    attachedProperties:ImageAsyncHelper.SourceUri="{Binding Movie.LargeCoverImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                    attachedProperties:ImageAsyncHelper.ImagePath="{Binding Movie.LargeCoverImage, IsAsync=True}"
                     RenderOptions.BitmapScalingMode="Fant">
                     <Image.Effect>
                         <DropShadowEffect
@@ -451,7 +450,7 @@
                                                                     Width="60"
                                                                     Height="60"
                                                                     HorizontalAlignment="Left"
-                                                                    attachedProperties:ImageAsyncHelper.SourceUri="{Binding SmallImage, Converter={StaticResource StringToUriConverter}, IsAsync=True}"
+                                                                    attachedProperties:ImageAsyncHelper.ImagePath="{Binding SmallImage, IsAsync=True}"
                                                                     RenderOptions.BitmapScalingMode="Fant" />
                                                             </StackPanel>
                                                         </Grid>

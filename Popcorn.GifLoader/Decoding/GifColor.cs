@@ -13,24 +13,15 @@ namespace Popcorn.GifLoader.Decoding
             _b = b;
         }
 
-        public byte R
-        {
-            get { return _r; }
-        }
+        public byte R => _r;
 
-        public byte G
-        {
-            get { return _g; }
-        }
+        public byte G => _g;
 
-        public byte B
-        {
-            get { return _b; }
-        }
+        public byte B => _b;
 
         public override string ToString()
         {
-            return string.Format("#{0:x2}{1:x2}{2:x2}", _r, _g, _b);
+            return $"#{_r:x2}{_g:x2}{_b:x2}";
         }
     }
 }

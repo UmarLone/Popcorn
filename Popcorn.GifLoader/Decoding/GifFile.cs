@@ -7,10 +7,9 @@ namespace Popcorn.GifLoader.Decoding
     internal class GifFile
     {
         public GifHeader Header { get; private set; }
-        public GifColor[] GlobalColorTable { get; set; }
-        public IList<GifFrame> Frames { get; set; }
-        public IList<GifExtension> Extensions { get; set; }
-        public ushort RepeatCount { get; set; }
+        public IList<GifFrame> Frames { get; private set; }
+        private IList<GifExtension> Extensions { get; set; }
+        public ushort RepeatCount { get; private set; }
 
         private GifFile()
         {
@@ -29,9 +28,9 @@ namespace Popcorn.GifLoader.Decoding
 
             if (Header.LogicalScreenDescriptor.HasGlobalColorTable)
             {
-                GlobalColorTable =
-                    GifHelpers.ReadColorTable(stream, Header.LogicalScreenDescriptor.GlobalColorTableSize);
+                GifHelpers.ReadColorTable(stream, Header.LogicalScreenDescriptor.GlobalColorTableSize);
             }
+
             ReadFrames(stream, metadataOnly);
 
             var netscapeExtension =
@@ -47,9 +46,9 @@ namespace Popcorn.GifLoader.Decoding
 
         private void ReadFrames(Stream stream, bool metadataOnly)
         {
-            List<GifFrame> frames = new List<GifFrame>();
-            List<GifExtension> controlExtensions = new List<GifExtension>();
-            List<GifExtension> specialExtensions = new List<GifExtension>();
+            var frames = new List<GifFrame>();
+            var controlExtensions = new List<GifExtension>();
+            var specialExtensions = new List<GifExtension>();
             while (true)
             {
                 var block = GifBlock.ReadBlock(stream, controlExtensions, metadataOnly);

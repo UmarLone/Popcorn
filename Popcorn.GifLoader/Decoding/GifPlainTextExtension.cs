@@ -11,27 +11,24 @@ namespace Popcorn.GifLoader.Decoding
     {
         internal const int ExtensionLabel = 0x01;
 
-        public int BlockSize { get; private set; }
-        public int Left { get; private set; }
-        public int Top { get; private set; }
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public int CellWidth { get; private set; }
-        public int CellHeight { get; private set; }
-        public int ForegroundColorIndex { get; private set; }
-        public int BackgroundColorIndex { get; private set; }
-        public string Text { get; private set; }
+        private int BlockSize { get; set; }
+        private int Left { get; set; }
+        private int Top { get; set; }
+        private int Width { get; set; }
+        private int Height { get; set; }
+        private int CellWidth { get; set; }
+        private int CellHeight { get; set; }
+        private int ForegroundColorIndex { get; set; }
+        private int BackgroundColorIndex { get; set; }
+        private string Text { get; set; }
 
-        public IList<GifExtension> Extensions { get; private set; }
+        private IList<GifExtension> Extensions { get; set; }
 
         private GifPlainTextExtension()
         {
         }
 
-        internal override GifBlockKind Kind
-        {
-            get { return GifBlockKind.GraphicRendering; }
-        }
+        internal override GifBlockKind Kind => GifBlockKind.GraphicRendering;
 
         internal static GifPlainTextExtension ReadPlainText(Stream stream, IEnumerable<GifExtension> controlExtensions,
             bool metadataOnly)

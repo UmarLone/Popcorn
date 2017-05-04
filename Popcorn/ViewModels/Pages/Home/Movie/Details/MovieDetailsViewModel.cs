@@ -312,39 +312,41 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                     var subtitles = await _subtitlesService.SearchSubtitlesFromImdb(
                         languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
                         imdbId.ToString());
-                    movie.AvailableSubtitles =
-                        new ObservableCollection<Subtitle>(subtitles.OrderBy(a => a.LanguageName)
-                            .Select(sub => new Subtitle
-                            {
-                                Sub = sub
-                            }).GroupBy(x => x.Sub.LanguageName,
-                                (k, g) =>
-                                    g.Aggregate(
-                                        (a, x) =>
-                                            (Convert.ToDouble(x.Sub.Rating, CultureInfo.InvariantCulture) >=
-                                             Convert.ToDouble(a.Sub.Rating, CultureInfo.InvariantCulture))
-                                                ? x
-                                                : a)));
-                    movie.AvailableSubtitles.Insert(0, new Subtitle
-                    {
-                        Sub = new OSDB.Subtitle
-                        {
-                            LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"),
-                            SubtitleId = "none"
-                        }
-                    });
 
-                    movie.AvailableSubtitles.Insert(1, new Subtitle
-                    {
-                        Sub = new OSDB.Subtitle
-                        {
-                            LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel"),
-                            SubtitleId = "custom"
-                        }
-                    });
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
+                        movie.AvailableSubtitles =
+                            new ObservableCollection<Subtitle>(subtitles.OrderBy(a => a.LanguageName)
+                                .Select(sub => new Subtitle
+                                {
+                                    Sub = sub
+                                }).GroupBy(x => x.Sub.LanguageName,
+                                    (k, g) =>
+                                        g.Aggregate(
+                                            (a, x) =>
+                                                (Convert.ToDouble(x.Sub.Rating, CultureInfo.InvariantCulture) >=
+                                                 Convert.ToDouble(a.Sub.Rating, CultureInfo.InvariantCulture))
+                                                    ? x
+                                                    : a)));
+
+                        movie.AvailableSubtitles.Insert(0, new Subtitle
+                        {
+                            Sub = new OSDB.Subtitle
+                            {
+                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("NoneLabel"),
+                                SubtitleId = "none"
+                            }
+                        });
+
+                        movie.AvailableSubtitles.Insert(1, new Subtitle
+                        {
+                            Sub = new OSDB.Subtitle
+                            {
+                                LanguageName = LocalizationProviderHelper.GetLocalizedValue<string>("CustomLabel"),
+                                SubtitleId = "custom"
+                            }
+                        });
                         movie.SelectedSubtitle = movie.AvailableSubtitles.FirstOrDefault();
                     });
 
@@ -386,28 +388,29 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
                 ComputeTorrentHealth();
             });
 
-            _customMovieSubtitleMessage = Messenger.Default.RegisterAsyncMessage<CustomMovieSubtitleMessage>(async message =>
-            {
-                var fileDialog = new OpenFileDialog
+            _customMovieSubtitleMessage = Messenger.Default.RegisterAsyncMessage<CustomMovieSubtitleMessage>(
+                async message =>
                 {
-                    Title = "Open Sub File",
-                    Filter = "SUB files (*.sub,*srt,*sbv)|*.sub;*.srt;*.sbv",
-                    InitialDirectory = @"C:\"
-                };
+                    var fileDialog = new OpenFileDialog
+                    {
+                        Title = "Open Sub File",
+                        Filter = "SUB files (*.sub,*srt,*sbv)|*.sub;*.srt;*.sbv",
+                        InitialDirectory = @"C:\"
+                    };
 
-                if (fileDialog.ShowDialog() == true)
-                {
-                    try
+                    if (fileDialog.ShowDialog() == true)
                     {
-                        message.FileName = fileDialog.FileName;
-                        await Task.FromResult(message.FileName);
+                        try
+                        {
+                            message.FileName = fileDialog.FileName;
+                            await Task.FromResult(message.FileName);
+                        }
+                        catch (Exception)
+                        {
+                            message.Error = true;
+                        }
                     }
-                    catch (Exception)
-                    {
-                        message.Error = true;
-                    }
-                }
-            });
+                });
         }
 
         /// <summary>

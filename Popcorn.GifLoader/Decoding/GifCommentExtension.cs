@@ -7,16 +7,13 @@ namespace Popcorn.GifLoader.Decoding
     {
         internal const int ExtensionLabel = 0xFE;
 
-        public string Text { get; private set; }
+        private string Text { get; set; }
 
         private GifCommentExtension()
         {
         }
 
-        internal override GifBlockKind Kind
-        {
-            get { return GifBlockKind.SpecialPurpose; }
-        }
+        internal override GifBlockKind Kind => GifBlockKind.SpecialPurpose;
 
         internal static GifCommentExtension ReadComment(Stream stream)
         {

@@ -8,11 +8,11 @@ namespace Popcorn.GifLoader.Decoding
         public int Width { get; private set; }
         public int Height { get; private set; }
         public bool HasGlobalColorTable { get; private set; }
-        public int ColorResolution { get; private set; }
-        public bool IsGlobalColorTableSorted { get; private set; }
+        private int ColorResolution { get; set; }
+        private bool IsGlobalColorTableSorted { get; set; }
         public int GlobalColorTableSize { get; private set; }
-        public int BackgroundColorIndex { get; private set; }
-        public double PixelAspectRatio { get; private set; }
+        private int BackgroundColorIndex { get; set; }
+        private double PixelAspectRatio { get; set; }
 
         internal static GifLogicalScreenDescriptor ReadLogicalScreenDescriptor(Stream stream)
         {
@@ -23,12 +23,12 @@ namespace Popcorn.GifLoader.Decoding
 
         private void Read(Stream stream)
         {
-            byte[] bytes = new byte[7];
+            var bytes = new byte[7];
             stream.ReadAll(bytes, 0, bytes.Length);
 
             Width = BitConverter.ToUInt16(bytes, 0);
             Height = BitConverter.ToUInt16(bytes, 2);
-            byte packedFields = bytes[4];
+            var packedFields = bytes[4];
             HasGlobalColorTable = (packedFields & 0x80) != 0;
             ColorResolution = ((packedFields & 0x70) >> 4) + 1;
             IsGlobalColorTableSorted = (packedFields & 0x08) != 0;

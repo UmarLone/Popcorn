@@ -8,7 +8,7 @@ namespace Popcorn.GifLoader.Decoding
         internal static GifBlock ReadBlock(Stream stream, IEnumerable<GifExtension> controlExtensions,
             bool metadataOnly)
         {
-            int blockId = stream.ReadByte();
+            var blockId = stream.ReadByte();
             if (blockId < 0)
                 throw GifHelpers.UnexpectedEndOfStreamException();
             switch (blockId)

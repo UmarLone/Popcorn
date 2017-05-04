@@ -11,8 +11,7 @@ namespace Popcorn.GifLoader.Decoding
             bool metadataOnly)
         {
             // Note: at this point, the Extension Introducer (0x21) has already been read
-
-            int label = stream.ReadByte();
+            var label = stream.ReadByte();
             if (label < 0)
                 throw GifHelpers.UnexpectedEndOfStreamException();
             switch (label)

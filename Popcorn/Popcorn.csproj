@@ -246,7 +246,6 @@
     <Compile Include="Converters\NullAsBoolConverter.cs" />
     <Compile Include="Converters\NullAsVisibilityConverter.cs" />
     <Compile Include="Converters\RatingPercentageToNormalizedRatingConverter.cs" />
-    <Compile Include="Converters\StringToUriConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
     <Compile Include="Converters\TorrentHealthToLabelConverter.cs" />
     <Compile Include="Converters\ValueToBrushConverter.cs" />

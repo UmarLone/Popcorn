@@ -532,7 +532,7 @@ namespace Popcorn.GifLoader
             BitmapDecoder decoder = null;
             Stream stream = null;
             Uri uri = null;
-            BitmapCreateOptions createOptions = BitmapCreateOptions.None;
+            var createOptions = BitmapCreateOptions.None;
 
             var bmp = image as BitmapImage;
             if (bmp != null)
@@ -551,7 +551,7 @@ namespace Popcorn.GifLoader
             }
             else
             {
-                BitmapFrame frame = image as BitmapFrame;
+                var frame = image as BitmapFrame;
                 if (frame != null)
                 {
                     decoder = frame.Decoder;
