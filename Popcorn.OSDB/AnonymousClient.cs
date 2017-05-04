@@ -105,7 +105,7 @@ namespace Popcorn.OSDB
                         response.EnsureSuccessStatusCode();
                         using (var content = response.Content)
                         {
-                            await content.ReadAsFileAsync(tempZipName, false);
+                            await content.ReadAsFileAsync(tempZipName, true);
                         }
                     }
                 }

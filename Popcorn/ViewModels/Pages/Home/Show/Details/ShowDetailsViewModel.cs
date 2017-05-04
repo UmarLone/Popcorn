@@ -121,7 +121,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Details
             this,
             message =>
             {
-                DownloadShow.IsDownloadingEpisode = false;
+                DownloadShow.StopDownloadingEpisode();
             });
 
         /// <summary>

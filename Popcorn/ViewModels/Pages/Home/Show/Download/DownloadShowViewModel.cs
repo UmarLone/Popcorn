@@ -152,7 +152,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// <summary>
         /// Stop downloading an episode
         /// </summary>
-        private void StopDownloadingEpisode()
+        public void StopDownloadingEpisode()
         {
             Logger.Info(
                 $"Stop downloading the episode {Episode.Title}");
