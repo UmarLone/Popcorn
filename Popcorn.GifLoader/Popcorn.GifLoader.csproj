@@ -81,6 +81,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Popcorn.Utils\Popcorn.Utils.csproj">
+      <Project>{094a69ce-c69e-4ef0-9321-ba16f7a89080}</Project>
+      <Name>Popcorn.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,11 +1,9 @@
-﻿using System.Collections.Async;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Services.Genres;
@@ -22,12 +20,12 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         /// <summary>
         /// Used to interact with shows
         /// </summary>
-        private readonly IShowService _showService;
+        private IShowService ShowService { get; }
 
         /// <summary>
         /// The user service
         /// </summary>
-        private readonly IUserService _userService;
+        private IUserService UserService { get; }
 
         /// <summary>
         /// <see cref="Caption"/>
@@ -104,8 +102,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show
         public ShowPageViewModel(IApplicationService applicationService, IShowService showService,
             IUserService userService, IGenreService genreService)
         {
-            _showService = showService;
-            _userService = userService;
+            ShowService = showService;
+            UserService = userService;
             _applicationService = applicationService;
             GenreViewModel = new GenreViewModel(userService, genreService);
             RegisterCommands();
@@ -283,7 +281,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show
                     return;
                 }
 
-                Tabs.Add(new SearchShowTabViewModel(ApplicationService, _showService, _userService));
+                Tabs.Add(new SearchShowTabViewModel(ApplicationService, ShowService, UserService));
                 SelectedTab = Tabs.Last();
                 var searchShowTab = SelectedTab as SearchShowTabViewModel;
                 if (searchShowTab != null)

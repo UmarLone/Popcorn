@@ -1,6 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using Popcorn.Messaging;
 
 namespace Popcorn.Models.ApplicationState
 {
@@ -26,7 +24,7 @@ namespace Popcorn.Models.ApplicationState
         /// </summary>
         public bool IsMediaPlaying
         {
-            get { return _isMoviePlaying; }
+            get => _isMoviePlaying;
             set { Set(() => IsMediaPlaying, ref _isMoviePlaying, value); }
         }
 
@@ -35,7 +33,7 @@ namespace Popcorn.Models.ApplicationState
         /// </summary>
         public bool IsConnectionInError
         {
-            get { return _isConnectionInError; }
+            get => _isConnectionInError;
             set { Set(() => IsConnectionInError, ref _isConnectionInError, value); }
         }
 
@@ -44,7 +42,7 @@ namespace Popcorn.Models.ApplicationState
         /// </summary>
         public bool IsFullScreen
         {
-            get { return _isFullScreen; }
+            get => _isFullScreen;
             set { Set(() => IsFullScreen, ref _isFullScreen, value); }
         }
     }

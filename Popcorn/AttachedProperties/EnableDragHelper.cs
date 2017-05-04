@@ -7,7 +7,7 @@ namespace Popcorn.AttachedProperties
     /// <summary>
     /// Enable drag for a control
     /// </summary>
-    public class EnableDragHelper
+    public static class EnableDragHelper
     {
         public static readonly DependencyProperty EnableDragProperty = DependencyProperty.RegisterAttached(
             "EnableDrag",
@@ -23,40 +23,37 @@ namespace Popcorn.AttachedProperties
             {
                 return;
             }
-            if ((bool) dependencyPropertyChangedEventArgs.NewValue == true)
+            if ((bool) dependencyPropertyChangedEventArgs.NewValue)
             {
-                uiElement.MouseMove += UIElementOnMouseMove;
+                uiElement.MouseMove += UiElementOnMouseMove;
             }
             else
             {
-                uiElement.MouseMove -= UIElementOnMouseMove;
+                uiElement.MouseMove -= UiElementOnMouseMove;
             }
 
         }
 
-        private static void UIElementOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
+        private static void UiElementOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
         {
             var uiElement = sender as UIElement;
-            if (uiElement != null)
+            if (uiElement != null && mouseEventArgs.LeftButton == MouseButtonState.Pressed)
             {
-                if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
+                DependencyObject parent = uiElement;
+                int avoidInfiniteLoop = 0;
+                // Search up the visual tree to find the first parent window.
+                while ((parent is Window) == false)
                 {
-                    DependencyObject parent = uiElement;
-                    int avoidInfiniteLoop = 0;
-                    // Search up the visual tree to find the first parent window.
-                    while ((parent is Window) == false)
+                    parent = VisualTreeHelper.GetParent(parent);
+                    avoidInfiniteLoop++;
+                    if (avoidInfiniteLoop == 1000)
                     {
-                        parent = VisualTreeHelper.GetParent(parent);
-                        avoidInfiniteLoop++;
-                        if (avoidInfiniteLoop == 1000)
-                        {
-                            // Something is wrong - we could not find the parent window.
-                            return;
-                        }
+                        // Something is wrong - we could not find the parent window.
+                        return;
                     }
-                    var window = parent as Window;
-                    window.DragMove();
                 }
+                var window = parent as Window;
+                window.DragMove();
             }
         }
 

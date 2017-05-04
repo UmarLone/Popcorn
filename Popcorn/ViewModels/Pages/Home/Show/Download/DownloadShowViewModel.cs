@@ -23,7 +23,7 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Download
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; }= LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Used to interact with subtitles

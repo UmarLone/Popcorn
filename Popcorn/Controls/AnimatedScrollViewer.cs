@@ -252,9 +252,9 @@ namespace Popcorn.Controls
 
         private static void OnTargetVerticalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) d;
+            var thisScroller = (AnimatedScrollViewer) d;
 
-            if ((double) e.NewValue != thisScroller._aniVerticalScrollBar.Value)
+            if (!((double) e.NewValue).Equals(thisScroller._aniVerticalScrollBar.Value))
             {
                 thisScroller._aniVerticalScrollBar.Value = (double) e.NewValue;
             }
@@ -283,7 +283,7 @@ namespace Popcorn.Controls
         {
             AnimatedScrollViewer thisScroller = (AnimatedScrollViewer) d;
 
-            if ((double) e.NewValue != thisScroller._aniHorizontalScrollBar.Value)
+            if (!((double) e.NewValue).Equals(thisScroller._aniHorizontalScrollBar.Value))
             {
                 thisScroller._aniHorizontalScrollBar.Value = (double) e.NewValue;
             }

@@ -166,7 +166,7 @@ namespace Popcorn.GifLoader
             obj.SetValue(AnimationControllerPropertyKey, value);
         }
 
-        private static readonly DependencyPropertyKey AnimationControllerPropertyKey =
+        private static DependencyPropertyKey AnimationControllerPropertyKey { get; } =
             DependencyProperty.RegisterAttachedReadOnly("AnimationController", typeof(ImageAnimationController),
                 typeof(ImageBehavior), new PropertyMetadata(null));
 

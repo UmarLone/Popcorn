@@ -56,9 +56,10 @@ namespace Popcorn.GifLoader.Decoding
                 if (block.Kind == GifBlockKind.GraphicRendering)
                     controlExtensions = new List<GifExtension>();
 
-                if (block is GifFrame)
+                var frame = block as GifFrame;
+                if (frame != null)
                 {
-                    frames.Add((GifFrame) block);
+                    frames.Add(frame);
                 }
                 else if (block is GifExtension)
                 {

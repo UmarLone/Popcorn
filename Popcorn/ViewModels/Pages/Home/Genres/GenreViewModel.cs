@@ -20,17 +20,17 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Language service
         /// </summary>
-        private readonly IUserService _userService;
+        private IUserService UserService { get; }
 
         /// <summary>
         /// Genre service
         /// </summary>
-        private readonly IGenreService _genreService;
+        private IGenreService GenreService { get; }
 
         /// <summary>
         /// Movie genres
@@ -59,8 +59,8 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// <param name="genreService">The genre service</param>
         public GenreViewModel(IUserService userService, IGenreService genreService)
         {
-            _userService = userService;
-            _genreService = genreService;
+            UserService = userService;
+            GenreService = genreService;
             CancellationLoadingGenres = new CancellationTokenSource();
             RegisterMessages();
         }
@@ -88,10 +88,10 @@ namespace Popcorn.ViewModels.Pages.Home.Genres
         /// </summary>
         public async Task LoadGenresAsync()
         {
-            var language = await _userService.GetCurrentLanguageAsync();
+            var language = await UserService.GetCurrentLanguageAsync();
             var genres =
                 new ObservableCollection<GenreJson>(
-                    await _genreService.GetGenresAsync(language.Culture, CancellationLoadingGenres.Token));
+                    await GenreService.GetGenresAsync(language.Culture, CancellationLoadingGenres.Token));
             if (CancellationLoadingGenres.IsCancellationRequested)
                 return;
 

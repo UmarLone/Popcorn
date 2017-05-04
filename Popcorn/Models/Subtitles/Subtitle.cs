@@ -12,7 +12,7 @@ namespace Popcorn.Models.Subtitles
         /// </summary>
         public OSDB.Subtitle Sub
         {
-            get { return _subtitle; }
+            get => _subtitle;
             set { Set(() => Sub, ref _subtitle, value); }
         }
 
@@ -21,7 +21,7 @@ namespace Popcorn.Models.Subtitles
         /// </summary>
         public string FilePath
         {
-            get { return _filePath; }
+            get => _filePath;
             set { Set(() => FilePath, ref _filePath, value); }
         }
     }

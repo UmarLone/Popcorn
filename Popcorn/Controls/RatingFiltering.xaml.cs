@@ -39,6 +39,7 @@ namespace Popcorn.Controls
         /// </summary>
         public double RatingValue
         {
+            get => (double)GetValue(RatingValueProperty);
             set
             {
                 if (value < 0)

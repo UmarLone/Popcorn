@@ -14,7 +14,7 @@ namespace Popcorn.ViewModels.Pages.Player
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Command used to stop playing the media

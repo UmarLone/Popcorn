@@ -1,12 +1,9 @@
-﻿using System.Collections.Async;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using Popcorn.Messaging;
 using Popcorn.Models.ApplicationState;
 using Popcorn.Services.Genres;
@@ -28,12 +25,12 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         /// <summary>
         /// Used to interact with movie history
         /// </summary>
-        private readonly IUserService _userService;
+        private IUserService UserService { get; }
 
         /// <summary>
         /// Used to interact with movies
         /// </summary>
-        private readonly IMovieService _movieService;
+        private IMovieService MovieService { get; }
 
         /// <summary>
         /// Application state
@@ -80,19 +77,19 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
         public MoviePageViewModel(IMovieService movieService,
             IUserService userService, IApplicationService applicationService, IGenreService genreService)
         {
-            _movieService = movieService;
-            _userService = userService;
+            MovieService = movieService;
+            UserService = userService;
             ApplicationService = applicationService;
             GenreViewModel = new GenreViewModel(userService, genreService);
             RegisterMessages();
             RegisterCommands();
 
             Search = new SearchMovieViewModel();
-            Tabs.Add(new PopularMovieTabViewModel(ApplicationService, _movieService, _userService));
-            Tabs.Add(new GreatestMovieTabViewModel(ApplicationService, _movieService, _userService));
-            Tabs.Add(new RecentMovieTabViewModel(ApplicationService, _movieService, _userService));
-            Tabs.Add(new FavoritesMovieTabViewModel(ApplicationService, _movieService, _userService));
-            Tabs.Add(new SeenMovieTabViewModel(ApplicationService, _movieService, _userService));
+            Tabs.Add(new PopularMovieTabViewModel(ApplicationService, MovieService, UserService));
+            Tabs.Add(new GreatestMovieTabViewModel(ApplicationService, MovieService, UserService));
+            Tabs.Add(new RecentMovieTabViewModel(ApplicationService, MovieService, UserService));
+            Tabs.Add(new FavoritesMovieTabViewModel(ApplicationService, MovieService, UserService));
+            Tabs.Add(new SeenMovieTabViewModel(ApplicationService, MovieService, UserService));
             SelectedTab = Tabs.First();
             SelectedMoviesIndexMenuTab = 0;
         }
@@ -298,7 +295,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie
                     return;
                 }
 
-                Tabs.Add(new SearchMovieTabViewModel(ApplicationService, _movieService, _userService));
+                Tabs.Add(new SearchMovieTabViewModel(ApplicationService, MovieService, UserService));
                 SelectedTab = Tabs.Last();
                 var searchMovieTab = SelectedTab as SearchMovieTabViewModel;
                 if (searchMovieTab != null)

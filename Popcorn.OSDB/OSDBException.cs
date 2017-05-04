@@ -10,12 +10,12 @@ namespace Popcorn.OSDB
     /// OSDB exception
     /// </summary>
     [Serializable]
-    public class OSDBException : Exception
+    public class OsdbException : Exception
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public OSDBException()
+        public OsdbException()
         {
         }
 
@@ -23,7 +23,7 @@ namespace Popcorn.OSDB
         /// Constructor
         /// </summary>
         /// <param name="message">Message</param>
-        public OSDBException(string message) : base(message)
+        public OsdbException(string message) : base(message)
         {
         }
     }

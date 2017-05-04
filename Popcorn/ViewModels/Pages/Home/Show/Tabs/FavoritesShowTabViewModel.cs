@@ -109,8 +109,8 @@ namespace Popcorn.ViewModels.Pages.Home.Show.Tabs
                         Shows.Remove(Shows.FirstOrDefault(a => a.ImdbId == movie));
                     }
 
-                    await showsToAdd.ToList()
-                        .ParallelForEachAsync(async imdbId =>
+                    var shows = showsToAdd.ToList();
+                    await shows.ParallelForEachAsync(async imdbId =>
                         {
                             var show = await ShowService.GetShowAsync(imdbId);
                             if ((Genre != null

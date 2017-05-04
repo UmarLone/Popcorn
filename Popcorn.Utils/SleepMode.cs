@@ -5,11 +5,11 @@
     /// </summary>
     public class SleepMode
     {
-        public enum EXECUTION_STATE : uint
+        public enum ExecutionState : uint
         {
-            ES_AWAYMODE_REQUIRED = 0x00000040,
-            ES_CONTINUOUS = 0x80000000,
-            ES_DISPLAY_REQUIRED = 0x00000002,
+            EsAwaymodeRequired = 0x00000040,
+            EsContinuous = 0x80000000,
+            EsDisplayRequired = 0x00000002,
         }
 
         /// <summary>
@@ -17,7 +17,7 @@
         /// </summary>
         public static void PreventWindowsFromSleeping()
         {
-            NativeMethods.SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+            NativeMethods.SetThreadExecutionState(ExecutionState.EsDisplayRequired);
         }
     }
 }

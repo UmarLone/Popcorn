@@ -11,39 +11,39 @@ namespace Popcorn.GifLoader
     /// </summary>
     public class ImageAnimationController : IDisposable
     {
-        private static readonly DependencyPropertyDescriptor SourceDescriptor;
+        private static DependencyPropertyDescriptor SourceDescriptor { get; }
 
         static ImageAnimationController()
         {
             SourceDescriptor = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
         }
 
-        private readonly Image _image;
-        private readonly ObjectAnimationUsingKeyFrames _animation;
-        private readonly AnimationClock _clock;
-        private readonly ClockController _clockController;
+        private Image Image { get; }
+        private ObjectAnimationUsingKeyFrames Animation { get; }
+        private AnimationClock Clock { get; }
+        private ClockController ClockController { get; }
 
         internal ImageAnimationController(Image image, ObjectAnimationUsingKeyFrames animation, bool autoStart)
         {
-            _image = image;
-            _animation = animation;
-            _animation.Completed += AnimationCompleted;
-            _clock = _animation.CreateClock();
-            _clockController = _clock.Controller;
+            Image = image;
+            Animation = animation;
+            Animation.Completed += AnimationCompleted;
+            Clock = Animation.CreateClock();
+            ClockController = Clock.Controller;
             SourceDescriptor.AddValueChanged(image, ImageSourceChanged);
 
             // ReSharper disable once PossibleNullReferenceException
-            _clockController.Pause();
+            ClockController.Pause();
 
-            _image.ApplyAnimationClock(Image.SourceProperty, _clock);
+            Image.ApplyAnimationClock(Image.SourceProperty, Clock);
 
             if (autoStart)
-                _clockController.Resume();
+                ClockController.Resume();
         }
 
         void AnimationCompleted(object sender, EventArgs e)
         {
-            _image.RaiseEvent(new System.Windows.RoutedEventArgs(ImageBehavior.AnimationCompletedEvent, _image));
+            Image.RaiseEvent(new System.Windows.RoutedEventArgs(ImageBehavior.AnimationCompletedEvent, Image));
         }
 
         private void ImageSourceChanged(object sender, EventArgs e)
@@ -56,7 +56,7 @@ namespace Popcorn.GifLoader
         /// </summary>
         public int FrameCount
         {
-            get { return _animation.KeyFrames.Count; }
+            get { return Animation.KeyFrames.Count; }
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Popcorn.GifLoader
         /// </summary>
         public bool IsPaused
         {
-            get { return _clock.IsPaused; }
+            get { return Clock.IsPaused; }
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Popcorn.GifLoader
         /// </summary>
         public bool IsComplete
         {
-            get { return _clock.CurrentState == ClockState.Filling; }
+            get { return Clock.CurrentState == ClockState.Filling; }
         }
 
         /// <summary>
@@ -81,8 +81,8 @@ namespace Popcorn.GifLoader
         /// <param name="index">The index of the frame to seek to</param>
         public void GotoFrame(int index)
         {
-            var frame = _animation.KeyFrames[index];
-            _clockController.Seek(frame.KeyTime.TimeSpan, TimeSeekOrigin.BeginTime);
+            var frame = Animation.KeyFrames[index];
+            ClockController.Seek(frame.KeyTime.TimeSpan, TimeSeekOrigin.BeginTime);
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace Popcorn.GifLoader
         {
             get
             {
-                var time = _clock.CurrentTime;
+                var time = Clock.CurrentTime;
                 var frameAndIndex =
-                    _animation.KeyFrames
+                    Animation.KeyFrames
                         .Cast<ObjectKeyFrame>()
                         .Select((f, i) => new {Time = f.KeyTime.TimeSpan, Index = i})
                         .FirstOrDefault(fi => fi.Time >= time);
@@ -109,7 +109,7 @@ namespace Popcorn.GifLoader
         /// </summary>
         public void Pause()
         {
-            _clockController.Pause();
+            ClockController.Pause();
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Popcorn.GifLoader
         /// </summary>
         public void Play()
         {
-            _clockController.Resume();
+            ClockController.Resume();
         }
 
         /// <summary>
@@ -156,10 +156,10 @@ namespace Popcorn.GifLoader
         {
             if (disposing)
             {
-                _image.BeginAnimation(Image.SourceProperty, null);
-                _animation.Completed -= AnimationCompleted;
-                SourceDescriptor.RemoveValueChanged(_image, ImageSourceChanged);
-                _image.Source = null;
+                Image.BeginAnimation(Image.SourceProperty, null);
+                Animation.Completed -= AnimationCompleted;
+                SourceDescriptor.RemoveValueChanged(Image, ImageSourceChanged);
+                Image.Source = null;
             }
         }
     }

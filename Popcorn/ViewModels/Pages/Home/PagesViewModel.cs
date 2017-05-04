@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
 using Popcorn.Helpers;
-using Popcorn.Messaging;
 using Popcorn.ViewModels.Pages.Home.Anime;
 using Popcorn.ViewModels.Pages.Home.Movie;
 using Popcorn.ViewModels.Pages.Home.Show;
@@ -24,8 +22,8 @@ namespace Popcorn.ViewModels.Pages.Home
         /// </summary>
         public ObservableCollection<IPageViewModel> Pages
         {
-            get { return _pages; }
-            set { Set(() => Pages, ref _pages, value); }
+            get => _pages;
+            private set { Set(() => Pages, ref _pages, value); }
         }
 
         /// <summary>

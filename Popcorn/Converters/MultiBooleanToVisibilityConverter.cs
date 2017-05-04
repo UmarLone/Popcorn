@@ -32,9 +32,6 @@ namespace Popcorn.Converters
                 case "OR":
                     visible = values.OfType<bool>().Aggregate(false, (current, value) => current || value);
                     break;
-                case "AND":
-                    visible = values.OfType<bool>().Aggregate(true, (current, value) => current && value);
-                    break;
                 default:
                     visible = values.OfType<bool>().Aggregate(true, (current, value) => current && value);
                     break;

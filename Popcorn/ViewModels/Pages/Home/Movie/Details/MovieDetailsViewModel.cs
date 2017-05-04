@@ -17,8 +17,6 @@ using Popcorn.Services.Movies.Movie;
 using Popcorn.Services.Movies.Trailer;
 using Popcorn.Services.Subtitles;
 using Popcorn.ViewModels.Pages.Home.Movie.Download;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.Win32;
 using Popcorn.Extensions;
 using Popcorn.Models.Torrent.Movie;
@@ -35,7 +33,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Holds the async message relative to <see cref="CustomMovieSubtitleMessage"/>
@@ -100,7 +98,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         /// <summary>
         /// The service used to interact with subtitles
         /// </summary>
-        private readonly ISubtitlesService _subtitlesService;
+        private ISubtitlesService SubtitlesService { get; }
 
         /// <summary>
         /// True if subtitles are loading
@@ -143,7 +141,7 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
         {
             _movieTrailerService = movieTrailerService;
             _movieService = movieService;
-            _subtitlesService = subtitlesService;
+            SubtitlesService = subtitlesService;
             CancellationLoadingToken = new CancellationTokenSource();
             CancellationLoadingTrailerToken = new CancellationTokenSource();
             DownloadMovie = new DownloadMovieViewModel(subtitlesService, new DownloadMovieService<MovieJson>());
@@ -303,13 +301,13 @@ namespace Popcorn.ViewModels.Pages.Home.Movie.Details
             LoadingSubtitles = true;
             try
             {
-                var languages = (await _subtitlesService.GetSubLanguages()).ToList();
+                var languages = (await SubtitlesService.GetSubLanguages()).ToList();
                 if (int.TryParse(new string(movie.ImdbCode
                     .SkipWhile(x => !char.IsDigit(x))
                     .TakeWhile(char.IsDigit)
                     .ToArray()), out int imdbId))
                 {
-                    var subtitles = await _subtitlesService.SearchSubtitlesFromImdb(
+                    var subtitles = await SubtitlesService.SearchSubtitlesFromImdb(
                         languages.Select(lang => lang.SubLanguageID).Aggregate((a, b) => a + "," + b),
                         imdbId.ToString());
 

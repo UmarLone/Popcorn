@@ -24,18 +24,18 @@ namespace Popcorn.ImageLoader
 
         #region Properties
 
-        private readonly Dictionary<Image, LoadImageRequest> _imagesLastRunningTask =
+        private Dictionary<Image, LoadImageRequest> ImagesLastRunningTask { get; } =
             new Dictionary<Image, LoadImageRequest>();
 
-        private readonly Queue<LoadImageRequest> _loadThumbnailQueue = new Queue<LoadImageRequest>();
-        private readonly Queue<LoadImageRequest> _loadNormalQueue = new Queue<LoadImageRequest>();
+        private Queue<LoadImageRequest> LoadThumbnailQueue { get; } = new Queue<LoadImageRequest>();
+        private Queue<LoadImageRequest> LoadNormalQueue { get; } = new Queue<LoadImageRequest>();
 
-        private readonly AutoResetEvent _loaderThreadThumbnailEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _loaderThreadNormalSizeEvent = new AutoResetEvent(false);
+        private AutoResetEvent LoaderThreadThumbnailEvent { get; } = new AutoResetEvent(false);
+        private AutoResetEvent LoaderThreadNormalSizeEvent { get; } = new AutoResetEvent(false);
 
-        private readonly DrawingImage _loadingImage;
-        private readonly DrawingImage _errorThumbnail;
-        private readonly TransformGroup _loadingAnimationTransform;
+        private DrawingImage LoadingImage { get; }
+        private DrawingImage ErrorThumbnail { get; }
+        private TransformGroup LoadingAnimationTransform { get; }
 
         #endregion
 
@@ -70,10 +70,10 @@ namespace Popcorn.ImageLoader
                 Source = new Uri("Popcorn.ImageLoader;component/Resources.xaml", UriKind.Relative)
             };
 
-            _loadingImage = resourceDictionary["ImageLoading"] as DrawingImage;
-            _loadingImage.Freeze();
-            _errorThumbnail = resourceDictionary["ImageError"] as DrawingImage;
-            _errorThumbnail.Freeze();
+            LoadingImage = resourceDictionary["ImageLoading"] as DrawingImage;
+            LoadingImage.Freeze();
+            ErrorThumbnail = resourceDictionary["ImageError"] as DrawingImage;
+            ErrorThumbnail.Freeze();
 
             #endregion
 
@@ -95,7 +95,7 @@ namespace Popcorn.ImageLoader
 
             rotateTransform.BeginAnimation(RotateTransform.AngleProperty, doubleAnimation);
 
-            _loadingAnimationTransform = group;
+            LoadingAnimationTransform = group;
 
             #endregion
         }
@@ -113,12 +113,12 @@ namespace Popcorn.ImageLoader
             // Begin Loading
             BeginLoading(image, loadTask);
 
-            lock (_loadThumbnailQueue)
+            lock (LoadThumbnailQueue)
             {
-                _loadThumbnailQueue.Enqueue(loadTask);
+                LoadThumbnailQueue.Enqueue(loadTask);
             }
 
-            _loaderThreadThumbnailEvent.Set();
+            LoaderThreadThumbnailEvent.Set();
         }
 
         #endregion
@@ -127,17 +127,17 @@ namespace Popcorn.ImageLoader
 
         private void BeginLoading(Image image, LoadImageRequest loadTask)
         {
-            lock (_imagesLastRunningTask)
+            lock (ImagesLastRunningTask)
             {
-                if (_imagesLastRunningTask.ContainsKey(image))
+                if (ImagesLastRunningTask.ContainsKey(image))
                 {
                     // Cancel previous loading...
-                    _imagesLastRunningTask[image].IsCanceled = true;
-                    _imagesLastRunningTask[image] = loadTask;
+                    ImagesLastRunningTask[image].IsCanceled = true;
+                    ImagesLastRunningTask[image] = loadTask;
                 }
                 else
                 {
-                    _imagesLastRunningTask.Add(image, loadTask);
+                    ImagesLastRunningTask.Add(image, loadTask);
                 }
             }
 
@@ -146,31 +146,29 @@ namespace Popcorn.ImageLoader
                 // Set IsLoading Pty
                 Loader.SetIsLoading(image, true);
 
-                if (Equals(image.RenderTransform, Transform.Identity))
-                    // Don't apply loading animation if image already has transform...
+                if (Equals(image.RenderTransform, Transform.Identity) &&
+                    Loader.GetDisplayWaitingAnimationDuringLoading(image))
                 {
+                    // Don't apply loading animation if image already has transform...
                     // Manage Waiting Image Parameter
-                    if (Loader.GetDisplayWaitingAnimationDuringLoading(image))
-                    {
-                        image.Source = _loadingImage;
-                        image.RenderTransformOrigin = new Point(0.5, 0.5);
-                        image.RenderTransform = _loadingAnimationTransform;
-                    }
+                    image.Source = LoadingImage;
+                    image.RenderTransformOrigin = new Point(0.5, 0.5);
+                    image.RenderTransform = LoadingAnimationTransform;
                 }
             }));
         }
 
         private void EndLoading(Image image, ImageSource imageSource, LoadImageRequest loadTask, bool markAsFinished)
         {
-            lock (_imagesLastRunningTask)
+            lock (ImagesLastRunningTask)
             {
-                if (_imagesLastRunningTask.ContainsKey(image))
+                if (ImagesLastRunningTask.ContainsKey(image))
                 {
-                    if (_imagesLastRunningTask[image].Source != loadTask.Source)
+                    if (ImagesLastRunningTask[image].Source != loadTask.Source)
                         return; // if the last launched task for this image is not this one, abort it!
 
                     if (markAsFinished)
-                        _imagesLastRunningTask.Remove(image);
+                        ImagesLastRunningTask.Remove(image);
                 }
                 else
                 {
@@ -181,14 +179,14 @@ namespace Popcorn.ImageLoader
 
                 image.Dispatcher.BeginInvoke(new ThreadStart(delegate
                 {
-                    if (image.RenderTransform == _loadingAnimationTransform)
+                    if (image.RenderTransform == LoadingAnimationTransform)
                     {
                         image.RenderTransform = Transform.Identity;
                     }
 
                     if (Loader.GetErrorDetected(image) && Loader.GetDisplayErrorThumbnailOnError(image))
                     {
-                        imageSource = _errorThumbnail;
+                        imageSource = ErrorThumbnail;
                     }
 
                     image.Source = imageSource;
@@ -237,7 +235,7 @@ namespace Popcorn.ImageLoader
                 }
                 catch (Exception)
                 {
-                    // TODO
+                    // An issue occured while getting stream.
                 }
 
                 if (imageStream != null)
@@ -285,7 +283,7 @@ namespace Popcorn.ImageLoader
                     }
                     catch (Exception)
                     {
-                        // TODO
+                        // An issue occured while creating bitmap image
                     }
                 }
 
@@ -321,16 +319,16 @@ namespace Popcorn.ImageLoader
         {
             do
             {
-                _loaderThreadThumbnailEvent.WaitOne();
+                LoaderThreadThumbnailEvent.WaitOne();
 
                 LoadImageRequest loadTask;
 
                 do
                 {
 
-                    lock (_loadThumbnailQueue)
+                    lock (LoadThumbnailQueue)
                     {
-                        loadTask = _loadThumbnailQueue.Count > 0 ? _loadThumbnailQueue.Dequeue() : null;
+                        loadTask = LoadThumbnailQueue.Count > 0 ? LoadThumbnailQueue.Dequeue() : null;
                     }
 
                     if (loadTask != null && !loadTask.IsCanceled)
@@ -352,12 +350,12 @@ namespace Popcorn.ImageLoader
                         {
                             EndLoading(loadTask.Image, bitmapSource, loadTask, false);
 
-                            lock (_loadNormalQueue)
+                            lock (LoadNormalQueue)
                             {
-                                _loadNormalQueue.Enqueue(loadTask);
+                                LoadNormalQueue.Enqueue(loadTask);
                             }
 
-                            _loaderThreadNormalSizeEvent.Set();
+                            LoaderThreadNormalSizeEvent.Set();
                         }
                     }
 
@@ -370,16 +368,16 @@ namespace Popcorn.ImageLoader
         {
             do
             {
-                _loaderThreadNormalSizeEvent.WaitOne();
+                LoaderThreadNormalSizeEvent.WaitOne();
 
                 LoadImageRequest loadTask;
 
                 do
                 {
 
-                    lock (_loadNormalQueue)
+                    lock (LoadNormalQueue)
                     {
-                        loadTask = _loadNormalQueue.Count > 0 ? _loadNormalQueue.Dequeue() : null;
+                        loadTask = LoadNormalQueue.Count > 0 ? LoadNormalQueue.Dequeue() : null;
                     }
 
                     if (loadTask != null && !loadTask.IsCanceled)

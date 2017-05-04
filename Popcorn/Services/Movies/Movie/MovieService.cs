@@ -24,7 +24,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Initialize a new instance of MovieService class
@@ -42,7 +42,7 @@ namespace Popcorn.Services.Movies.Movie
             }
             catch (Exception)
             {
-                //TODO
+                // An issue occured with TmdbClient
             }
         }
 
@@ -54,7 +54,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <summary>
         /// True if movie languages must be refreshed
         /// </summary>
-        private bool _mustRefreshLanguage;
+        private bool MustRefreshLanguage { get; set; }
 
         /// <summary>
         /// Change the culture of TMDb
@@ -62,18 +62,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <param name="language">Language to set</param>
         public void ChangeTmdbLanguage(LanguageJson language)
         {
-            if (TmdbClient.DefaultLanguage == null && language.Culture == "en")
-            {
-                _mustRefreshLanguage = false;
-            }
-            else if (TmdbClient.DefaultLanguage != language.Culture)
-            {
-                _mustRefreshLanguage = true;
-            }
-            else
-            {
-                _mustRefreshLanguage = false;
-            }
+            MustRefreshLanguage = TmdbClient.DefaultLanguage != language.Culture;
 
             TmdbClient.DefaultLanguage = language.Culture;
         }
@@ -323,7 +312,7 @@ namespace Popcorn.Services.Movies.Movie
         /// <returns>Task</returns>
         public async Task TranslateMovieAsync(MovieJson movieToTranslate)
         {
-            if (!_mustRefreshLanguage) return;
+            if (!MustRefreshLanguage) return;
             var watch = Stopwatch.StartNew();
             try
             {

@@ -133,7 +133,7 @@ namespace Popcorn.Extensions
                 self,
                 token,
                 false,
-                async m => (TResult)await callback(m));
+                async m => await callback(m));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Popcorn.Extensions
                 self,
                 null,
                 false,
-                async m => (TResult)await callback(m));
+                async m => await callback(m));
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Popcorn.Extensions
                 self,
                 token,
                 receiveDerivedMessagesToo,
-                async m => (TResult)await callback(m));
+                async m => await callback(m));
         }
     }
 }

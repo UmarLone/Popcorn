@@ -21,7 +21,7 @@ namespace Popcorn.Models.Trailer
         /// </summary>
         public Uri Uri
         {
-            get { return _uri; }
+            get => _uri;
             private set { Set(() => Uri, ref _uri, value); }
         }
     }

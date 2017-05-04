@@ -20,10 +20,7 @@ namespace Popcorn.Utils
         /// </summary>
         public readonly FileAttributes Attributes;
 
-        public DateTime CreationTime
-        {
-            get { return this.CreationTimeUtc.ToLocalTime(); }
-        }
+        public DateTime CreationTime => CreationTimeUtc.ToLocalTime();
 
         /// <summary>
         /// File creation time in UTC
@@ -33,11 +30,8 @@ namespace Popcorn.Utils
         /// <summary>
         /// Gets the last access time in local time.
         /// </summary>
-        public DateTime LastAccesTime
-        {
-            get { return this.LastAccessTimeUtc.ToLocalTime(); }
-        }
-        
+        public DateTime LastAccesTime => this.LastAccessTimeUtc.ToLocalTime();
+
         /// <summary>
         /// File last access time in UTC
         /// </summary>
@@ -46,16 +40,13 @@ namespace Popcorn.Utils
         /// <summary>
         /// Gets the last access time in local time.
         /// </summary>
-        public DateTime LastWriteTime
-        {
-            get { return this.LastWriteTimeUtc.ToLocalTime(); }
-        }
-        
+        public DateTime LastWriteTime => this.LastWriteTimeUtc.ToLocalTime();
+
         /// <summary>
         /// File last write time in UTC
         /// </summary>
         public readonly DateTime LastWriteTimeUtc;
-        
+
         /// <summary>
         /// Size of the file in bytes
         /// </summary>
@@ -79,7 +70,7 @@ namespace Popcorn.Utils
         /// </returns>
         public override string ToString()
         {
-            return this.Name;
+            return Name;
         }
 
         /// <summary>
@@ -88,34 +79,34 @@ namespace Popcorn.Utils
         /// <param name="dir">The directory that the file is stored at</param>
         /// <param name="findData">WIN32_FIND_DATA structure that this
         /// object wraps.</param>
-        internal FileData(string dir, WIN32_FIND_DATA findData) 
+        internal FileData(string dir, WIN32_FIND_DATA findData)
         {
-            this.Attributes = findData.dwFileAttributes;
+            Attributes = findData.dwFileAttributes;
 
 
-            this.CreationTimeUtc = ConvertDateTime(findData.ftCreationTime_dwHighDateTime, 
-                                                findData.ftCreationTime_dwLowDateTime);
+            CreationTimeUtc = ConvertDateTime(findData.ftCreationTime_dwHighDateTime,
+                findData.ftCreationTime_dwLowDateTime);
 
-            this.LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTime_dwHighDateTime,
-                                                findData.ftLastAccessTime_dwLowDateTime);
+            LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTime_dwHighDateTime,
+                findData.ftLastAccessTime_dwLowDateTime);
 
-            this.LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTime_dwHighDateTime,
-                                                findData.ftLastWriteTime_dwLowDateTime);
+            LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTime_dwHighDateTime,
+                findData.ftLastWriteTime_dwLowDateTime);
 
-            this.Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
+            Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
 
-            this.Name = findData.cFileName;
-            this.Path = System.IO.Path.Combine(dir, findData.cFileName);
+            Name = findData.cFileName;
+            Path = System.IO.Path.Combine(dir, findData.cFileName);
         }
 
         private static long CombineHighLowInts(uint high, uint low)
         {
-            return (((long)high) << 0x20) | low;
+            return ((long) high << 0x20) | low;
         }
 
         private static DateTime ConvertDateTime(uint high, uint low)
         {
-            long fileTime = CombineHighLowInts(high, low);
+            var fileTime = CombineHighLowInts(high, low);
             return DateTime.FromFileTimeUtc(fileTime);
         }
     }
@@ -138,10 +129,8 @@ namespace Popcorn.Utils
         public uint nFileSizeLow;
         public int dwReserved0;
         public int dwReserved1;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-        public string cFileName;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-        public string cAlternateFileName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternateFileName;
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -178,7 +167,7 @@ namespace Popcorn.Utils
         /// </exception>
         public static IEnumerable<FileData> EnumerateFiles(string path)
         {
-            return FastDirectoryEnumerator.EnumerateFiles(path, "*");
+            return EnumerateFiles(path, "*");
         }
 
         /// <summary>
@@ -197,7 +186,7 @@ namespace Popcorn.Utils
         /// </exception>
         public static IEnumerable<FileData> EnumerateFiles(string path, string searchPattern)
         {
-            return FastDirectoryEnumerator.EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+            return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
         }
 
         /// <summary>
@@ -226,15 +215,15 @@ namespace Popcorn.Utils
         {
             if (path == null)
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
             if (searchPattern == null)
             {
-                throw new ArgumentNullException("searchPattern");
+                throw new ArgumentNullException(nameof(searchPattern));
             }
             if ((searchOption != SearchOption.TopDirectoryOnly) && (searchOption != SearchOption.AllDirectories))
             {
-                throw new ArgumentOutOfRangeException("searchOption");
+                throw new ArgumentOutOfRangeException(nameof(searchOption));
             }
 
             string fullPath = Path.GetFullPath(path);
@@ -258,7 +247,7 @@ namespace Popcorn.Utils
         /// </exception>
         public static FileData[] GetFiles(string path, string searchPattern, SearchOption searchOption)
         {
-            IEnumerable<FileData> e = FastDirectoryEnumerator.EnumerateFiles(path, searchPattern, searchOption);
+            IEnumerable<FileData> e = EnumerateFiles(path, searchPattern, searchOption);
             List<FileData> list = new List<FileData>(e);
 
             FileData[] retval = new FileData[list.Count];
@@ -273,9 +262,9 @@ namespace Popcorn.Utils
         /// </summary>
         private class FileEnumerable : IEnumerable<FileData>
         {
-            private readonly string m_path;
-            private readonly string m_filter;
-            private readonly SearchOption m_searchOption;
+            private readonly string _mPath;
+            private readonly string _mFilter;
+            private readonly SearchOption _mSearchOption;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileEnumerable"/> class.
@@ -288,9 +277,9 @@ namespace Popcorn.Utils
             /// </param>
             public FileEnumerable(string path, string filter, SearchOption searchOption)
             {
-                m_path = path;
-                m_filter = filter;
-                m_searchOption = searchOption;
+                _mPath = path;
+                _mFilter = filter;
+                _mSearchOption = searchOption;
             }
 
             #region IEnumerable<FileData> Members
@@ -304,7 +293,7 @@ namespace Popcorn.Utils
             /// </returns>
             public IEnumerator<FileData> GetEnumerator()
             {
-                return new FileEnumerator(m_path, m_filter, m_searchOption);
+                return new FileEnumerator(_mPath, _mFilter, _mSearchOption);
             }
 
             #endregion
@@ -320,7 +309,7 @@ namespace Popcorn.Utils
             /// </returns>
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
             {
-                return new FileEnumerator(m_path, m_filter, m_searchOption);
+                return new FileEnumerator(_mPath, _mFilter, _mSearchOption);
             }
 
             #endregion
@@ -354,7 +343,7 @@ namespace Popcorn.Utils
             /// </returns>
             protected override bool ReleaseHandle()
             {
-                return FindClose(base.handle);
+                return FindClose(handle);
             }
         }
 
@@ -366,12 +355,12 @@ namespace Popcorn.Utils
         private class FileEnumerator : IEnumerator<FileData>
         {
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern SafeFindHandle FindFirstFile(string fileName, 
+            private static extern SafeFindHandle FindFirstFile(string fileName,
                 [In, Out] WIN32_FIND_DATA data);
 
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern bool FindNextFile(SafeFindHandle hndFindFile, 
-                    [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_DATA lpFindFileData);
+            private static extern bool FindNextFile(SafeFindHandle hndFindFile,
+                [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_DATA lpFindFileData);
 
             /// <summary>
             /// Hold context information about where we current are in the directory search.
@@ -383,18 +372,18 @@ namespace Popcorn.Utils
 
                 public SearchContext(string path)
                 {
-                    this.Path = path;
+                    Path = path;
                 }
             }
 
-            private string m_path;
-            private string m_filter;
-            private SearchOption m_searchOption;
-            private Stack<SearchContext> m_contextStack;
-            private SearchContext m_currentContext;
+            private string _mPath;
+            private readonly string _mFilter;
+            private readonly SearchOption _mSearchOption;
+            private readonly Stack<SearchContext> _mContextStack;
+            private SearchContext _mCurrentContext;
 
-            private SafeFindHandle m_hndFindFile;
-            private WIN32_FIND_DATA m_win_find_data = new WIN32_FIND_DATA();
+            private SafeFindHandle _mHndFindFile;
+            private readonly WIN32_FIND_DATA _mWinFindData = new WIN32_FIND_DATA();
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileEnumerator"/> class.
@@ -407,14 +396,14 @@ namespace Popcorn.Utils
             /// </param>
             public FileEnumerator(string path, string filter, SearchOption searchOption)
             {
-                m_path = path;
-                m_filter = filter;
-                m_searchOption = searchOption;
-                m_currentContext = new SearchContext(path);
-                
-                if (m_searchOption == SearchOption.AllDirectories)
+                _mPath = path;
+                _mFilter = filter;
+                _mSearchOption = searchOption;
+                _mCurrentContext = new SearchContext(path);
+
+                if (_mSearchOption == SearchOption.AllDirectories)
                 {
-                    m_contextStack = new Stack<SearchContext>();
+                    _mContextStack = new Stack<SearchContext>();
                 }
             }
 
@@ -427,10 +416,7 @@ namespace Popcorn.Utils
             /// <returns>
             /// The element in the collection at the current position of the enumerator.
             /// </returns>
-            public FileData Current
-            {
-                get { return new FileData(m_path, m_win_find_data); }
-            }
+            public FileData Current => new FileData(_mPath, _mWinFindData);
 
             #endregion
 
@@ -442,10 +428,7 @@ namespace Popcorn.Utils
             /// </summary>
             public void Dispose()
             {
-                if (m_hndFindFile != null)
-                {
-                    m_hndFindFile.Dispose();
-                }
+                _mHndFindFile?.Dispose();
             }
 
             #endregion
@@ -459,10 +442,7 @@ namespace Popcorn.Utils
             /// <returns>
             /// The element in the collection at the current position of the enumerator.
             /// </returns>
-            object System.Collections.IEnumerator.Current
-            {
-                get { return new FileData(m_path, m_win_find_data); }
-            }
+            object System.Collections.IEnumerator.Current => new FileData(_mPath, _mWinFindData);
 
             /// <summary>
             /// Advances the enumerator to the next element of the collection.
@@ -480,68 +460,68 @@ namespace Popcorn.Utils
 
                 //If the handle is null, this is first call to MoveNext in the current 
                 // directory.  In that case, start a new search.
-                if (m_currentContext.SubdirectoriesToProcess == null)
+                if (_mCurrentContext.SubdirectoriesToProcess == null)
                 {
-                    if (m_hndFindFile == null)
+                    if (_mHndFindFile == null)
                     {
-                        new FileIOPermission(FileIOPermissionAccess.PathDiscovery, m_path).Demand();
+                        new FileIOPermission(FileIOPermissionAccess.PathDiscovery, _mPath).Demand();
 
-                        string searchPath = Path.Combine(m_path, m_filter);
-                        m_hndFindFile = FindFirstFile(searchPath, m_win_find_data);
-                        retval = !m_hndFindFile.IsInvalid;
+                        string searchPath = Path.Combine(_mPath, _mFilter);
+                        _mHndFindFile = FindFirstFile(searchPath, _mWinFindData);
+                        retval = !_mHndFindFile.IsInvalid;
                     }
                     else
                     {
                         //Otherwise, find the next item.
-                        retval = FindNextFile(m_hndFindFile, m_win_find_data);
+                        retval = FindNextFile(_mHndFindFile, _mWinFindData);
                     }
                 }
 
                 //If the call to FindNextFile or FindFirstFile succeeded...
                 if (retval)
                 {
-                    if (((FileAttributes)m_win_find_data.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    if ((_mWinFindData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                     {
                         //Ignore folders for now.   We call MoveNext recursively here to 
                         // move to the next item that FindNextFile will return.
                         return MoveNext();
                     }
                 }
-                else if (m_searchOption == SearchOption.AllDirectories)
+                else if (_mSearchOption == SearchOption.AllDirectories)
                 {
                     //SearchContext context = new SearchContext(m_hndFindFile, m_path);
                     //m_contextStack.Push(context);
                     //m_path = Path.Combine(m_path, m_win_find_data.cFileName);
                     //m_hndFindFile = null;
 
-                    if (m_currentContext.SubdirectoriesToProcess == null)
+                    if (_mCurrentContext.SubdirectoriesToProcess == null)
                     {
-                        string[] subDirectories = Directory.GetDirectories(m_path);
-                        m_currentContext.SubdirectoriesToProcess = new Stack<string>(subDirectories);
+                        string[] subDirectories = Directory.GetDirectories(_mPath);
+                        _mCurrentContext.SubdirectoriesToProcess = new Stack<string>(subDirectories);
                     }
 
-                    if (m_currentContext.SubdirectoriesToProcess.Count > 0)
+                    if (_mCurrentContext.SubdirectoriesToProcess.Count > 0)
                     {
-                        string subDir = m_currentContext.SubdirectoriesToProcess.Pop();
+                        string subDir = _mCurrentContext.SubdirectoriesToProcess.Pop();
 
-                        m_contextStack.Push(m_currentContext);
-                        m_path = subDir;
-                        m_hndFindFile = null;
-                        m_currentContext = new SearchContext(m_path);
+                        _mContextStack.Push(_mCurrentContext);
+                        _mPath = subDir;
+                        _mHndFindFile = null;
+                        _mCurrentContext = new SearchContext(_mPath);
                         return MoveNext();
                     }
 
                     //If there are no more files in this directory and we are 
                     // in a sub directory, pop back up to the parent directory and
                     // continue the search from there.
-                    if (m_contextStack.Count > 0)
+                    if (_mContextStack.Count > 0)
                     {
-                        m_currentContext = m_contextStack.Pop();
-                        m_path = m_currentContext.Path;
-                        if (m_hndFindFile != null)
+                        _mCurrentContext = _mContextStack.Pop();
+                        _mPath = _mCurrentContext.Path;
+                        if (_mHndFindFile != null)
                         {
-                            m_hndFindFile.Close();
-                            m_hndFindFile = null;
+                            _mHndFindFile.Close();
+                            _mHndFindFile = null;
                         }
 
                         return MoveNext();
@@ -559,7 +539,7 @@ namespace Popcorn.Utils
             /// </exception>
             public void Reset()
             {
-                m_hndFindFile = null;
+                _mHndFindFile = null;
             }
 
             #endregion

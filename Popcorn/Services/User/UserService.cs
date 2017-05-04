@@ -26,23 +26,26 @@ namespace Popcorn.Services.User
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Services used to interact with movies
         /// </summary>
-        private readonly IMovieService _movieService;
+        private IMovieService MovieService { get; }
 
         /// <summary>
         /// User Id (Machine Guid)
         /// </summary>
-        private readonly string _userId;
+        private string UserId { get; }
 
         /// <summary>
         /// User
         /// </summary>
         private UserJson User { get; set; }
 
+        /// <summary>
+        /// <see cref="IRestClient"/>
+        /// </summary>
         private IRestClient RestClient { get; }
 
         /// <summary>
@@ -52,8 +55,8 @@ namespace Popcorn.Services.User
         /// <param name="userId">User Id (Machine Guid)</param>
         public UserService(IMovieService movieService, string userId)
         {
-            _movieService = movieService;
-            _userId = userId;
+            MovieService = movieService;
+            UserId = userId;
             RestClient = new RestClient(Constants.PopcornApi);
         }
 
@@ -65,7 +68,7 @@ namespace Popcorn.Services.User
         {
             var request = new RestRequest("/{segment}/{userId}", Method.GET);
             request.AddUrlSegment("segment", "user");
-            request.AddUrlSegment("userId", _userId);
+            request.AddUrlSegment("userId", UserId);
             var response = await RestClient.ExecuteTaskAsync<UserJson>(request);
             if (response.ErrorException != null)
                 throw response.ErrorException;
@@ -383,9 +386,6 @@ namespace Popcorn.Services.User
             {
                 switch (language.Culture)
                 {
-                    case "en":
-                        currentLanguage = new EnglishLanguage();
-                        break;
                     case "fr":
                         currentLanguage = new FrenchLanguage();
                         break;
@@ -426,7 +426,7 @@ namespace Popcorn.Services.User
         /// <param name="language"></param>
         private void ChangeLanguage(LanguageJson language)
         {
-            _movieService.ChangeTmdbLanguage(language);
+            MovieService.ChangeTmdbLanguage(language);
             LocalizeDictionary.Instance.Culture = new CultureInfo(language.Culture);
             Messenger.Default.Send(new ChangeLanguageMessage());
         }

@@ -11,17 +11,18 @@ namespace Popcorn.Messaging.Async
     class AsyncMessageReceiver<TMessage> : IDisposable
         where TMessage : MessageBase
     {
-        private IMessenger _messenger;
-        private Func<TMessage, Task<object>> _callback;
-        private object _token;
+        private bool _disposed;
+        private IMessenger Messenger { get; set; }
+        private Func<TMessage, Task<object>> Callback { get; set; }
+        private object Token { get; set; }
         public AsyncMessageReceiver(IMessenger messenger,
             object token,
             bool receiveDerivedMessagesToo,
             Func<TMessage, Task<object>> callback)
         {
-            _messenger = messenger;
-            _token = token;
-            _callback = callback;
+            Messenger = messenger;
+            Token = token;
+            Callback = callback;
             messenger.Register<AsyncMessage<TMessage>>(
                 this,
                 token,
@@ -33,7 +34,7 @@ namespace Popcorn.Messaging.Async
         {
             try
             {
-                var result = await _callback(m.InnerMessage);
+                var result = await Callback(m.InnerMessage);
                 m.SetResult(result);
             }
             catch (Exception ex)
@@ -41,16 +42,39 @@ namespace Popcorn.Messaging.Async
                 m.SetException(ex);
             }
         }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
-            if (_callback == null)
-            {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
                 return;
+
+            if (disposing)
+            {
+                if (Callback == null)
+                {
+                    return;
+                }
+
+                Messenger.Unregister<AsyncMessage<TMessage>>(this, Token, ReceiveAsyncMessage);
+                Callback = null;
+                Token = null;
+                Messenger = null;
             }
-            _messenger.Unregister<AsyncMessage<TMessage>>(this, _token, ReceiveAsyncMessage);
-            _callback = null;
-            _token = null;
-            _messenger = null;
+
+            _disposed = true;
         }
     }
 }

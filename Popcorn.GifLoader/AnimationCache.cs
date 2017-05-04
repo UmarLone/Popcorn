@@ -99,7 +99,7 @@ namespace Popcorn.GifLoader
             }
         }
 
-        private static readonly Dictionary<CacheKey, ObjectAnimationUsingKeyFrames> _animationCache =
+        private static Dictionary<CacheKey, ObjectAnimationUsingKeyFrames> _animationCache { get; } =
             new Dictionary<CacheKey, ObjectAnimationUsingKeyFrames>();
 
         private static readonly Dictionary<CacheKey, int> ReferenceCount = new Dictionary<CacheKey, int>();

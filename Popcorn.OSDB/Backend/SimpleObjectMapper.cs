@@ -3,7 +3,7 @@ using CookComputing.XmlRpc;
 
 namespace Popcorn.OSDB.Backend
 {
-    public class SimpleObjectMapper
+    public static class SimpleObjectMapper
     {
         public static T MapToObject<T>(XmlRpcStruct obj) where T : class
         {

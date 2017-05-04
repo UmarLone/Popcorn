@@ -200,14 +200,14 @@ namespace Popcorn.AttachedProperties
 
         private class ContentManager
         {
-            private readonly TabControl _tabControl;
+            private TabControl TabControl { get; }
             private Decorator _border;
 
             public ContentManager(TabControl tabControl, Decorator border)
             {
-                _tabControl = tabControl;
+                TabControl = tabControl;
                 _border = border;
-                _tabControl.SelectionChanged += (sender, args) => { UpdateSelectedTab(); };
+                TabControl.SelectionChanged += (sender, args) => { UpdateSelectedTab(); };
             }
 
             public void ReplaceContainer(Decorator newBorder)
@@ -222,10 +222,10 @@ namespace Popcorn.AttachedProperties
 
             private ContentControl GetCurrentContent()
             {
-                var item = _tabControl.SelectedItem;
+                var item = TabControl.SelectedItem;
                 if (item == null) return null;
 
-                var tabItem = _tabControl.ItemContainerGenerator.ContainerFromItem(item);
+                var tabItem = TabControl.ItemContainerGenerator.ContainerFromItem(item);
                 if (tabItem == null) return null;
 
                 var cachedContent = GetInternalCachedContent(tabItem);
@@ -233,8 +233,8 @@ namespace Popcorn.AttachedProperties
                 cachedContent = new ContentControl
                 {
                     DataContext = item,
-                    ContentTemplate = GetTemplate(_tabControl),
-                    ContentTemplateSelector = GetTemplateSelector(_tabControl)
+                    ContentTemplate = GetTemplate(TabControl),
+                    ContentTemplateSelector = GetTemplateSelector(TabControl)
                 };
 
                 cachedContent.SetBinding(ContentControl.ContentProperty, new Binding());

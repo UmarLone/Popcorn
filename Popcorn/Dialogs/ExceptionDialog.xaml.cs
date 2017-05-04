@@ -66,8 +66,8 @@ namespace Popcorn.Dialogs
         /// </summary>
         public string Message
         {
-            get { return (string) GetValue(MessageProperty); }
-            set { SetValue(MessageProperty, value); }
+            get => (string) GetValue(MessageProperty);
+            set => SetValue(MessageProperty, value);
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace Popcorn.Dialogs
         /// </summary>
         public string OkButtonText
         {
-            get { return (string) GetValue(OkButtonTextProperty); }
-            set { SetValue(OkButtonTextProperty, value); }
+            get => (string) GetValue(OkButtonTextProperty);
+            set => SetValue(OkButtonTextProperty, value);
         }
 
         /// <summary>
@@ -156,7 +156,6 @@ namespace Popcorn.Dialogs
                     PART_OkButton.Style = FindResource("AccentedDialogHighlightedSquareButton") as Style;
                     break;
                 case MetroDialogColorScheme.Theme:
-                    break;
                 case MetroDialogColorScheme.Inverted:
                     break;
                 default:

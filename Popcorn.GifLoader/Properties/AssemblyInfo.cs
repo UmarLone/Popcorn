@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows.Markup;
-using Popcorn.GifLoader.Properties;
+using Popcorn.Utils;
 
 [assembly: AssemblyTitle("Popcorn.GifLoader")]
 [assembly: AssemblyDescription("Popcorn Windows native app made in .NET/WPF")]
@@ -17,19 +15,6 @@ using Popcorn.GifLoader.Properties;
 
 [assembly: Guid("a985ebe7-753b-4d73-b363-4b63d87f98b7")]
 
-[assembly: AssemblyVersion(VersionInfo.VersionString)]
-[assembly: AssemblyFileVersion(VersionInfo.VersionString)]
-[assembly: AssemblyInformationalVersion(VersionInfo.VersionString)]
-
-[assembly: InternalsVisibleTo("Popcorn.GifLoader.Demo")]
-
-namespace Popcorn.GifLoader.Properties
-{
-    class VersionInfo
-    {
-        /// <summary>
-        /// Single place to define version
-        /// </summary>
-        public const string VersionString = "1.4.14";
-    }
-}
+[assembly: AssemblyVersion(Constants.AppVersion)]
+[assembly: AssemblyFileVersion(Constants.AppVersion)]
+[assembly: AssemblyInformationalVersion(Constants.AppVersion)]

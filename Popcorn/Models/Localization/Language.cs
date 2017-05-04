@@ -16,15 +16,21 @@ namespace Popcorn.Models.Localization
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Services used to interacts with languages
         /// </summary>
         private readonly IUserService _userService;
 
+        /// <summary>
+        /// Current language
+        /// </summary>
         private LanguageJson _currentLanguage;
 
+        /// <summary>
+        /// Available languages
+        /// </summary>
         private ICollection<LanguageJson> _languages;
 
         /// <summary>

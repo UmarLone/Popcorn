@@ -5,9 +5,9 @@ namespace Popcorn.Utils
     /// <summary>
     /// Provide Windows native methods
     /// </summary>
-    internal class NativeMethods
+    public static class NativeMethods
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern SleepMode.EXECUTION_STATE SetThreadExecutionState(SleepMode.EXECUTION_STATE esFlags);
+        public static extern SleepMode.ExecutionState SetThreadExecutionState(SleepMode.ExecutionState esFlags);
     }
 }

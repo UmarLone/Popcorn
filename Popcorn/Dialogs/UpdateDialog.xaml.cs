@@ -249,7 +249,6 @@ namespace Popcorn.Dialogs
                     PART_LaterButton.Style = FindResource("AccentedDialogHighlightedSquareButton") as Style;
                     break;
                 case MetroDialogColorScheme.Theme:
-                    break;
                 case MetroDialogColorScheme.Inverted:
                     break;
                 default:

@@ -23,7 +23,7 @@ namespace Popcorn.Services.Download
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Action to execute when a movie has been buffered
@@ -46,7 +46,7 @@ namespace Popcorn.Services.Download
             Action cancelled,
             CancellationTokenSource cts)
         {
-            _logger.Info(
+            Logger.Info(
                 $"Start downloading : {torrentPath}");
             await Task.Run(async () =>
             {
@@ -170,14 +170,8 @@ namespace Popcorn.Services.Download
                     double minimumBuffering;
                     switch (type)
                     {
-                        case MediaType.Movie:
-                            minimumBuffering = Constants.MinimumMovieBuffering;
-                            break;
                         case MediaType.Show:
                             minimumBuffering = Constants.MinimumShowBuffering;
-                            break;
-                        case MediaType.Unkown:
-                            minimumBuffering = Constants.MinimumMovieBuffering;
                             break;
                         default:
                             minimumBuffering = Constants.MinimumMovieBuffering;

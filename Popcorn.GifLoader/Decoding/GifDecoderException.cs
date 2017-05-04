@@ -3,17 +3,17 @@ using System;
 namespace Popcorn.GifLoader.Decoding
 {
     [Serializable]
-    internal class GifDecoderException : Exception
+    public class GifDecoderException : Exception
     {
-        internal GifDecoderException()
+        public GifDecoderException()
         {
         }
 
-        internal GifDecoderException(string message) : base(message)
+        public GifDecoderException(string message) : base(message)
         {
         }
 
-        internal GifDecoderException(string message, Exception inner) : base(message, inner)
+        public GifDecoderException(string message, Exception inner) : base(message, inner)
         {
         }
 

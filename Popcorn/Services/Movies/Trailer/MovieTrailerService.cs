@@ -19,12 +19,12 @@ namespace Popcorn.Services.Movies.Trailer
         /// <summary>
         /// Logger of the class
         /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The service used to interact with movies
         /// </summary>
-        private readonly IMovieService _movieService;
+        private IMovieService MovieService { get; }
 
         /// <summary>
         /// Initializes a new instance of the TrailerViewModel class.
@@ -32,7 +32,7 @@ namespace Popcorn.Services.Movies.Trailer
         /// <param name="movieService">Movie service</param>
         public MovieTrailerService(IMovieService movieService)
         {
-            _movieService = movieService;
+            MovieService = movieService;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Popcorn.Services.Movies.Trailer
         {
             try
             {
-                var trailer = await _movieService.GetMovieTrailerAsync(movie, ct);
+                var trailer = await MovieService.GetMovieTrailerAsync(movie, ct);
                 if (string.IsNullOrEmpty(trailer))
                 {
                     Logger.Error(

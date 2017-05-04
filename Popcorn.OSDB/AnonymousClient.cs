@@ -13,20 +13,20 @@ namespace Popcorn.OSDB
 {
     public class AnonymousClient : IAnonymousClient
     {
-        private bool _disposed;
-        private readonly IOsdb _proxy;
-        private string _token;
+        private bool Disposed { get; set; }
+        private IOsdb Proxy { get; }
+        private string Token { get; set; }
 
         internal AnonymousClient(IOsdb proxy)
         {
-            _proxy = proxy;
+            Proxy = proxy;
         }
 
         internal void Login(string username, string password, string language, string userAgent)
         {
-            var response = _proxy.Login(username, password, language, userAgent);
+            var response = Proxy.Login(username, password, language, userAgent);
             VerifyResponseCode(response);
-            _token = response.token;
+            Token = response.token;
         }
 
         public Task<IList<Subtitle>> SearchSubtitlesFromImdb(string languages, string imdbId)
@@ -50,7 +50,7 @@ namespace Popcorn.OSDB
             var tcs = new TaskCompletionSource<IList<Subtitle>>();
             try
             {
-                var response = _proxy.SearchSubtitles(_token, new[] {request});
+                var response = Proxy.SearchSubtitles(Token, new[] {request});
                 VerifyResponseCode(response);
 
                 var subtitles = new List<Subtitle>();
@@ -132,7 +132,7 @@ namespace Popcorn.OSDB
             var tcs = new TaskCompletionSource<IEnumerable<Language>>();
             try
             {
-                var response = _proxy.GetSubLanguages(language);
+                var response = Proxy.GetSubLanguages(language);
                 VerifyResponseCode(response);
 
                 IList<Language> languages = response.data.Select(languageInfo => BuildLanguageObject(languageInfo))
@@ -155,21 +155,21 @@ namespace Popcorn.OSDB
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (!Disposed)
             {
-                if (disposing && !string.IsNullOrEmpty(_token))
+                if (disposing && !string.IsNullOrEmpty(Token))
                 {
                     try
                     {
-                        _proxy.Logout(_token);
+                        Proxy.Logout(Token);
                     }
                     catch
                     {
                         //soak it. We don't want exception on disposing. It's better to let the session timeout.
                     }
-                    _token = null;
+                    Token = null;
                 }
-                _disposed = true;
+                Disposed = true;
             }
         }
 
@@ -237,7 +237,7 @@ namespace Popcorn.OSDB
             int responseCode = int.Parse(response.status.Substring(0, 3));
             if (responseCode >= 400)
             {
-                throw new OSDBException($"Unexpected error response {response.status}");
+                throw new OsdbException($"Unexpected error response {response.status}");
             }
         }
     }

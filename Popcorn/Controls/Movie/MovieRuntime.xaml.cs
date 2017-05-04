@@ -51,7 +51,7 @@ namespace Popcorn.Controls.Movie
         private void DisplayMovieRuntime()
         {
             var result = Convert.ToDouble(Runtime, CultureInfo.InvariantCulture);
-            if (!(result >= 60d)) return;
+            if (result < 60d) return;
             var hours = result/60d;
             var minutes = result%60d;
 

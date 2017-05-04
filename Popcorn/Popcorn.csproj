@@ -222,7 +222,6 @@
     <Compile Include="AttachedProperties\ImageAsyncHelper.cs" />
     <Compile Include="AttachedProperties\RippleAssist.cs" />
     <Compile Include="AttachedProperties\TextParenthesis.cs" />
-    <Compile Include="Behaviors\ScrollAnimationBehavior.cs" />
     <Compile Include="Comparers\ShowComparer.cs" />
     <Compile Include="Comparers\MovieComparer.cs" />
     <Compile Include="Controls\RatingStar.xaml.cs">

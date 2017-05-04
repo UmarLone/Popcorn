@@ -13,28 +13,28 @@ namespace Popcorn.Models.Cast
         [DeserializeAs(Name = "name")]
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set { Set(() => Name, ref _name, value); }
         }
 
         [DeserializeAs(Name = "character_name")]
         public string CharacterName
         {
-            get { return _characterName; }
+            get => _characterName;
             set { Set(() => CharacterName, ref _characterName, value); }
         }
 
         [DeserializeAs(Name = "url_small_image")]
         public string SmallImage
         {
-            get { return _smallImage; }
+            get => _smallImage;
             set { Set(() => SmallImage, ref _smallImage, value); }
         }
         
         [DeserializeAs(Name = "imdb_code")]
         public string ImdbCode
         {
-            get { return _imdbCode; }
+            get => _imdbCode;
             set { Set(() => ImdbCode, ref _imdbCode, value); }
         }
     }

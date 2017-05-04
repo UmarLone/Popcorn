@@ -6,7 +6,7 @@ namespace Popcorn.AttachedProperties
     /// <summary>
     /// Enable drag for a control
     /// </summary>
-    public class TextParenthesis
+    public static class TextParenthesis
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.RegisterAttached(
             "Text",

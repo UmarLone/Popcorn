@@ -6,19 +6,9 @@ namespace Popcorn.OSDB
 {
     public class Osdb
     {
-        private IOsdb _proxyInstance;
+        private IOsdb ProxyInstance { get; set; }
 
-        private IOsdb Proxy
-        {
-            get
-            {
-                if (_proxyInstance == null)
-                {
-                    _proxyInstance = XmlRpcProxyGen.Create<IOsdb>();
-                }
-                return _proxyInstance;
-            }
-        }
+        private IOsdb Proxy => ProxyInstance ?? (ProxyInstance = XmlRpcProxyGen.Create<IOsdb>());
 
         public IAnonymousClient Login(string userAgent)
         {

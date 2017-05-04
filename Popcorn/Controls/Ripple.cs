@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -22,7 +20,7 @@ namespace Popcorn.Controls
         public const string TemplateStateMousePressed = "MousePressed";
         public const string TemplateStateMouseOut = "MouseOut";
 
-        private static readonly HashSet<Ripple> PressedInstances = new HashSet<Ripple>();
+        private static HashSet<Ripple> PressedInstances { get; } = new HashSet<Ripple>();
 
         static Ripple()
         {
