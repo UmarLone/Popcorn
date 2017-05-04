@@ -29,7 +29,6 @@
     Background="Black"
     DataContext="{Binding Window, Source={StaticResource Locator}}"
     Icon="../Resources/Images/icon.ico"
-    IgnoreTaskbarOnMaximize="True"
     ShowTitleBar="False"
     WindowStartupLocation="CenterScreen"
     WindowState="{Binding ApplicationService.IsFullScreen, Converter={converters:WindowStateToBooleanConverter}, Mode=TwoWay}"
